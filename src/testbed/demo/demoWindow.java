@@ -1,5 +1,7 @@
 package testbed.demo;
 
+import library.Body;
+import library.Circle;
 import library.World;
 
 import javax.swing.*;
@@ -9,20 +11,21 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Demo extends JPanel {
+public class demoWindow extends JPanel {
     private int width;
     private int height;
     private boolean antiAliasing;
     private World world;
 
-    public Demo(int width, int height, boolean antiAliasing) {
+    public demoWindow(int width, int height, boolean antiAliasing) {
         this.width = width;
         this.height = height;
         this.antiAliasing = antiAliasing;
         this.world = new World();
+        world.addBody(new Body(new Circle(50), 100,100));
     }
 
-    public static void showWindow(Demo gameScreen, String title) {
+    public static void showWindow(demoWindow gameScreen, String title) {
         if (gameScreen != null) {
             JFrame window = new JFrame(title);
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,13 +40,27 @@ public class Demo extends JPanel {
         }
     }
 
+    private boolean drawAABB = false;
+    private boolean drawShapes = true;
+    private boolean drawJoints = true;
+    private boolean drawAABBs = false;
+    private boolean drawContactPoints = false;
+    private boolean drawContactNormals = false;
+    private boolean drawContactImpulse = false;
+    private boolean drawFrictionImpulse = false;
+    private boolean drawCOMs = false;
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D gi = (Graphics2D) g;
         if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
-            
+            if (drawShapes) {
+                for (Body b : world.bodies) {
+                    b.shape.draw(g);
+                }
+            }
         }
     }
 }

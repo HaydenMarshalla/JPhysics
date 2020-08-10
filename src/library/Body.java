@@ -3,27 +3,28 @@ package library;
 import library.math.Vectors2D;
 
 public class Body {
-    Vectors2D position;
-    Vectors2D velocity;
-    Vectors2D force;
+    public Vectors2D position;
+    public Vectors2D velocity;
+    public Vectors2D force;
 
-    double angularVelocity;
-    double torque;
+    public double angularVelocity;
+    public double torque;
 
-    double restitution;
-    double mass,invMass,I, invI;
+    public double restitution;
+    public double mass, invMass, I, invI;
 
-    double orientation;
+    public double orientation;
 
-    Shapes shape;
+    public Shapes shape;
+    public AABB aabb;
 
-    Body(Shapes shape, int x, int y){
+    public Body(Shapes shape, int x, int y) {
         this.shape = shape;
         this.shape.body = this;
 
-        position = new Vectors2D(x,y);
-        velocity = new Vectors2D(0,0);
-        force = new Vectors2D(0,0);
+        position = new Vectors2D(x, y);
+        velocity = new Vectors2D(0, 0);
+        force = new Vectors2D(0, 0);
 
         angularVelocity = 0;
         torque = 0;
