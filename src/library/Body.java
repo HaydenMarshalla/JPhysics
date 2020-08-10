@@ -31,7 +31,7 @@ public class Body {
         restitution = 0.2;
 
         this.shape.calcMass(1.0);
-        this.shape.createAABBs();
+        this.shape.createAABB();
 
         orientation = 0;
     }
