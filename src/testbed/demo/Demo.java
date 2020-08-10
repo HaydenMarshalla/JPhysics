@@ -36,6 +36,16 @@ public class Demo extends JPanel {
             //gameScreen.start();
         }
     }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D gi = (Graphics2D) g;
+        if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (world != null) {
+            
+        }
+    }
 }
 
 class KeyboardInput implements KeyListener {
