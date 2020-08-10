@@ -2,8 +2,8 @@ package testbed.demo;
 
 import library.Body;
 import library.Circle;
+import library.Polygon;
 import library.World;
-import library.math.Vectors2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,19 +12,55 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class demoWindow extends JPanel {
+public class demoWindow extends JPanel implements Runnable {
     private int width;
     private int height;
     private boolean antiAliasing;
     private World world;
+    private Thread physicsThread = new Thread(this);
 
     public demoWindow(int width, int height, boolean antiAliasing) {
         this.width = width;
         this.height = height;
         this.antiAliasing = antiAliasing;
-        this.world = new World(new Vectors2D(0,-1));
-        world.addBody(new Body(new Circle(50), 100,100));
-        world.addBody(new Body(new Circle(50), 201,100));
+        this.world = new World();
+        world.addBody(new Body(new Polygon(50.0, 50.0), 300, 100));
+    }
+
+    public void start() {
+        physicsThread.start();
+    }
+
+    @Override
+    public void run() {
+
+    }
+
+    private boolean drawAABB = false;
+    private boolean drawShapes = true;
+    private boolean drawJoints = true;
+    private boolean drawAABBs = false;
+    private boolean drawContactPoints = false;
+    private boolean drawContactNormals = false;
+    private boolean drawContactImpulse = false;
+    private boolean drawFrictionImpulse = false;
+    private boolean drawCOMs = false;
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D gi = (Graphics2D) g;
+
+        if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (world != null) {
+            world.step(0.001, 10);
+            if (drawShapes) {
+                for (Body b : world.bodies) {
+                    b.shape.draw(g);
+                }
+            }
+            repaint();
+        }
     }
 
     public static void showWindow(demoWindow gameScreen, String title) {
@@ -42,30 +78,9 @@ public class demoWindow extends JPanel {
         }
     }
 
-    private boolean drawAABB = false;
-    private boolean drawShapes = true;
-    private boolean drawJoints = true;
-    private boolean drawAABBs = false;
-    private boolean drawContactPoints = false;
-    private boolean drawContactNormals = false;
-    private boolean drawContactImpulse = false;
-    private boolean drawFrictionImpulse = false;
-    private boolean drawCOMs = false;
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D gi = (Graphics2D) g;
-        if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if (world != null) {
-            world.step(0.00001,10);
-            if (drawShapes) {
-                for (Body b : world.bodies) {
-                    b.shape.draw(g);
-                }
-            }
-            repaint();
-        }
+    public void setBackground(demoWindow gameScreen, Color col){
+        gameScreen.setOpaque(true);
+        gameScreen.setBackground(col);
     }
 }
 
