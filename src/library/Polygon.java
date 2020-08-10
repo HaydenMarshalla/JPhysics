@@ -104,7 +104,6 @@ public class Polygon extends Shapes {
             }
         }
         body.aabb = new AABB(new Vectors2D(minX, minY).add(body.position), new Vectors2D(maxX, maxY).add(body.position));
-
     }
 
     @Override

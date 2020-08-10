@@ -31,10 +31,10 @@ public class Body {
 
         restitution = 0.2;
 
-        this.shape.calcMass(1.0);
-        this.shape.createAABB();
-
         orientation = 0;
         shape.orient.set(orientation);
+
+        this.shape.calcMass(1.0);
+        this.shape.createAABB();
     }
 }

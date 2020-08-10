@@ -10,6 +10,7 @@ public class Arbiter {
         this.A = a;
         this.B = b;
     }
+
     public final Vectors2D[] contacts = {new Vectors2D(), new Vectors2D()};
     public Vectors2D normal = new Vectors2D();
     public int contactCount = 0;
@@ -49,15 +50,70 @@ public class Arbiter {
             this.contacts[0].set(normal.normalize().scalar(ca.radius).add(A.position));
         }
     }
-    private void circleVsPolygon(Body a, Body b) {
 
+    private void circleVsPolygon(Body a, Body b) {
+        Circle A = (Circle) a.shape;
+        Polygon B = (Polygon) b.shape;
+
+        //Transpose effectively removes the rotation thus allowing the OBB vs OBB detection to become AABB vs OBB
+        Vectors2D distanceOfPoints = a.position.subtract(b.position);
+        Vectors2D distancePolyToCircle = B.orient.transpose().mul(distanceOfPoints);
+        double penetration = -Double.MAX_VALUE;
+        int faceNormal = 0;
+        //Applies SAT to check for penetration
+        for (int i = 0; i < B.vertices.length; i++) {
+            double distance = B.normals[i].dotProduct(distancePolyToCircle.subtract(B.vertices[i]));
+
+            //If circle is outside of polygon, no collision detected.
+            if (distance > A.radius) {
+                return;
+            }
+
+            if (distance > penetration) {
+                faceNormal = i;
+                penetration = distance;
+            }
+        }
+        //Get vertex's of face to be evaluated
+        Vectors2D vector1 = B.vertices[faceNormal];
+        Vectors2D vector2 = B.vertices[faceNormal + 1 < B.vertices.length ? faceNormal + 1 : 0];
+
+        double firstPolyCorner = (distancePolyToCircle.subtract(vector1)).dotProduct(vector2.subtract(vector1));
+        double secondPolyCorner = (distancePolyToCircle.subtract(vector2)).dotProduct(vector1.subtract(vector2));
+
+        if (firstPolyCorner <= 0.0) {
+            penetration = distancePolyToCircle.distance(vector1);
+            if (penetration >= A.radius) {
+                return;
+            }
+
+            this.penetration = penetration;
+            contactCount = 1;
+            B.orient.mul(normal.set(vector1.subtract(distancePolyToCircle).normalize()));
+            contacts[0] = B.orient.mul(vector1, new Vectors2D()).add(b.position);
+        } else if (secondPolyCorner <= 0.0) {
+            penetration = distancePolyToCircle.distance(vector2);
+            if (penetration >= A.radius) {
+                return;
+            }
+            this.penetration = penetration;
+            contactCount = 1;
+            B.orient.mul(normal.set(vector2.subtract(distancePolyToCircle).normalize()));
+            contacts[0] = B.orient.mul(vector2, new Vectors2D()).add(b.position);
+        } else {
+            this.penetration = A.radius - penetration;
+            Vectors2D n = B.normals[faceNormal];
+            this.contactCount = 1;
+            B.orient.mul(n, normal).negative();
+            this.contacts[0].set(a.position.addi(normal.scalar(A.radius)));
+        }
     }
 
     private void polygonVsPolygon() {
 
     }
 
-    public void penetrationResolution(){
+    public void penetrationResolution() {
 
     }
 
