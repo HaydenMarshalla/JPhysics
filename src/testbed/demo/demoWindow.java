@@ -3,6 +3,7 @@ package testbed.demo;
 import library.Body;
 import library.Circle;
 import library.World;
+import library.math.Vectors2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,8 +22,9 @@ public class demoWindow extends JPanel {
         this.width = width;
         this.height = height;
         this.antiAliasing = antiAliasing;
-        this.world = new World();
+        this.world = new World(new Vectors2D(0,-1));
         world.addBody(new Body(new Circle(50), 100,100));
+        world.addBody(new Body(new Circle(50), 201,100));
     }
 
     public static void showWindow(demoWindow gameScreen, String title) {
@@ -56,11 +58,13 @@ public class demoWindow extends JPanel {
         Graphics2D gi = (Graphics2D) g;
         if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
+            world.step(0.00001,10);
             if (drawShapes) {
                 for (Body b : world.bodies) {
                     b.shape.draw(g);
                 }
             }
+            repaint();
         }
     }
 }

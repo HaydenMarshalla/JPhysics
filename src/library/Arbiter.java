@@ -11,10 +11,6 @@ public class Arbiter {
         this.B = b;
     }
 
-    public void broadPhase() {
-
-    }
-
     private double penetration;
     public Vectors2D normal = new Vectors2D();
     public final Vectors2D[] contacts = new Vectors2D[2];
@@ -31,6 +27,10 @@ public class Arbiter {
     }
 
     public void penetrationResolution() {
+
+    }
+
+    public void solve() {
 
     }
 }

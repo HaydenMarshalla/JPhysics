@@ -6,15 +6,13 @@ import java.util.ArrayList;
 
 public class World {
     public Vectors2D gravity;
-    public int iterations;
 
-    public World(Vectors2D gravity, int iterations) {
+    public World(Vectors2D gravity) {
         this.gravity = gravity;
-        this.iterations = iterations;
     }
 
-    public World(){
-        gravity = new Vectors2D(0,0);
+    public World() {
+        gravity = new Vectors2D(0, 0);
     }
 
     public ArrayList<Body> bodies = new ArrayList<>();
@@ -22,6 +20,58 @@ public class World {
 
     public void step(double dt, int iterations) {
         contacts.clear();
+
+        //Broad phase collision detection
+        broadPhase();
+
+        //Applies tentative velocities
+        for (Body b : bodies) {
+            if (b.invMass == 0.0) {
+                continue;
+            }
+            b.velocity.add(gravity.add((b.force.scalar(b.invMass)).scalar(dt)));
+            b.angularVelocity += dt * b.invI * b.torque;
+        }
+
+        //Solves the contact constraints
+        for (int i = 0; i < iterations; i++) {
+            for (Arbiter contact : contacts) {
+                contact.solve();
+            }
+        }
+
+        //
+        for (Body b : bodies) {
+            Vectors2D posChange = b.velocity.scalar(dt);
+            b.position.add(posChange);
+            b.orientation += dt * b.angularVelocity;
+
+            b.aabb.getMin().add(posChange);
+            b.aabb.getMax().add(posChange);
+        }
+
+        clearForces();
+    }
+
+    private void broadPhase() {
+        for (int i = 0; i < bodies.size(); i++) {
+            Body a = bodies.get(i);
+
+            for (int x = i + 1; x < bodies.size(); x++) {
+                Body b = bodies.get(x);
+                if (a.invMass == 0.0 && b.invMass == 0) {
+                    continue;
+                }
+
+                Arbiter contactQuery = new Arbiter(a, b);
+                if (AABB.AABBOverLap(a.aabb, b.aabb)) {
+                    contactQuery.narrowPhase();
+                    if (contactQuery.contactCount > 0) {
+                        contacts.add(contactQuery);
+                    }
+                }
+            }
+        }
     }
 
     public Body addBody(Body b) {
@@ -29,11 +79,14 @@ public class World {
         return b;
     }
 
-    public void removeBody() {
-        
+    public void removeBody(Body b) {
+        bodies.remove(b);
     }
 
     public void clearForces() {
-
+        for (Body b : bodies) {
+            b.force.set(0, 0);
+            b.torque = 0;
+        }
     }
 }
