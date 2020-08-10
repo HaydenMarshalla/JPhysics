@@ -57,33 +57,26 @@ public class Vectors2D {
 
     public Vectors2D normalize() {
         double d = Math.sqrt(x * x + y * y);
-
         if (d == 0) {
             d = 1;
         }
-
         this.x /= d;
         this.y /= d;
-
         return this;
     }
 
     public Vectors2D normalize(Vectors2D out) {
         double d = Math.sqrt(x * x + y * y);
-
         if (d == 0) {
             d = 1;
         }
-
         out = new Vectors2D(x / d, y / d);
-
         return out;
     }
 
     public double distance(Vectors2D v) {
         double dx = this.x - v.x;
         double dy = this.y - v.y;
-
         return StrictMath.sqrt(dx * dx + dy * dy);
     }
 
@@ -107,16 +100,19 @@ public class Vectors2D {
         return v1.x * this.x + v1.y * this.y;
     }
 
+    public double length(){
+        return Math.sqrt(x*x+y*y);
+
+    }
+
     public static Vectors2D cross(Vectors2D a, double s) {
-
         return new Vectors2D(s * a.y, -s * a.x);
-
     }
 
     public static Vectors2D cross(double s, Vectors2D a) {
-
         return new Vectors2D(-s * a.y, s * a.x);
     }
+
 
     public final boolean isValid() {
         return !Double.isNaN(x) && !Double.isInfinite(x) && !Double.isNaN(y) && !Double.isInfinite(y);

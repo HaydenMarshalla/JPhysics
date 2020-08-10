@@ -80,6 +80,30 @@ public class Polygon extends Shapes {
 
     @Override
     public void createAABB() {
+        Vectors2D firstPoint = orient.mul(vertices[0], new Vectors2D());
+        double minX = firstPoint.x;
+        double maxX = firstPoint.x;
+        double minY = firstPoint.y;
+        double maxY = firstPoint.y;
+
+        for (int i = 1; i < vertices.length; i++) {
+            Vectors2D point = orient.mul(vertices[i], new Vectors2D());
+            double px = point.x;
+            double py = point.y;
+
+            if (px < minX) {
+                minX = px;
+            } else if (px > maxX) {
+                maxX = px;
+            }
+
+            if (py < minY) {
+                minY = py;
+            } else if (py > maxY) {
+                maxY = py;
+            }
+        }
+        body.aabb = new AABB(new Vectors2D(minX, minY).add(body.position), new Vectors2D(maxX, maxY).add(body.position));
 
     }
 
@@ -90,7 +114,7 @@ public class Polygon extends Shapes {
         for (int i = 0; i < vertices.length; i++) {
             Vectors2D v = new Vectors2D(this.vertices[i]);
             orient.mul(v);
-            v.addi(body.position);
+            v.add(body.position);
             if (i == 0) {
                 s.moveTo(v.x, v.y);
             } else {
@@ -102,13 +126,12 @@ public class Polygon extends Shapes {
             g2.setColor(new Color(32, 57, 32));
             g2.fill(s);
             g2.setColor(new Color(127, 229, 127));
-            g2.draw(s);
         } else {
             g2.setColor(new Color(55, 45, 46));
             g2.fill(s);
             g2.setColor(new Color(231, 178, 177));
-            g2.draw(s);
         }
+        g2.draw(s);
     }
 
     @Override

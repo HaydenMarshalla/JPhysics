@@ -35,5 +35,6 @@ public class Body {
         this.shape.createAABB();
 
         orientation = 0;
+        shape.orient.set(orientation);
     }
 }
