@@ -28,12 +28,14 @@ public class Polygon extends Shapes {
     }
 
     public Polygon(int radius, int noOfSides) {
+        vertices = new Vectors2D[noOfSides];
         for (int i = 0; i < noOfSides; i++) {
             double angle = 2 * Math.PI / noOfSides * (i + 0.75);
-            double pointX = body.position.x + radius * StrictMath.cos(angle);
-            double pointY = body.position.y + radius * StrictMath.sin(angle);
+            double pointX = radius * StrictMath.cos(angle);
+            double pointY = radius * StrictMath.sin(angle);
             vertices[i] = new Vectors2D(pointX, pointY);
         }
+        calcNormals();
     }
 
     public void calcNormals() {

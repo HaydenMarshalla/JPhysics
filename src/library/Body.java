@@ -37,4 +37,9 @@ public class Body {
         this.shape.calcMass(1.0);
         this.shape.createAABB();
     }
+
+    public void setOrientation(double delta) {
+        orientation += delta;
+        shape.orient.set(orientation);
+    }
 }

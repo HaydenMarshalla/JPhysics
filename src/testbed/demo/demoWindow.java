@@ -24,16 +24,25 @@ public class demoWindow extends JPanel implements Runnable {
         this.height = height;
         this.antiAliasing = antiAliasing;
         this.world = new World();
-        world.addBody(new Body(new Polygon(50.0, 50.0), 300, 100));
+        world.addBody(new Body(new Circle(50.0), 100, 125));
+        world.addBody(new Body(new Polygon(50.0,50.0), 400, 100));
+
+        world.bodies.get(0).velocity.set(10,0);
+        start();
     }
 
     public void start() {
         physicsThread.start();
+        running = true;
     }
 
+    private boolean running = false;
     @Override
     public void run() {
-
+        while (running) {
+            world.step(0.000001, 10);
+            repaint();
+        }
     }
 
     private boolean drawAABB = false;
@@ -50,16 +59,13 @@ public class demoWindow extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D gi = (Graphics2D) g;
-
         if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
-            world.step(0.001, 10);
             if (drawShapes) {
                 for (Body b : world.bodies) {
                     b.shape.draw(g);
                 }
             }
-            repaint();
         }
     }
 
@@ -78,7 +84,7 @@ public class demoWindow extends JPanel implements Runnable {
         }
     }
 
-    public void setBackground(demoWindow gameScreen, Color col){
+    public void setBackground(demoWindow gameScreen, Color col) {
         gameScreen.setOpaque(true);
         gameScreen.setBackground(col);
     }

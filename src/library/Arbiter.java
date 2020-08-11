@@ -47,7 +47,9 @@ public class Arbiter {
             this.contactCount = 1;
             this.penetration = radius - distance;
             this.normal = normal.normalize();
-            this.contacts[0].set(normal.normalize().scalar(ca.radius).add(A.position));
+            normal.normalize();
+            Vectors2D circleContactPoint = normal.scalar(ca.radius);
+            this.contacts[0].set(circleContactPoint.addi(A.position));
         }
     }
 
@@ -56,13 +58,16 @@ public class Arbiter {
         Polygon B = (Polygon) b.shape;
 
         //Transpose effectively removes the rotation thus allowing the OBB vs OBB detection to become AABB vs OBB
-        Vectors2D distanceOfPoints = a.position.subtract(b.position);
-        Vectors2D distancePolyToCircle = B.orient.transpose().mul(distanceOfPoints);
+        Vectors2D distOfBodies = a.position.subtract(b.position);
+        Vectors2D polyToCircleVec = B.orient.transpose().mul(distOfBodies);
         double penetration = -Double.MAX_VALUE;
-        int faceNormal = 0;
-        //Applies SAT to check for penetration
+        int faceNormalIndex = 0;
+
+        //Applies SAT to check for potential penetration
+        //Retrieves best edge of polygon
         for (int i = 0; i < B.vertices.length; i++) {
-            double distance = B.normals[i].dotProduct(distancePolyToCircle.subtract(B.vertices[i]));
+            Vectors2D v = polyToCircleVec.subtract(B.vertices[i]);
+            double distance = B.normals[i].dotProduct(v);
 
             //If circle is outside of polygon, no collision detected.
             if (distance > A.radius) {
@@ -70,42 +75,58 @@ public class Arbiter {
             }
 
             if (distance > penetration) {
-                faceNormal = i;
+                faceNormalIndex = i;
                 penetration = distance;
             }
         }
-        //Get vertex's of face to be evaluated
-        Vectors2D vector1 = B.vertices[faceNormal];
-        Vectors2D vector2 = B.vertices[faceNormal + 1 < B.vertices.length ? faceNormal + 1 : 0];
 
-        double firstPolyCorner = (distancePolyToCircle.subtract(vector1)).dotProduct(vector2.subtract(vector1));
-        double secondPolyCorner = (distancePolyToCircle.subtract(vector2)).dotProduct(vector1.subtract(vector2));
+        //Get vertex's of best face
+        Vectors2D vector1 = B.vertices[faceNormalIndex];
+        Vectors2D vector2 = B.vertices[faceNormalIndex + 1 < B.vertices.length ? faceNormalIndex + 1 : 0];
 
+        Vectors2D v1ToV2 = vector2.subtract(vector1);
+        Vectors2D circleBodyTov1 = polyToCircleVec.subtract(vector1);
+        double firstPolyCorner = circleBodyTov1.dotProduct(v1ToV2);
+
+        Vectors2D v2ToV1 = vector1.subtract(vector2);
+        Vectors2D circleBodyTov2 = polyToCircleVec.subtract(vector2);
+        double secondPolyCorner = circleBodyTov2.dotProduct(v2ToV1);
+
+        //If first vertex is positive, v1 edge region collision check
+        //If second vertex is positive, v2 edge region collision check
+        //Else circle has made contact with the polygon face.
         if (firstPolyCorner <= 0.0) {
-            penetration = distancePolyToCircle.distance(vector1);
+            penetration = polyToCircleVec.distance(vector1);
+
+            //Check to see if vertex is within the circle
             if (penetration >= A.radius) {
                 return;
             }
 
             this.penetration = penetration;
             contactCount = 1;
-            B.orient.mul(normal.set(vector1.subtract(distancePolyToCircle).normalize()));
-            contacts[0] = B.orient.mul(vector1, new Vectors2D()).add(b.position);
+            B.orient.mul(this.normal.set(vector1.subtract(polyToCircleVec).normalize()));
+            contacts[0] = B.orient.mul(vector1, new Vectors2D()).addi(b.position);
         } else if (secondPolyCorner <= 0.0) {
-            penetration = distancePolyToCircle.distance(vector2);
+            penetration = polyToCircleVec.distance(vector2);
+
+            //Check to see if vertex is within the circle
             if (penetration >= A.radius) {
                 return;
             }
+
             this.penetration = penetration;
             contactCount = 1;
-            B.orient.mul(normal.set(vector2.subtract(distancePolyToCircle).normalize()));
-            contacts[0] = B.orient.mul(vector2, new Vectors2D()).add(b.position);
+            B.orient.mul(this.normal.set(vector2.subtract(polyToCircleVec).normalize()));
+            contacts[0] = B.orient.mul(vector2, new Vectors2D()).addi(b.position);
+
         } else {
             this.penetration = A.radius - penetration;
-            Vectors2D n = B.normals[faceNormal];
+            Vectors2D faceNormal = B.normals[faceNormalIndex];
             this.contactCount = 1;
-            B.orient.mul(n, normal).negative();
-            this.contacts[0].set(a.position.addi(normal.scalar(A.radius)));
+            B.orient.mul(faceNormal, this.normal);
+            Vectors2D circleContactPoint = a.position.addi(this.normal.negative().scalar(A.radius));
+            this.contacts[0].set(circleContactPoint);
         }
     }
 
@@ -118,12 +139,12 @@ public class Arbiter {
     }
 
     public void solve() {
-        for (int i = 0; i < contactCount; i++) {
+        for (int i = 0; i < 1; i++) {
             Vectors2D contactA = contacts[i].subtract(A.position);
             Vectors2D contactB = contacts[i].subtract(B.position);
 
             //Relative velocity created from equation found in GDC talk of box2D lite.
-            Vectors2D relativeVel = B.velocity.add(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
+            Vectors2D relativeVel = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
             double contactVel = relativeVel.dotProduct(normal);
 
@@ -142,10 +163,10 @@ public class Arbiter {
 
             //Apply contact impulse
             Vectors2D impulse = normal.scalar(j);
-            B.velocity = B.velocity.add(impulse.scalar(B.invMass));
+            B.velocity = B.velocity.addi(impulse.scalar(B.invMass));
             B.angularVelocity += B.invI * contactB.crossProduct(impulse);
 
-            A.velocity = A.velocity.add(impulse.negative().scalar(A.invMass));
+            A.velocity = A.velocity.addi(impulse.negative().scalar(A.invMass));
             A.angularVelocity += A.invI * contactA.crossProduct(impulse.negative());
         }
     }

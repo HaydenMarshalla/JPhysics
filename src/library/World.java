@@ -21,7 +21,6 @@ public class World {
     public void step(double dt, int iterations) {
         contacts.clear();
 
-        //Broad phase collision detection
         broadPhase();
 
         //Applies tentative velocities
@@ -33,21 +32,27 @@ public class World {
             b.angularVelocity += dt * b.invI * b.torque;
         }
 
-        //Solves the contact constraints
+        //Resolve collisions
         for (int i = 0; i < iterations; i++) {
             for (Arbiter contact : contacts) {
                 contact.solve();
             }
         }
 
-        //
+        //Integrate positions
         for (Body b : bodies) {
             Vectors2D posChange = b.velocity.scalar(dt);
-            b.position.add(posChange);
-            b.orientation += dt * b.angularVelocity;
+            b.position.add(b.velocity.scalar(dt));
 
             b.aabb.getMin().add(posChange);
             b.aabb.getMax().add(posChange);
+
+            if (b.angularVelocity != 0) {
+                b.setOrientation(dt * b.angularVelocity);
+                if (b.shape instanceof Polygon) {
+                    b.shape.createAABB();
+                }
+            }
         }
 
         clearForces();
