@@ -2,6 +2,7 @@ package testbed.demo;
 
 import library.*;
 import library.Polygon;
+import library.math.Vectors2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,17 +26,16 @@ public class demoWindow extends JPanel implements Runnable {
         this.windowHeight = height;
         this.antiAliasing = antiAliasing;
 
-        this.world = new World();
+        this.world = new World(new Vectors2D(0,9.81));
         physicsThread = new Thread(this);
 
         addKeyListener(keyInput);
         addMouseListener(mouseInput);
         addMouseWheelListener(mouseScrollInput);
 
-        world.addBody(new Body(new Circle(50.0), 100, 125));
-        world.addBody(new Body(new Polygon(50.0, 50.0), 400, 100));
-
-        world.bodies.get(0).velocity.set(10, 0);
+        Body b = world.addBody(new Body(new Circle(50.0), 200, 200));
+        Body b1 = world.addBody(new Body(new Polygon(300.0, 50.0), 400, 600));
+        b1.setDensity(0);
         startThread();
     }
 
@@ -49,7 +49,7 @@ public class demoWindow extends JPanel implements Runnable {
     @Override
     public void run() {
         while (running) {
-            world.step(0.000001, 10);
+            world.step(0.0000001, 10);
             repaint();
         }
     }

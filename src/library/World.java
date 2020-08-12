@@ -28,7 +28,7 @@ public class World {
             if (b.invMass == 0.0) {
                 continue;
             }
-            b.velocity.add(gravity.add((b.force.scalar(b.invMass)).scalar(dt)));
+            b.velocity.add(gravity.add(b.force.scalar(b.invMass)).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
 
@@ -42,7 +42,7 @@ public class World {
         //Integrate positions
         for (Body b : bodies) {
             Vectors2D posChange = b.velocity.scalar(dt);
-            b.position.add(b.velocity.scalar(dt));
+            b.position.add(posChange);
 
             b.aabb.getMin().add(posChange);
             b.aabb.getMax().add(posChange);
@@ -94,4 +94,9 @@ public class World {
             b.torque = 0;
         }
     }
+
+    public void clearWorld(){
+        bodies.clear();
+        contacts.clear();
+    };
 }

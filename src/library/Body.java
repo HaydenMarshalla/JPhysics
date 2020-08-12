@@ -42,4 +42,19 @@ public class Body {
         orientation += delta;
         shape.orient.set(orientation);
     }
+
+    public void setDensity(int density) {
+        if (density != Integer.MAX_VALUE && density >= 0) {
+            shape.calcMass(density);
+        } else {
+            setStatic();
+        }
+    }
+
+    private void setStatic() {
+        this.mass = Double.MAX_VALUE;
+        invMass = 0;
+        I = Double.MAX_VALUE;
+        invI = 0;
+    }
 }
