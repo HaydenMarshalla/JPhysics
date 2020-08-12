@@ -27,11 +27,11 @@ public class Circle extends Shapes {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, ColourSettings paintSettings) {
         Graphics2D gi = (Graphics2D) g;
-        gi.setColor(Color.BLACK);
+        gi.setColor(paintSettings.shapeFill);
         gi.fill(new Ellipse2D.Double(body.position.x  - radius, body.position.y - radius, 2 * radius, 2 * radius));
-        gi.setColor(Color.CYAN);
+        gi.setColor(paintSettings.shapeOutLine);
         gi.draw(new Ellipse2D.Double(body.position.x - radius, body.position.y - radius, 2 * radius, 2 * radius));
     }
 

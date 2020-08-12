@@ -1,42 +1,51 @@
 package testbed.demo;
 
-import library.Body;
-import library.Circle;
+import library.*;
 import library.Polygon;
-import library.World;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class demoWindow extends JPanel implements Runnable {
-    private int width;
-    private int height;
+    private int windowWidth;
+    private int windowHeight;
     private boolean antiAliasing;
+
     private World world;
-    private Thread physicsThread = new Thread(this);
+    private Thread physicsThread;
+
+    //Input handler classes
+    KeyboardInput keyInput = new KeyboardInput();
+    MouseInput mouseInput = new MouseInput();
+    MouseScroll mouseScrollInput = new MouseScroll();
 
     public demoWindow(int width, int height, boolean antiAliasing) {
-        this.width = width;
-        this.height = height;
+        this.windowWidth = width;
+        this.windowHeight = height;
         this.antiAliasing = antiAliasing;
-        this.world = new World();
-        world.addBody(new Body(new Circle(50.0), 100, 125));
-        world.addBody(new Body(new Polygon(50.0,50.0), 400, 100));
 
-        world.bodies.get(0).velocity.set(10,0);
-        start();
+        this.world = new World();
+        physicsThread = new Thread(this);
+
+        addKeyListener(keyInput);
+        addMouseListener(mouseInput);
+        addMouseWheelListener(mouseScrollInput);
+
+        world.addBody(new Body(new Circle(50.0), 100, 125));
+        world.addBody(new Body(new Polygon(50.0, 50.0), 400, 100));
+
+        world.bodies.get(0).velocity.set(10, 0);
+        startThread();
     }
 
-    public void start() {
+    public void startThread() {
         physicsThread.start();
         running = true;
     }
 
     private boolean running = false;
+
     @Override
     public void run() {
         while (running) {
@@ -45,15 +54,16 @@ public class demoWindow extends JPanel implements Runnable {
         }
     }
 
-    private boolean drawAABB = false;
     private boolean drawShapes = true;
     private boolean drawJoints = true;
-    private boolean drawAABBs = false;
+    private boolean drawAABBs = true;
     private boolean drawContactPoints = false;
     private boolean drawContactNormals = false;
     private boolean drawContactImpulse = false;
     private boolean drawFrictionImpulse = false;
     private boolean drawCOMs = false;
+
+    private ColourSettings paintSettings = new ColourSettings();
 
     @Override
     public void paintComponent(Graphics g) {
@@ -61,9 +71,31 @@ public class demoWindow extends JPanel implements Runnable {
         Graphics2D gi = (Graphics2D) g;
         if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
-            if (drawShapes) {
-                for (Body b : world.bodies) {
-                    b.shape.draw(g);
+            for (Body b : world.bodies) {
+                if (drawShapes) {
+                    b.shape.draw(g,paintSettings);
+                }
+                if (drawAABBs){
+                    b.shape.drawAABB(g,paintSettings);
+                }
+                if (drawJoints){
+                    //TO DO
+                }
+                if (drawContactPoints){
+                    //TO DO
+                }
+                if (drawContactNormals){
+                    //TO DO
+                }
+                if (drawContactImpulse){
+                    //TO DO
+                }
+                if (drawFrictionImpulse){
+                    //TO DO
+                }
+                if (drawCOMs){
+                    //TO DO
+                    b.shape.drawCOMS(g,paintSettings);
                 }
             }
         }
@@ -75,23 +107,18 @@ public class demoWindow extends JPanel implements Runnable {
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             window.add(gameScreen);
             window.setMinimumSize(new Dimension(800, 600));
-            window.setPreferredSize(new Dimension(gameScreen.width, gameScreen.height));
+            window.setPreferredSize(new Dimension(gameScreen.windowWidth, gameScreen.windowHeight));
             window.pack();
             window.setLocationRelativeTo(null);
             window.setVisible(true);
-
-            //gameScreen.start();
+            gameScreen.setFocusable(true);
+            gameScreen.setOpaque(true);
+            gameScreen.setBackground(gameScreen.paintSettings.background);
         }
-    }
-
-    public void setBackground(demoWindow gameScreen, Color col) {
-        gameScreen.setOpaque(true);
-        gameScreen.setBackground(col);
     }
 }
 
 class KeyboardInput implements KeyListener {
-
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -104,6 +131,13 @@ class KeyboardInput implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+
+    }
+}
+
+class MouseScroll implements MouseWheelListener {
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
 
     }
 }

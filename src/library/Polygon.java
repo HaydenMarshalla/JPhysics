@@ -109,7 +109,7 @@ public class Polygon extends Shapes {
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, ColourSettings paintSettings) {
         Graphics2D g2 = (Graphics2D) g;
         Path2D.Double s = new Path2D.Double();
         for (int i = 0; i < vertices.length; i++) {
@@ -124,13 +124,13 @@ public class Polygon extends Shapes {
         }
         s.closePath();
         if (body.mass == 0.0) {
-            g2.setColor(new Color(32, 57, 32));
+            g2.setColor(paintSettings.staticFill);
             g2.fill(s);
-            g2.setColor(new Color(127, 229, 127));
+            g2.setColor(paintSettings.staticOutLine);
         } else {
-            g2.setColor(new Color(55, 45, 46));
+            g2.setColor(paintSettings.shapeFill);
             g2.fill(s);
-            g2.setColor(new Color(231, 178, 177));
+            g2.setColor(paintSettings.shapeOutLine);
         }
         g2.draw(s);
     }
