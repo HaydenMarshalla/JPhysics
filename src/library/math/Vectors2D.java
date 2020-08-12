@@ -65,13 +65,13 @@ public class Vectors2D {
         return this;
     }
 
-    public Vectors2D normalize(Vectors2D out) {
+    public void normalize(Vectors2D out) {
         double d = Math.sqrt(x * x + y * y);
         if (d == 0) {
             d = 1;
         }
-        out = new Vectors2D(x / d, y / d);
-        return out;
+        out.x = this.x / d;
+        out.y = this.y / d;
     }
 
     public double distance(Vectors2D v) {
@@ -100,8 +100,8 @@ public class Vectors2D {
         return v1.x * this.x + v1.y * this.y;
     }
 
-    public double length(){
-        return Math.sqrt(x*x+y*y);
+    public double length() {
+        return Math.sqrt(x * x + y * y);
 
     }
 
