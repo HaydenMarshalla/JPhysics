@@ -26,15 +26,14 @@ public class demoWindow extends JPanel implements Runnable {
         this.windowHeight = height;
         this.antiAliasing = antiAliasing;
 
-        this.world = new World(new Vectors2D(0,9.81));
+        this.world = new World(new Vectors2D(0, 10));
         physicsThread = new Thread(this);
 
         addKeyListener(keyInput);
         addMouseListener(mouseInput);
         addMouseWheelListener(mouseScrollInput);
-
-        Body b = world.addBody(new Body(new Circle(50.0), 200, 200));
-        Body b1 = world.addBody(new Body(new Polygon(300.0, 50.0), 400, 600));
+        Body b = world.addBody(new Body(new Polygon(50,4), 190,100));
+        Body b1 = world.addBody(new Body(new Polygon(500.0,50.0), 150,400));
         b1.setDensity(0);
         startThread();
     }
@@ -49,7 +48,7 @@ public class demoWindow extends JPanel implements Runnable {
     @Override
     public void run() {
         while (running) {
-            world.step(0.0000001, 10);
+            world.step(0.000001, 10);
             repaint();
         }
     }
@@ -73,29 +72,29 @@ public class demoWindow extends JPanel implements Runnable {
         if (world != null) {
             for (Body b : world.bodies) {
                 if (drawShapes) {
-                    b.shape.draw(g,paintSettings);
+                    b.shape.draw(g, paintSettings);
                 }
-                if (drawAABBs){
-                    b.shape.drawAABB(g,paintSettings);
+                if (drawAABBs) {
+                    b.shape.drawAABB(g, paintSettings);
                 }
-                if (drawJoints){
+                if (drawJoints) {
                     //TO DO
                 }
-                if (drawContactPoints){
+                if (drawContactPoints) {
                     //TO DO
                 }
-                if (drawContactNormals){
+                if (drawContactNormals) {
                     //TO DO
                 }
-                if (drawContactImpulse){
+                if (drawContactImpulse) {
                     //TO DO
                 }
-                if (drawFrictionImpulse){
+                if (drawFrictionImpulse) {
                     //TO DO
                 }
-                if (drawCOMs){
+                if (drawCOMs) {
                     //TO DO
-                    b.shape.drawCOMS(g,paintSettings);
+                    b.shape.drawCOMS(g, paintSettings);
                 }
             }
         }

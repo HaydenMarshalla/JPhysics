@@ -3,6 +3,8 @@ package library;
 import library.math.Vectors2D;
 
 public class Body {
+    public double dynamicFriction;
+    public double staticFriction;
     public Vectors2D position;
     public Vectors2D velocity;
     public Vectors2D force;
@@ -29,7 +31,10 @@ public class Body {
         angularVelocity = 0;
         torque = 0;
 
-        restitution = 0.2;
+        restitution = 0.8;
+
+        staticFriction = 0.5;
+        dynamicFriction = 0.3;
 
         orientation = 0;
         shape.orient.set(orientation);
@@ -39,8 +44,9 @@ public class Body {
     }
 
     public void setOrientation(double delta) {
-        orientation += delta;
+        orientation = delta;
         shape.orient.set(orientation);
+        this.shape.createAABB();
     }
 
     public void setDensity(int density) {

@@ -88,20 +88,6 @@ public class Vectors2DTest {
     }
 
     @Test
-    public void normalizeToOutVector() {
-        Vectors2D vec1 = new Vectors2D(-345.34, 745.0);
-        Vectors2D out = new Vectors2D();
-        vec1.normalize(out);
-        assertFalse(vec1.length() == 1.0);
-
-        assertEquals(vec1.x, -345.34);
-        assertEquals(vec1.y, 745.0);
-
-        assertEquals(out.x, -0.4205573495355269,0.0);
-        assertEquals(out.y, 0.9072659564602061,0.0);
-    }
-
-    @Test
     public void distance() {
         Vectors2D vec1 = new Vectors2D(5.0, 2.0);
         Vectors2D vec2 = new Vectors2D(7.0, 1.0);

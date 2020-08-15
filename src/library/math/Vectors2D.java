@@ -41,6 +41,10 @@ public class Vectors2D {
         return this;
     }
 
+    public Vectors2D negativeVec() {
+        return new Vectors2D(-x,-y);
+    }
+
     public Vectors2D add(Vectors2D v) {
         this.x = x + v.x;
         this.y = y + v.y;
@@ -63,15 +67,6 @@ public class Vectors2D {
         this.x /= d;
         this.y /= d;
         return this;
-    }
-
-    public void normalize(Vectors2D out) {
-        double d = Math.sqrt(x * x + y * y);
-        if (d == 0) {
-            d = 1;
-        }
-        out.x = this.x / d;
-        out.y = this.y / d;
     }
 
     public double distance(Vectors2D v) {

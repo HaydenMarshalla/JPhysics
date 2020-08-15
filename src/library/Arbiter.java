@@ -18,15 +18,17 @@ public class Arbiter {
 
     public void narrowPhase() {
         restitution = Math.min(A.restitution, B.restitution);
+        double contactVel = B.velocity.subtract(A.velocity).dotProduct(B.position.subtract(A.position));
+        if (contactVel >= 0) {
+            return;
+        }
         if (A.shape instanceof Circle && B.shape instanceof Circle) {
             circleVsCircle();
         } else if (A.shape instanceof Circle && B.shape instanceof Polygon) {
             circleVsPolygon(A, B);
         } else if (A.shape instanceof Polygon && B.shape instanceof Circle) {
             circleVsPolygon(B, A);
-            if (this.contactCount > 0) {
-                this.normal.negative();
-            }
+            this.normal.negative();
         } else if (A.shape instanceof Polygon && B.shape instanceof Polygon) {
             polygonVsPolygon();
         }
@@ -64,7 +66,7 @@ public class Arbiter {
         int faceNormalIndex = 0;
 
         //Applies SAT to check for potential penetration
-        //Retrieves best edge of polygon
+        //Retrieves best face of polygon
         for (int i = 0; i < B.vertices.length; i++) {
             Vectors2D v = polyToCircleVec.subtract(B.vertices[i]);
             double distance = B.normals[i].dotProduct(v);
@@ -92,8 +94,8 @@ public class Arbiter {
         Vectors2D circleBodyTov2 = polyToCircleVec.subtract(vector2);
         double secondPolyCorner = circleBodyTov2.dotProduct(v2ToV1);
 
-        //If first vertex is positive, v1 edge region collision check
-        //If second vertex is positive, v2 edge region collision check
+        //If first vertex is positive, v1 face region collision check
+        //If second vertex is positive, v2 face region collision check
         //Else circle has made contact with the polygon face.
         if (firstPolyCorner <= 0.0) {
             penetration = polyToCircleVec.distance(vector1);
@@ -131,7 +133,183 @@ public class Arbiter {
     }
 
     private void polygonVsPolygon() {
+        Polygon pa = (Polygon) A.shape;
+        Polygon pb = (Polygon) B.shape;
 
+        AxisData aData = new AxisData();
+        findAxisOfMinPenetration(aData, pa, pb);
+        if (aData.getPenetration() >= 0) {
+            return;
+        }
+
+        AxisData bData = new AxisData();
+        findAxisOfMinPenetration(bData, pb, pa);
+        if (bData.getPenetration() >= 0) {
+            return;
+        }
+
+        int referenceFaceIndex;
+        Polygon referencePoly;
+        Polygon incidentPoly;
+        boolean flip;
+
+        if (selectionBias(aData.getPenetration(), bData.getPenetration())) {
+            referencePoly = pa;
+            incidentPoly = pb;
+            referenceFaceIndex = aData.getReferenceFaceIndex();
+            flip = false;
+        } else {
+            referencePoly = pb;
+            incidentPoly = pa;
+            referenceFaceIndex = bData.getReferenceFaceIndex();
+            flip = true;
+        }
+
+        Vectors2D[] incidentFaceVertexes = new Vectors2D[2];
+        Vectors2D referenceNormal = referencePoly.normals[referenceFaceIndex];
+
+        //Reference face of reference polygon in local space of incident polygon
+        referenceNormal = referencePoly.orient.mul(referenceNormal, new Vectors2D());
+        referenceNormal = incidentPoly.orient.transpose().mul(referenceNormal, new Vectors2D());
+
+        //Finds face of incident polygon angled best vs reference poly normal.
+        //Best face is the incident face that is the most anti parallel (most negative dot product)
+        int incidentIndex = 0;
+        double minDot = Double.MAX_VALUE;
+        for (int i = 0; i < incidentPoly.vertices.length; i++) {
+            double dot = referenceNormal.dotProduct(incidentPoly.normals[i]);
+
+            if (dot < minDot) {
+                minDot = dot;
+                incidentIndex = i;
+            }
+        }
+
+        //Incident faces vertexes in world space
+        incidentFaceVertexes[0] = incidentPoly.orient.mul(incidentPoly.vertices[incidentIndex], new Vectors2D()).addi(incidentPoly.body.position);
+        incidentFaceVertexes[1] = incidentPoly.orient.mul(incidentPoly.vertices[incidentIndex + 1 >= incidentPoly.vertices.length ? 0 : incidentIndex + 1], new Vectors2D()).addi(incidentPoly.body.position);
+
+        //Gets vertex's of reference polygon reference face in world space
+        Vectors2D v1 = referencePoly.vertices[referenceFaceIndex];
+        Vectors2D v2 = referencePoly.vertices[referenceFaceIndex + 1 == referencePoly.vertices.length ? 0 : referenceFaceIndex + 1];
+
+        //Rotate and translate vertex's of reference poly
+        v1 = referencePoly.orient.mul(v1, new Vectors2D()).addi(referencePoly.body.position);
+        v2 = referencePoly.orient.mul(v2, new Vectors2D()).addi(referencePoly.body.position);
+
+        Vectors2D refTangent = v2.subtract(v1);
+        refTangent.normalize();
+
+        double negSide = -refTangent.dotProduct(v1);
+        double posSide = refTangent.dotProduct(v2);
+        int np = clip(refTangent.negativeVec(), negSide, incidentFaceVertexes);
+
+        if (np < 2) {
+            return;
+        }
+
+        np = clip(refTangent, posSide, incidentFaceVertexes);
+
+        if (np < 2) {
+            return;
+        }
+
+        Vectors2D refFaceNormal = refTangent.normal().negativeVec();
+
+        Vectors2D[] contactVectorsFound = new Vectors2D[2];
+        double totalPen = 0;
+        int contactsFound = 0;
+        for (int i = 0; i < 2; i++) {
+            double separation = refFaceNormal.dotProduct(incidentFaceVertexes[i]) - refFaceNormal.dotProduct(v1);
+            if (separation <= 0.0) {
+                contactVectorsFound[contactsFound] = incidentFaceVertexes[i];
+                totalPen += -separation;
+                contactsFound++;
+            }
+        }
+
+        Vectors2D contactPoint;
+        if (contactsFound == 1) {
+            contactPoint = contactVectorsFound[0];
+            this.penetration = totalPen;
+        } else {
+            contactPoint = (contactVectorsFound[1].addi(contactVectorsFound[0])).scalar(0.5);
+            this.penetration = totalPen / 2;
+        }
+        this.contactCount = 1;
+        this.contacts[0].set(contactPoint);
+        normal.set(flip ? refFaceNormal.negative() : refFaceNormal);
+    }
+
+    private int clip(Vectors2D n, double offset, Vectors2D[] face) {
+        int num = 0;
+        Vectors2D[] out = {
+                new Vectors2D(face[0]),
+                new Vectors2D(face[1])
+        };
+        double dist = n.dotProduct(face[0]) - offset;
+        double dist1 = n.dotProduct(face[1]) - offset;
+
+        if (dist <= 0.0) out[num++].set(face[0]);
+        if (dist1 <= 0.0) out[num++].set(face[1]);
+
+        if (dist * dist1 < 0.0) {
+            double interp = dist / (dist - dist1);
+
+            out[num].set(face[1].subtract(face[0]).scalar(interp).addi(face[0]));
+            num++;
+        }
+
+        face[0] = out[0];
+        face[1] = out[1];
+
+        return num;
+    }
+
+    //Finds the incident face of polygon A in local space relative to polygons B position
+    public void findAxisOfMinPenetration(AxisData data, Polygon A, Polygon B) {
+        double distance = -Double.MAX_VALUE;
+        int bestIndex = 0;
+
+        for (int i = 0; i < A.vertices.length; i++) {
+            //Applies polygon A's orientation to its normals for calculation.
+            Vectors2D polyANormal = A.orient.mul(A.normals[i], new Vectors2D());
+
+            //Rotates the normal by the clock wise rotation matrix of B to put the normal relative to the local space of polygon B
+            //Polygon b is axis aligned and the normal is located according to this in the correct position in local space
+            Vectors2D localPolyANormal = B.orient.transpose().mul(polyANormal, new Vectors2D());
+
+            double bestProjection = Double.MAX_VALUE;
+            Vectors2D bestVertex = B.vertices[0];
+
+            //Finds the index of the most negative vertex relative to the normal of polygon A
+            for (int x = 0; x < B.vertices.length; x++) {
+                Vectors2D vertex = B.vertices[x];
+                double projection = vertex.dotProduct(localPolyANormal);
+
+                if (projection < bestProjection) {
+                    bestVertex = vertex;
+                    bestProjection = projection;
+                }
+            }
+
+            //Distance of B to A in world space space
+            Vectors2D distanceOfBA = A.body.position.subtract(B.body.position);
+
+            //Best vertex relative to polygon B in local space
+            Vectors2D polyANormalVertex = B.orient.transpose().mul(A.orient.mul(A.vertices[i], new Vectors2D()).addi(distanceOfBA));
+
+            //Distance between best vertex and polygon A's plane in local space
+            double d = localPolyANormal.dotProduct(bestVertex.subtract(polyANormalVertex));
+
+            //Records penetration and vertex
+            if (d > distance) {
+                distance = d;
+                bestIndex = i;
+            }
+        }
+        data.setPenetration(distance);
+        data.setReferenceFaceIndex(bestIndex);
     }
 
     public void penetrationResolution() {
@@ -139,35 +317,66 @@ public class Arbiter {
     }
 
     public void solve() {
-        for (int i = 0; i < 1; i++) {
-            Vectors2D contactA = contacts[i].subtract(A.position);
-            Vectors2D contactB = contacts[i].subtract(B.position);
+        Vectors2D contactA = contacts[0].subtract(A.position);
+        Vectors2D contactB = contacts[0].subtract(B.position);
 
-            //Relative velocity created from equation found in GDC talk of box2D lite.
-            Vectors2D relativeVel = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
+        //Relative velocity created from equation found in GDC talk of box2D lite.
+        Vectors2D relativeVel = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
-            double contactVel = relativeVel.dotProduct(normal);
+        //Positive = converging Negative = diverging
+        double contactVel = relativeVel.dotProduct(normal);
 
-            //Prevents objects colliding when they are moving away from each other.
-            //If not, objects could still be overlapping after a contact has been resolved and cause objects to stick together
-            if (contactVel >= 0) {
-                return;
-            }
-
-            double acn = contactA.crossProduct(normal);
-            double bcn = contactB.crossProduct(normal);
-            double inverseMassSum = A.invMass + B.invMass + (acn * acn) * A.invI + (bcn * bcn) * B.invI;
-
-            double j = -(restitution + 1) * contactVel;
-            j /= inverseMassSum;
-
-            //Apply contact impulse
-            Vectors2D impulse = normal.scalar(j);
-            B.velocity = B.velocity.addi(impulse.scalar(B.invMass));
-            B.angularVelocity += B.invI * contactB.crossProduct(impulse);
-
-            A.velocity = A.velocity.addi(impulse.negative().scalar(A.invMass));
-            A.angularVelocity += A.invI * contactA.crossProduct(impulse.negative());
+        //Prevents objects colliding when they are moving away from each other.
+        //If not, objects could still be overlapping after a contact has been resolved and cause objects to stick together
+        if (contactVel >= 0) {
+            return;
         }
+
+        double acn = contactA.crossProduct(normal);
+        double bcn = contactB.crossProduct(normal);
+        double inverseMassSum = A.invMass + B.invMass + (acn * acn) * A.invI + (bcn * bcn) * B.invI;
+
+        double j = -(restitution + 1) * contactVel;
+        j /= inverseMassSum;
+
+        //Apply contact impulse
+        Vectors2D impulse = normal.scalar(j);
+        B.velocity.add(impulse.scalar(B.invMass));
+        B.angularVelocity += B.invI * contactB.crossProduct(impulse);
+
+        A.velocity.add(impulse.negativeVec().scalar(A.invMass));
+        A.angularVelocity += A.invI * contactA.crossProduct(impulse.negativeVec());
+    }
+
+    private static boolean selectionBias(double a, double b) {
+        double BIAS_RELATIVE = 0.95;
+        double BIAS_ABSOLUTE = 0.01;
+        return a >= b * BIAS_RELATIVE + a * BIAS_ABSOLUTE;
+    }
+}
+
+class AxisData {
+    private double penetration;
+    private int referenceFaceIndex;
+
+    AxisData() {
+        penetration = -Double.MAX_VALUE;
+        referenceFaceIndex = 0;
+    }
+
+    public void setPenetration(double value) {
+        penetration = value;
+    }
+
+    public void setReferenceFaceIndex(int value) {
+        referenceFaceIndex = value;
+    }
+
+    public double getPenetration() {
+        return penetration;
+    }
+
+    public int getReferenceFaceIndex() {
+        return referenceFaceIndex;
     }
 }

@@ -28,7 +28,7 @@ public class World {
             if (b.invMass == 0.0) {
                 continue;
             }
-            b.velocity.add(gravity.add(b.force.scalar(b.invMass)).scalar(dt));
+            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
 
@@ -44,18 +44,17 @@ public class World {
             Vectors2D posChange = b.velocity.scalar(dt);
             b.position.add(posChange);
 
-            b.aabb.getMin().add(posChange);
-            b.aabb.getMax().add(posChange);
-
             if (b.angularVelocity != 0) {
-                b.setOrientation(dt * b.angularVelocity);
-                if (b.shape instanceof Polygon) {
-                    b.shape.createAABB();
-                }
+                b.setOrientation(b.orientation + (dt * b.angularVelocity));
+            } else {
+                b.aabb.getMin().add(posChange);
+                b.aabb.getMax().add(posChange);
             }
+            b.force.set(0, 0);
+            b.torque = 0;
         }
 
-        clearForces();
+        //Correct positional errors from the discrete collisions
     }
 
     private void broadPhase() {
@@ -88,15 +87,10 @@ public class World {
         bodies.remove(b);
     }
 
-    public void clearForces() {
-        for (Body b : bodies) {
-            b.force.set(0, 0);
-            b.torque = 0;
-        }
-    }
-
-    public void clearWorld(){
+    public void clearWorld() {
         bodies.clear();
         contacts.clear();
-    };
+    }
+
+    ;
 }
