@@ -51,6 +51,16 @@ public class Vectors2DTest {
     }
 
     @Test
+    public void negativeVec() {
+        Vectors2D vec1 = new Vectors2D(5.0, 1.0);
+        Vectors2D vec2 = vec1.negativeVec();
+        assertEquals(5.0, vec1.x);
+        assertEquals(1.0, vec1.y);
+        assertEquals(-5.0, vec2.x);
+        assertEquals(-1.0, vec2.y);
+    }
+
+    @Test
     public void add() {
         Vectors2D vec1 = new Vectors2D(5.0, 2.0);
         Vectors2D vec2 = new Vectors2D(7.0, 1.0);
@@ -83,8 +93,8 @@ public class Vectors2DTest {
         Vectors2D vec1 = new Vectors2D(-345.34, 745.0);
         vec1.normalize();
         assertEquals(vec1.length(), 1.0);
-        assertEquals(vec1.x, -0.4205573495355269,0.0);
-        assertEquals(vec1.y, 0.9072659564602061,0.0);
+        assertEquals(vec1.x, -0.4205573495355269, 0.0);
+        assertEquals(vec1.y, 0.9072659564602061, 0.0);
     }
 
     @Test

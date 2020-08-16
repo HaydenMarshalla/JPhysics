@@ -18,10 +18,6 @@ public class Arbiter {
 
     public void narrowPhase() {
         restitution = Math.min(A.restitution, B.restitution);
-        double contactVel = B.velocity.subtract(A.velocity).dotProduct(B.position.subtract(A.position));
-        if (contactVel >= 0) {
-            return;
-        }
         if (A.shape instanceof Circle && B.shape instanceof Circle) {
             circleVsCircle();
         } else if (A.shape instanceof Circle && B.shape instanceof Polygon) {
@@ -346,6 +342,30 @@ public class Arbiter {
 
         A.velocity.add(impulse.negativeVec().scalar(A.invMass));
         A.angularVelocity += A.invI * contactA.crossProduct(impulse.negativeVec());
+
+        Vectors2D rv = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
+
+        Vectors2D t = new Vectors2D(rv);
+        t = t.add(normal.scalar(-rv.dotProduct(normal))).normalize();
+
+        double jt = -rv.dotProduct(t);
+        jt /= inverseMassSum;
+        jt /= contactCount;
+
+        Vectors2D tangentImpulse;
+        double staticFriction = Math.min(A.staticFriction, B.staticFriction);
+        double dynamicFriction = Math.min(A.dynamicFriction, B.dynamicFriction);
+        if (StrictMath.abs(jt) < j * staticFriction) {
+            tangentImpulse = t.scalar(jt);
+        } else {
+            tangentImpulse = t.scalar(j * -dynamicFriction);
+        }
+
+        B.velocity.add(tangentImpulse.scalar(B.invMass));
+        B.angularVelocity += B.invI * contactB.crossProduct(tangentImpulse);
+
+        A.velocity.add(tangentImpulse.negativeVec().scalar(A.invMass));
+        A.angularVelocity += A.invI * contactA.crossProduct(tangentImpulse.negativeVec());
     }
 
     private static boolean selectionBias(double a, double b) {

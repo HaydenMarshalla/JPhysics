@@ -32,7 +32,7 @@ public class demoWindow extends JPanel implements Runnable {
         addKeyListener(keyInput);
         addMouseListener(mouseInput);
         addMouseWheelListener(mouseScrollInput);
-        Body b = world.addBody(new Body(new Polygon(50,4), 190,100));
+        Body b = world.addBody(new Body(new Polygon(50.0,50.0), 190,100));
         Body b1 = world.addBody(new Body(new Polygon(500.0,50.0), 150,400));
         b1.setDensity(0);
         startThread();
