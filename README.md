@@ -3,8 +3,8 @@ A 2D sequential impulse based physics engine with no third-party-library depende
 
 The engine is written in Java and has been created with the intention of being used in games. 
 
-##Feature List
-###Physics
+## Feature List
+### Physics
 - Rigid body dynamics
 - Primitive joint constraints
 - Momentum
@@ -13,17 +13,17 @@ The engine is written in Java and has been created with the intention of being u
 - Collision response (Sequential Impulses Solver)
 - Stable object stacking
 
-###Collision
+### Collision
 - AABB queries (Broadphase)
 - One-shot contact manifolds
 - Discrete collision detection
 - Convex polygon and circle collisions
 
-###Testbed
+### Testbed
 - Java swing for demo graphics
 - Junit4 for junit tests
 
-###To do
+### To do
 - Ray casting
 - Object slicing
 - Orbits
@@ -48,14 +48,14 @@ Follow these simple steps!
 An appropriate IDE for example Intellij (with java 1.8+ JDK installed)
 Junit4 library (for junit tests)
 
-##Versioning Strategy
+## Versioning Strategy
 [Semantic versioning](https://semver.org/) has been used to tag the releases of the project.
 
-##Authors
+## Authors
 Hayden Marshall
 
-##License
+## License
 The repository falls under the [MIT license](https://en.wikipedia.org/wiki/MIT_License). See LICENSE.txt for more information.
 
-##Credits
+## Credits
 Dirk Gregorius and Erin Catto's gdc talks and documentation have been of great help with the theoretical approach of creating a physics engine.
