@@ -2,6 +2,7 @@ package testbed.demo;
 
 import library.*;
 import library.Polygon;
+import library.joints.Joint;
 import library.math.Vectors2D;
 
 import javax.swing.*;
@@ -26,15 +27,16 @@ public class demoWindow extends JPanel implements Runnable {
         this.windowHeight = height;
         this.antiAliasing = antiAliasing;
 
-        this.world = new World(new Vectors2D(0, 10));
+        this.world = new World(new Vectors2D(0, -10));
         physicsThread = new Thread(this);
 
         addKeyListener(keyInput);
         addMouseListener(mouseInput);
         addMouseWheelListener(mouseScrollInput);
-        Body b = world.addBody(new Body(new Polygon(50.0,50.0), 190,100));
-        Body b1 = world.addBody(new Body(new Polygon(500.0,50.0), 150,400));
+        Body b = world.addBody(new Body(new Polygon(50.0, 50.0), 190, 100));
+        Body b1 = world.addBody(new Body(new Polygon(500.0, 50.0), 150, 400));
         b1.setDensity(0);
+        world.addJoint(new Joint(b, b1, 200.0, 1000, 10, false, new Vectors2D(), new Vectors2D()));
         startThread();
     }
 
@@ -77,9 +79,6 @@ public class demoWindow extends JPanel implements Runnable {
                 if (drawAABBs) {
                     b.shape.drawAABB(g, paintSettings);
                 }
-                if (drawJoints) {
-                    //TO DO
-                }
                 if (drawContactPoints) {
                     //TO DO
                 }
@@ -95,6 +94,11 @@ public class demoWindow extends JPanel implements Runnable {
                 if (drawCOMs) {
                     //TO DO
                     b.shape.drawCOMS(g, paintSettings);
+                }
+            }
+            if (drawJoints) {
+                for (Joint j : world.joints) {
+                    j.draw(gi);
                 }
             }
         }

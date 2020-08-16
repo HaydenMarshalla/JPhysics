@@ -1,5 +1,6 @@
 package library;
 
+import library.joints.Joint;
 import library.math.Vectors2D;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class World {
 
     public ArrayList<Body> bodies = new ArrayList<>();
     public ArrayList<Arbiter> contacts = new ArrayList<>();
+    public ArrayList<Joint> joints = new ArrayList<>();
 
     public void step(double dt, int iterations) {
         contacts.clear();
@@ -36,6 +38,9 @@ public class World {
         for (int i = 0; i < iterations; i++) {
             for (Arbiter contact : contacts) {
                 contact.solve();
+            }
+            for (Joint j : joints) {
+                j.applyTension();
             }
         }
 
@@ -87,10 +92,19 @@ public class World {
         bodies.remove(b);
     }
 
+    public Joint addJoint(Joint j) {
+        joints.add(j);
+        return j;
+    }
+
+    public void removeJoint(Joint j) {
+        joints.remove(j);
+    }
+
+
     public void clearWorld() {
         bodies.clear();
         contacts.clear();
+        joints.clear();
     }
-
-    ;
 }
