@@ -8,6 +8,10 @@ import java.util.ArrayList;
 public class World {
     public Vectors2D gravity;
 
+    public void setGravity(Vectors2D gravity){
+        this.gravity = gravity;
+
+    }
     public World(Vectors2D gravity) {
         this.gravity = gravity;
     }

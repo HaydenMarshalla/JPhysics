@@ -1,48 +1,47 @@
 package testbed.demo;
 
 import library.*;
-import library.Polygon;
 import library.joints.Joint;
-import library.math.Vectors2D;
+import testbed.demo.input.KeyBoardInput;
+import testbed.demo.input.MouseInput;
+import testbed.demo.input.MouseScroll;
+
+import testbed.demo.tests.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class demoWindow extends JPanel implements Runnable {
+public class TestBedWindow extends JPanel implements Runnable {
     private int windowWidth;
     private int windowHeight;
     private boolean antiAliasing;
 
-    private World world;
     private Thread physicsThread;
 
     //Input handler classes
-    KeyboardInput keyInput = new KeyboardInput();
+    KeyBoardInput keyInput = new KeyBoardInput();
     MouseInput mouseInput = new MouseInput();
     MouseScroll mouseScrollInput = new MouseScroll();
 
-    public demoWindow(int width, int height, boolean antiAliasing) {
+    public TestBedWindow(int width, int height, boolean antiAliasing) {
         this.windowWidth = width;
         this.windowHeight = height;
         this.antiAliasing = antiAliasing;
 
-        this.world = new World(new Vectors2D(0, -10));
         physicsThread = new Thread(this);
 
         addKeyListener(keyInput);
         addMouseListener(mouseInput);
         addMouseWheelListener(mouseScrollInput);
-        Body b = world.addBody(new Body(new Polygon(50.0, 50.0), 190, 100));
-        Body b1 = world.addBody(new Body(new Polygon(500.0, 50.0), 150, 400));
-        b1.setDensity(0);
-        world.addJoint(new Joint(b, b1, 200.0, 1000, 10, false, new Vectors2D(), new Vectors2D()));
         startThread();
     }
 
+    private World world = new World();
+
     public void startThread() {
-        physicsThread.start();
+        Restitution.load(this);
         running = true;
+        physicsThread.start();
     }
 
     private boolean running = false;
@@ -104,7 +103,7 @@ public class demoWindow extends JPanel implements Runnable {
         }
     }
 
-    public static void showWindow(demoWindow gameScreen, String title) {
+    public static void showWindow(TestBedWindow gameScreen, String title) {
         if (gameScreen != null) {
             JFrame window = new JFrame(title);
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -119,55 +118,12 @@ public class demoWindow extends JPanel implements Runnable {
             gameScreen.setBackground(gameScreen.paintSettings.background);
         }
     }
-}
 
-class KeyboardInput implements KeyListener {
-    @Override
-    public void keyTyped(KeyEvent e) {
-
+    public void createWorld(World world) {
+        this.world = world;
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
-}
-
-class MouseScroll implements MouseWheelListener {
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-
-    }
-}
-
-class MouseInput implements MouseListener {
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+    public World getWorld() {
+        return world;
     }
 }
