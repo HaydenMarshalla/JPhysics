@@ -17,6 +17,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private boolean antiAliasing;
 
     private Thread physicsThread;
+    private Camera camera;
 
     //Input handler classes
     KeyBoardInput keyInput = new KeyBoardInput();
@@ -33,6 +34,9 @@ public class TestBedWindow extends JPanel implements Runnable {
         addKeyListener(keyInput);
         addMouseListener(mouseInput);
         addMouseWheelListener(mouseScrollInput);
+
+        camera = new Camera(1920,1080,this);
+
         startThread();
     }
 
@@ -73,10 +77,10 @@ public class TestBedWindow extends JPanel implements Runnable {
         if (world != null) {
             for (Body b : world.bodies) {
                 if (drawShapes) {
-                    b.shape.draw(g, paintSettings);
+                    b.shape.draw(g, paintSettings, camera);
                 }
                 if (drawAABBs) {
-                    b.shape.drawAABB(g, paintSettings);
+                    b.shape.drawAABB(g, paintSettings, camera);
                 }
                 if (drawContactPoints) {
                     //TO DO
@@ -92,12 +96,12 @@ public class TestBedWindow extends JPanel implements Runnable {
                 }
                 if (drawCOMs) {
                     //TO DO
-                    b.shape.drawCOMS(g, paintSettings);
+                    b.shape.drawCOMS(g, paintSettings, camera);
                 }
             }
             if (drawJoints) {
                 for (Joint j : world.joints) {
-                    j.draw(gi);
+                    j.draw(gi, camera);
                 }
             }
         }

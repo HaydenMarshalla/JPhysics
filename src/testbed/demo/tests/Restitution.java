@@ -12,16 +12,16 @@ public class Restitution {
         World temp = testBedWindow.getWorld();
 
         {
-            Body b = temp.addBody(new Body(new Polygon(400.0, 20.0), 640, 100));
+            Body b = temp.addBody(new Body(new Polygon(200.0, 20.0), 0, 0));
             b.setDensity(0);
 
-            Body b1 = temp.addBody(new Body(new Polygon(50.0, 50.0), 390, 300));
+            Body b1 = temp.addBody(new Body(new Polygon(30.0, 30.0), -100, 150));
             b1.restitution = 0.33;
 
-            Body b2 = temp.addBody(new Body(new Polygon(50.0, 50.0), 640, 300));
+            Body b2 = temp.addBody(new Body(new Polygon(30.0, 30.0), 0, 150));
             b2.restitution = 0.66;
 
-            Body b3 = temp.addBody(new Body(new Polygon(50.0, 50.0), 890, 300));
+            Body b3 = temp.addBody(new Body(new Polygon(30.0, 30.0), 100, 150));
             b3.restitution = 1;
         }
     }

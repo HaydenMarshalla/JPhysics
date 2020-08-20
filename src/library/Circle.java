@@ -27,12 +27,14 @@ public class Circle extends Shapes {
     }
 
     @Override
-    public void draw(Graphics g, ColourSettings paintSettings) {
+    public void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
         Graphics2D gi = (Graphics2D) g;
         gi.setColor(paintSettings.shapeFill);
-        gi.fill(new Ellipse2D.Double(body.position.x  - radius, body.position.y - radius, 2 * radius, 2 * radius));
+        Vectors2D circlePotion = camera.scaleToScreen(body.position);
+        double drawnRadius = camera.scaleToScreenXValue(radius);
+        gi.fill(new Ellipse2D.Double(circlePotion.x  - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
         gi.setColor(paintSettings.shapeOutLine);
-        gi.draw(new Ellipse2D.Double(body.position.x - radius, body.position.y - radius, 2 * radius, 2 * radius));
+        gi.draw(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
     }
 
     @Override

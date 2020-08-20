@@ -22,15 +22,15 @@ public abstract class Shapes {
 
     public abstract Type getType();
 
-    public abstract void draw(Graphics g, ColourSettings paintSettings);
+    public abstract void draw(Graphics g, ColourSettings paintSettings, Camera camera);
 
-    public void drawAABB(Graphics g, ColourSettings paintSettings){
+    public void drawAABB(Graphics g, ColourSettings paintSettings, Camera camera){
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(paintSettings.aabb);
 
         Path2D polyBB = new Path2D.Double();
-        Vectors2D min = body.aabb.getMin();
-        Vectors2D max = body.aabb.getMax();
+        Vectors2D min = camera.scaleToScreen(body.aabb.getMin());
+        Vectors2D max = camera.scaleToScreen(body.aabb.getMax());
 
         polyBB.moveTo(min.x, min.y);
         polyBB.lineTo(min.x, max.y);
@@ -41,7 +41,7 @@ public abstract class Shapes {
         g2.draw(polyBB);
     }
 
-    public void drawCOMS(Graphics g, ColourSettings paintSettings){
+    public void drawCOMS(Graphics g, ColourSettings paintSettings, Camera camera){
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(paintSettings.centreOfMass);
     };

@@ -109,13 +109,14 @@ public class Polygon extends Shapes {
     }
 
     @Override
-    public void draw(Graphics g, ColourSettings paintSettings) {
+    public void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
         Graphics2D g2 = (Graphics2D) g;
         Path2D.Double s = new Path2D.Double();
         for (int i = 0; i < vertices.length; i++) {
             Vectors2D v = new Vectors2D(this.vertices[i]);
             orient.mul(v);
             v.add(body.position);
+            v = camera.scaleToScreen(v);
             if (i == 0) {
                 s.moveTo(v.x, v.y);
             } else {

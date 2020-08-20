@@ -1,6 +1,7 @@
 package library.joints;
 
 import library.Body;
+import library.Camera;
 import library.math.Matrix2D;
 import library.math.Vectors2D;
 
@@ -80,7 +81,9 @@ public class Joint {
         A.angularVelocity -= A.invI * object2AttachmentPoint.subtract(object2.position).crossProduct(impulse);
     }
 
-    public void draw(Graphics2D g) {
-        g.draw(new Line2D.Double(object1AttachmentPoint.x, object1AttachmentPoint.y, object2AttachmentPoint.x, object2AttachmentPoint.y));
+    public void draw(Graphics2D g, Camera camera) {
+        Vectors2D obj1Pos = camera.scaleToScreen(object1AttachmentPoint);
+        Vectors2D obj2Pos = camera.scaleToScreen(object2AttachmentPoint);
+        g.draw(new Line2D.Double(obj1Pos.x, obj1Pos.y, obj2Pos.x, obj2Pos.y));
     }
 }
