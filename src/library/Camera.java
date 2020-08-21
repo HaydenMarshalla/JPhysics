@@ -42,4 +42,8 @@ public class Camera {
         double w = radius / (upperBound.x - lowerBound.x);
         return w * panel.getWidth();
     }
+
+    public void transformCentre(Vectors2D v) {
+        centre.add(v);
+    }
 }

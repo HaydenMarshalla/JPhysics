@@ -20,9 +20,9 @@ public class TestBedWindow extends JPanel implements Runnable {
     private Camera camera;
 
     //Input handler classes
-    KeyBoardInput keyInput = new KeyBoardInput();
-    MouseInput mouseInput = new MouseInput();
-    MouseScroll mouseScrollInput = new MouseScroll();
+    KeyBoardInput keyInput;
+    MouseInput mouseInput;
+    MouseScroll mouseScrollInput;
 
     public TestBedWindow(int width, int height, boolean antiAliasing) {
         this.windowWidth = width;
@@ -31,11 +31,17 @@ public class TestBedWindow extends JPanel implements Runnable {
 
         physicsThread = new Thread(this);
 
-        addKeyListener(keyInput);
-        addMouseListener(mouseInput);
-        addMouseWheelListener(mouseScrollInput);
+        camera = new Camera(1920, 1080, this);
 
-        camera = new Camera(1920,1080,this);
+
+        mouseInput = new MouseInput(this);
+        addMouseListener(mouseInput);
+
+        keyInput = new KeyBoardInput(camera);
+        addKeyListener(keyInput);
+
+        mouseScrollInput = new MouseScroll(camera);
+        addMouseWheelListener(mouseScrollInput);
 
         startThread();
     }
