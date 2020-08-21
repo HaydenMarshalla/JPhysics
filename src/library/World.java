@@ -8,10 +8,11 @@ import java.util.ArrayList;
 public class World {
     public Vectors2D gravity;
 
-    public void setGravity(Vectors2D gravity){
+    public void setGravity(Vectors2D gravity) {
         this.gravity = gravity;
 
     }
+
     public World(Vectors2D gravity) {
         this.gravity = gravity;
     }
@@ -23,6 +24,7 @@ public class World {
     public ArrayList<Body> bodies = new ArrayList<>();
     public ArrayList<Arbiter> contacts = new ArrayList<>();
     public ArrayList<Joint> joints = new ArrayList<>();
+    public ArrayList<Body> explosionParticles = new ArrayList<>();
 
     public void step(double dt, int iterations) {
         contacts.clear();
@@ -45,6 +47,9 @@ public class World {
             }
             for (Joint j : joints) {
                 j.applyTension();
+            }
+            for (Body b : explosionParticles) {
+
             }
         }
 
@@ -72,17 +77,25 @@ public class World {
 
             for (int x = i + 1; x < bodies.size(); x++) {
                 Body b = bodies.get(x);
-                if (a.invMass == 0.0 && b.invMass == 0) {
-                    continue;
-                }
+                contactGeneration(a, b);
+            }
 
-                Arbiter contactQuery = new Arbiter(a, b);
-                if (AABB.AABBOverLap(a.aabb, b.aabb)) {
-                    contactQuery.narrowPhase();
-                    if (contactQuery.contactCount > 0) {
-                        contacts.add(contactQuery);
-                    }
-                }
+            for (Body b : explosionParticles) {
+                contactGeneration(a, b);
+            }
+        }
+    }
+
+    private void contactGeneration(Body a, Body b) {
+        if (a.invMass == 0.0 && b.invMass == 0) {
+            return;
+        }
+
+        Arbiter contactQuery = new Arbiter(a, b);
+        if (AABB.AABBOverLap(a.aabb, b.aabb)) {
+            contactQuery.narrowPhase();
+            if (contactQuery.contactCount > 0) {
+                contacts.add(contactQuery);
             }
         }
     }
@@ -105,10 +118,32 @@ public class World {
         joints.remove(j);
     }
 
+    private double dragValue;
+
+    private void applyDrag(Body b) {
+        b.force = b.velocity.scalar(-dragValue * b.mass);
+    }
 
     public void clearWorld() {
         bodies.clear();
         contacts.clear();
         joints.clear();
+        explosionParticles.clear();
+    }
+
+    public void gravityBetweenObj() {
+        for (int a = 0; a < bodies.size(); a++) {
+            Body A = bodies.get(a);
+            for (int b = a + 1; b < bodies.size(); b++) {
+                Body B = bodies.get(b);
+                double distance = A.position.distance(B.position);
+                double force = Math.pow(6.67, -11) * A.mass * B.mass / (distance * distance);
+                Vectors2D direction = new Vectors2D(B.position.x - A.position.x, B.position.y - A.position.y);
+                direction = direction.scalar(force);
+                Vectors2D oppositeDir = new Vectors2D(-direction.x, -direction.y);
+                A.force.addi(direction);
+                B.force.addi(oppositeDir);
+            }
+        }
     }
 }

@@ -29,7 +29,7 @@ public class Camera {
 
         Vectors2D output = new Vectors2D();
         output.x = w * panel.getWidth();
-        output.y = (1.0 - h) * panel.getHeight();
+        output.y = (1.0 - h) * (panel.getWidth()/aspectRatio);
         return output;
     }
 

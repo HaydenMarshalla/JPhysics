@@ -12,27 +12,23 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TestBedWindow extends JPanel implements Runnable {
-    private int windowWidth;
-    private int windowHeight;
-    private boolean antiAliasing;
+    private final boolean antiAliasing;
 
-    private Thread physicsThread;
-    private Camera camera;
+    private final Thread physicsThread;
+    private final Camera camera;
 
     //Input handler classes
     KeyBoardInput keyInput;
     MouseInput mouseInput;
     MouseScroll mouseScrollInput;
 
-    public TestBedWindow(int width, int height, boolean antiAliasing) {
-        this.windowWidth = width;
-        this.windowHeight = height;
+    public TestBedWindow(boolean antiAliasing) {
         this.antiAliasing = antiAliasing;
 
         physicsThread = new Thread(this);
 
-        camera = new Camera(1920, 1080, this);
-
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        camera = new Camera((int)screenSize.getWidth(), (int)screenSize.getHeight(), this);
 
         mouseInput = new MouseInput(this);
         addMouseListener(mouseInput);
@@ -49,7 +45,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private World world = new World();
 
     public void startThread() {
-        Restitution.load(this);
+        ExplosionParticles.load(this);
         running = true;
         physicsThread.start();
     }
@@ -66,7 +62,7 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     private boolean drawShapes = true;
     private boolean drawJoints = true;
-    private boolean drawAABBs = true;
+    private boolean drawAABBs = false;
     private boolean drawContactPoints = false;
     private boolean drawContactNormals = false;
     private boolean drawContactImpulse = false;
@@ -113,13 +109,13 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
     }
 
-    public static void showWindow(TestBedWindow gameScreen, String title) {
+    public static void showWindow(TestBedWindow gameScreen, String title, int windowWidth, int windowHeight) {
         if (gameScreen != null) {
             JFrame window = new JFrame(title);
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             window.add(gameScreen);
             window.setMinimumSize(new Dimension(800, 600));
-            window.setPreferredSize(new Dimension(gameScreen.windowWidth, gameScreen.windowHeight));
+            window.setPreferredSize(new Dimension(windowWidth, windowHeight));
             window.pack();
             window.setLocationRelativeTo(null);
             window.setVisible(true);
