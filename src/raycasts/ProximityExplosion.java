@@ -39,12 +39,10 @@ public class ProximityExplosion extends RayCast {
             if (distance == 0) return;
 
             double invDistance = 1 / distance;
-            //Not physically correct as it should be blast * radius to object ^ 2 as the pressure of an explosion in 2D dissipates
             double impulseMag = blastPower * invDistance;
 
             Vectors2D force = b.force.addi(blastDir.normalize().scalar(impulseMag));
-            //Has to be done here instead of adding a force otherwise it gets effected by the timestep which for the explosion would mean it only occurs during DT once but in reality and explosion has a long impulse time and so transferring all the force to velocity assumes the impulse lasted as long as dt and all momentum is conserved
-            b.velocity.addi(force.scalar(b.invMass));
+            b.velocity.add(force.scalar(b.invMass));
         }
     }
 

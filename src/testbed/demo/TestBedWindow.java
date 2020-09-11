@@ -2,6 +2,7 @@ package testbed.demo;
 
 import library.*;
 import library.joints.Joint;
+import library.math.Vectors2D;
 import testbed.demo.input.KeyBoardInput;
 import testbed.demo.input.MouseInput;
 import testbed.demo.input.MouseScroll;
@@ -10,6 +11,8 @@ import testbed.demo.tests.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final boolean antiAliasing;
@@ -28,7 +31,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         physicsThread = new Thread(this);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        camera = new Camera((int)screenSize.getWidth(), (int)screenSize.getHeight(), this);
+        camera = new Camera((int) screenSize.getWidth(), (int) screenSize.getHeight(), this);
 
         mouseInput = new MouseInput(this);
         addMouseListener(mouseInput);
@@ -55,7 +58,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     @Override
     public void run() {
         while (running) {
-            world.step(0.000001, 10);
+            world.step(0.0001, 10);
             repaint();
         }
     }
@@ -77,6 +80,27 @@ public class TestBedWindow extends JPanel implements Runnable {
         Graphics2D gi = (Graphics2D) g;
         if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
+            //GRID CODE
+            gi.setColor(Color.WHITE);
+            int spacing = 50;
+            int projection = 100000;
+            int loop = projection;
+            Vectors2D x = new Vectors2D(0, -projection);
+            for (int i = 0; i < loop; i += spacing/2) {
+                Vectors2D v = camera.scaleToScreen(new Vectors2D(projection, x.y));
+                Vectors2D v2 = camera.scaleToScreen(new Vectors2D(-projection, x.y));
+                x.add(new Vectors2D(0, spacing));
+                gi.draw(new Line2D.Double(v.x, v.y, v2.x, v2.y));
+            }
+
+            Vectors2D y = new Vectors2D(-projection, 0);
+            for (int i = 0; i < loop; i += spacing/2) {
+                Vectors2D v = camera.scaleToScreen(new Vectors2D(y.x,projection));
+                Vectors2D v2 = camera.scaleToScreen(new Vectors2D(y.x,-projection));
+                y.add(new Vectors2D(spacing,0));
+                gi.draw(new Line2D.Double(v.x, v.y, v2.x, v2.y));
+            }
+
             for (Body b : world.bodies) {
                 if (drawShapes) {
                     b.shape.draw(g, paintSettings, camera);

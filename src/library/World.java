@@ -10,7 +10,6 @@ public class World {
 
     public void setGravity(Vectors2D gravity) {
         this.gravity = gravity;
-
     }
 
     public World(Vectors2D gravity) {
@@ -24,7 +23,6 @@ public class World {
     public ArrayList<Body> bodies = new ArrayList<>();
     public ArrayList<Arbiter> contacts = new ArrayList<>();
     public ArrayList<Joint> joints = new ArrayList<>();
-    public ArrayList<Body> explosionParticles = new ArrayList<>();
 
     public void step(double dt, int iterations) {
         contacts.clear();
@@ -47,9 +45,6 @@ public class World {
             }
             for (Joint j : joints) {
                 j.applyTension();
-            }
-            for (Body b : explosionParticles) {
-
             }
         }
 
@@ -77,10 +72,6 @@ public class World {
 
             for (int x = i + 1; x < bodies.size(); x++) {
                 Body b = bodies.get(x);
-                contactGeneration(a, b);
-            }
-
-            for (Body b : explosionParticles) {
                 contactGeneration(a, b);
             }
         }
@@ -124,11 +115,14 @@ public class World {
         b.force = b.velocity.scalar(-dragValue * b.mass);
     }
 
+    public void setDragValue(double i) {
+        dragValue = i;
+    }
+
     public void clearWorld() {
         bodies.clear();
         contacts.clear();
         joints.clear();
-        explosionParticles.clear();
     }
 
     public void gravityBetweenObj() {

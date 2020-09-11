@@ -3,14 +3,9 @@ package testbed.junittests;
 import library.math.Vectors2D;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 public class Vectors2DTest {
-
-
     @Test
     public void setUsingDoubleParameters() {
         Vectors2D vec = new Vectors2D(4.0, 2.0);
@@ -201,5 +196,14 @@ public class Vectors2DTest {
         assertFalse(new Vectors2D(0.0 / 0, 234.534).isValid());
         assertFalse(new Vectors2D(34255234.4, 0.0 / 0).isValid());
 
+    }
+
+    @Test
+    public void createArray() {
+        Vectors2D[] vectorList = new Vectors2D[10];
+        for (Vectors2D v : vectorList) {
+            assertNull(v);
+        }
+        assertEquals(vectorList.length, 10);
     }
 }

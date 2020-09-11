@@ -5,32 +5,44 @@ import library.math.Matrix2D;
 import library.math.Vectors2D;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ParticleExplosion extends RayCast {
-    private int particles;
+    public ArrayList<Body> particles = new ArrayList<>();
+    private final int noOfParticles;
 
-    public ParticleExplosion(Vectors2D centrePoint, World world, int noOfParticles) {
-        super(centrePoint, world);
-        this.particles = noOfParticles;
+    public ParticleExplosion(Vectors2D location, World world, int noOfParticles) {
+        super(location, world);
+        this.noOfParticles = noOfParticles;
     }
 
     public void createParticles() {
-        double no = 6.28319 / particles;
+        double no = 6.28319 / noOfParticles;
         Vectors2D line = new Vectors2D(0, 10);
-        Vectors2D position = epicentre;
         Matrix2D rotate = new Matrix2D();
-        rotate.set(0);
-        for (int i = 0; i < particles; i++) {
+        rotate.set(no);
+        for (int i = 0; i < noOfParticles; i++) {
             rotate.mul(line);
-            position.add(line);
-            world.addBody(new Body(new Circle(5), (int) position.x, (int) position.y));
-            rotate.set(no);
+            Vectors2D position = epicentre.addi(line);
+            Body b = new Body(new Circle(5), position.x, position.y);
+            world.addBody(b);
+            particles.add(b);
         }
     }
 
     @Override
     public void applyBlastImpulse(double blastPower) {
+        for (Body b : particles) {
+            Vectors2D blastDir = b.position.subtract(epicentre);
+            double distance = blastDir.length();
+            if (distance == 0) return;
 
+            double invDistance = 1 / distance;
+            double impulseMag = blastPower * invDistance;
+
+            Vectors2D force = b.force.addi(blastDir.normalize().scalar(impulseMag));
+            b.velocity.add(force.scalar(b.invMass));
+        }
     }
 
     @Override

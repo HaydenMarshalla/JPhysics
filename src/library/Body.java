@@ -20,7 +20,9 @@ public class Body {
     public Shapes shape;
     public AABB aabb;
 
-    public Body(Shapes shape, int x, int y) {
+ //   public Trail trail;
+
+    public Body(Shapes shape, double x, double y) {
         this.shape = shape;
         this.shape.body = this;
 
@@ -41,6 +43,8 @@ public class Body {
 
         this.shape.calcMass(1.0);
         this.shape.createAABB();
+
+      //  trail = new Trail(20,0.01);
     }
 
     public void setOrientation(double delta) {

@@ -42,7 +42,7 @@ public class Vectors2D {
     }
 
     public Vectors2D negativeVec() {
-        return new Vectors2D(-x,-y);
+        return new Vectors2D(-x, -y);
     }
 
     public Vectors2D add(Vectors2D v) {
@@ -108,9 +108,20 @@ public class Vectors2D {
         return new Vectors2D(-s * a.y, s * a.x);
     }
 
-
     public final boolean isValid() {
         return !Double.isNaN(x) && !Double.isInfinite(x) && !Double.isNaN(y) && !Double.isInfinite(y);
+    }
+
+    public static Vectors2D[] createArray(int n) {
+        Vectors2D[] array = new Vectors2D[n];
+        for (Vectors2D v : array) {
+            v = new Vectors2D();
+        }
+        return array;
+    }
+
+    public static boolean checkDifference(Vectors2D position, Vectors2D epicentre) {
+        return position.x == epicentre.x && position.y == epicentre.y;
     }
 
     @Override

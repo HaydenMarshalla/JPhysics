@@ -11,8 +11,8 @@ public abstract class RayCast {
     public Vectors2D epicentre;
     public World world;
 
-    public RayCast(Vectors2D centrePoint, World world) {
-        epicentre = centrePoint;
+    public RayCast(Vectors2D location, World world) {
+        epicentre = location;
         this.world = world;
     }
 
