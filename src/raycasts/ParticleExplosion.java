@@ -16,15 +16,16 @@ public class ParticleExplosion extends RayCast {
         this.noOfParticles = noOfParticles;
     }
 
-    public void createParticles() {
+    public void createParticles(int spacing, int size) {
         double no = 6.28319 / noOfParticles;
-        Vectors2D line = new Vectors2D(0, 10);
+        Vectors2D line = new Vectors2D(0, spacing);
         Matrix2D rotate = new Matrix2D();
         rotate.set(no);
         for (int i = 0; i < noOfParticles; i++) {
             rotate.mul(line);
             Vectors2D position = epicentre.addi(line);
-            Body b = new Body(new Circle(5), position.x, position.y);
+            Body b = new Body(new Circle(size), position.x, position.y);
+            b.setGravityEffect(false);
             world.addBody(b);
             particles.add(b);
         }

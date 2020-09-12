@@ -20,11 +20,15 @@ public class Body {
     public Shapes shape;
     public AABB aabb;
 
+    public boolean effectedByGravity;
+
  //   public Trail trail;
 
     public Body(Shapes shape, double x, double y) {
         this.shape = shape;
         this.shape.body = this;
+
+        effectedByGravity = true;
 
         position = new Vectors2D(x, y);
         velocity = new Vectors2D(0, 0);
@@ -54,7 +58,7 @@ public class Body {
     }
 
     public void setDensity(int density) {
-        if (density != Integer.MAX_VALUE && density >= 0) {
+        if (density != Integer.MAX_VALUE && density > 0) {
             shape.calcMass(density);
         } else {
             setStatic();
@@ -66,5 +70,9 @@ public class Body {
         invMass = 0;
         I = Double.MAX_VALUE;
         invI = 0;
+    }
+
+    public void setGravityEffect(boolean b) {
+        effectedByGravity = b;
     }
 }

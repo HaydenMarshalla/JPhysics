@@ -74,6 +74,7 @@ public class Joint {
 
     private void impulse(double force, Body B, Body A, Vectors2D tangent) {
         Vectors2D impulse = tangent.scalar(force);
+
         B.velocity = B.velocity.addi(impulse.scalar(B.invMass));
         B.angularVelocity += B.invI * object1AttachmentPoint.subtract(object1.position).crossProduct(impulse);
 

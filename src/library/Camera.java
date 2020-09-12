@@ -11,7 +11,7 @@ public class Camera {
     private TestBedWindow panel;
 
     public Camera(int windowWidth, int windowHeight, TestBedWindow testWindow) {
-        centre = new Vectors2D(0, 50);
+        centre = new Vectors2D(0, 0);
         zoom = 1.0;
         this.width = windowWidth;
         this.height = windowHeight;
@@ -45,5 +45,13 @@ public class Camera {
 
     public void transformCentre(Vectors2D v) {
         centre.add(v);
+    }
+
+    public void setCentre(Vectors2D centre){
+        this.centre = centre;
+    }
+
+    public void setZoom(double zoom){
+        this.zoom = zoom;
     }
 }

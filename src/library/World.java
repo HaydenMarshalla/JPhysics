@@ -34,7 +34,13 @@ public class World {
             if (b.invMass == 0.0) {
                 continue;
             }
-            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).scalar(dt));
+
+            //Separated gravity integration to allow explosion particles to not be affected by gravity
+            if (b.effectedByGravity) {
+                b.velocity.add(gravity.scalar(dt));
+            }
+
+            b.velocity.add(b.force.scalar(b.invMass).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
 
