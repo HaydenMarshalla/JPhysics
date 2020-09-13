@@ -59,15 +59,15 @@ public class Joint {
             return 0;
         }
         double extensionRatio = distance - naturalLength;
-        double tensionDueToHookesLaw = extensionRatio * springConstant;
+        double tensionDueToHooksLaw = extensionRatio * springConstant;
         double tensionDueToMotionDamping = dampeningConstant * rateOfChangeOfExtension();
-        return tensionDueToHookesLaw + tensionDueToMotionDamping;
+        return tensionDueToHooksLaw + tensionDueToMotionDamping;
     }
 
     public double rateOfChangeOfExtension() {
         Vectors2D distance = object2AttachmentPoint.subtract(object1AttachmentPoint);
         distance.normalize();
-        Vectors2D relativeVelocity = object2.velocity;
+        Vectors2D relativeVelocity = object2.velocity.subtract(object1.velocity);
 
         return relativeVelocity.dotProduct(distance);
     }
