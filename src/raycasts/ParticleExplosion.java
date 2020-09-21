@@ -16,7 +16,7 @@ public class ParticleExplosion extends RayCast {
         this.noOfParticles = noOfParticles;
     }
 
-    public void createParticles(int spacing, int size) {
+    public void createParticles(int spacing, int size, int density) {
         double no = 6.28319 / noOfParticles;
         Vectors2D line = new Vectors2D(0, spacing);
         Matrix2D rotate = new Matrix2D();
@@ -25,6 +25,7 @@ public class ParticleExplosion extends RayCast {
             rotate.mul(line);
             Vectors2D position = epicentre.addi(line);
             Body b = new Body(new Circle(size), position.x, position.y);
+            b.setDensity(density);
             b.setGravityEffect(false);
             world.addBody(b);
             particles.add(b);
@@ -43,6 +44,16 @@ public class ParticleExplosion extends RayCast {
 
             Vectors2D force = b.force.addi(blastDir.normalize().scalar(impulseMag));
             b.velocity.add(force.scalar(b.invMass));
+        }
+    }
+
+    public void applyVelocityFromEpicentre(double velocity){
+        for (Body b : particles) {
+            Vectors2D blastDir = b.position.subtract(epicentre);
+            double distance = blastDir.length();
+            if (distance == 0) return;
+
+            b.velocity.add(blastDir.normalize().scalar(velocity));
         }
     }
 

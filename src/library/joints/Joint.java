@@ -77,7 +77,6 @@ public class Joint {
 
         B.velocity = B.velocity.addi(impulse.scalar(B.invMass));
         B.angularVelocity += B.invI * object1AttachmentPoint.subtract(object1.position).crossProduct(impulse);
-
         A.velocity = A.velocity.subtract(impulse.scalar(A.invMass));
         A.angularVelocity -= A.invI * object2AttachmentPoint.subtract(object2.position).crossProduct(impulse);
     }

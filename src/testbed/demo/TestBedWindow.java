@@ -11,8 +11,6 @@ import testbed.demo.tests.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final boolean antiAliasing;
@@ -48,7 +46,9 @@ public class TestBedWindow extends JPanel implements Runnable {
     private World world = new World();
 
     public void startThread() {
-        ExplosionParticles.load(this);
+        //ExplosionParticles.load(this);
+        //Restitution.load(this);
+        MixedShapes.load(this);
         running = true;
         physicsThread.start();
     }
@@ -80,7 +80,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         Graphics2D gi = (Graphics2D) g;
         if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
-            //GRID CODE
+         /*   //GRID CODE
             gi.setColor(Color.WHITE);
             int spacing = 50;
             int projection = 100000;
@@ -99,7 +99,7 @@ public class TestBedWindow extends JPanel implements Runnable {
                 Vectors2D v2 = camera.scaleToScreen(new Vectors2D(y.x,-projection));
                 y.add(new Vectors2D(spacing,0));
                 gi.draw(new Line2D.Double(v.x, v.y, v2.x, v2.y));
-            }
+            }*/
 
             for (Body b : world.bodies) {
                 if (drawShapes) {
@@ -155,5 +155,14 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     public World getWorld() {
         return world;
+    }
+
+    public void setCamera(Vectors2D centre, double zoom) {
+        camera.setCentre(centre);
+        camera.setZoom(zoom);
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }
