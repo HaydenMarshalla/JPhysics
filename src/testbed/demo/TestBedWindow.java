@@ -1,6 +1,7 @@
 package testbed.demo;
 
 import library.*;
+import library.Timer;
 import library.joints.Joint;
 import library.math.Vectors2D;
 import testbed.demo.input.KeyBoardInput;
@@ -11,6 +12,8 @@ import testbed.demo.tests.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ConcurrentModificationException;
+import java.util.NoSuchElementException;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final boolean antiAliasing;
@@ -54,9 +57,20 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     @Override
     public void run() {
+        int updates = 0;
+        int frames = 0;
+        long excessTime = 0L;
+        long frameTime = (long) (1e+9 / Settings.FPS);
+        Timer time = new Timer();
         while (running) {
-            world.step();
+            time.reset();
+            while (time.timePassed() + excessTime < frameTime) {
+                world.step();
+                updates++;
+            }
+            updates = 0;
             repaint();
+            excessTime = time.timePassed() - frameTime;
         }
     }
 
