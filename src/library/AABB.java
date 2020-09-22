@@ -55,9 +55,28 @@ public class AABB {
         return x <= this.getMax().x && x >= this.getMin().x && y >= this.getMax().y && y <= this.getMin().y;
     }
 
+    public void addOffset(Vectors2D offset) {
+        this.min.add(offset);
+        this.max.add(offset);
+    }
+
     @Override
     public final String toString() {
         return "AABB[" + min + " . " + max + "]";
+    }
+
+    public AABB copy() {
+        return new AABB(this.min, this.max);
+    }
+
+    public static boolean BodyOverlapCheck(Body A, Body B) {
+        AABB aCopy = A.aabb.copy();
+        AABB bCopy = B.aabb.copy();
+
+        aCopy.addOffset(A.position);
+        bCopy.addOffset(B.position);
+
+        return AABB.AABBOverLap(aCopy, bCopy);
     }
 
     public static boolean AABBOverLap(AABB a, AABB b) {

@@ -46,7 +46,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private World world = new World();
 
     public void startThread() {
-        Friction.load(this);
+        StackedObjects.load(this);
         physicsThread.start();
     }
 

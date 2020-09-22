@@ -20,15 +20,15 @@ public class Body {
     public Shapes shape;
     public AABB aabb;
 
-    public boolean effectedByGravity;
+    public boolean affectedByGravity;
 
- //   public Trail trail;
+    //public Trail trail;
 
     public Body(Shapes shape, double x, double y) {
         this.shape = shape;
         this.shape.body = this;
 
-        effectedByGravity = true;
+        affectedByGravity = true;
 
         position = new Vectors2D(x, y);
         velocity = new Vectors2D(0, 0);
@@ -40,7 +40,7 @@ public class Body {
         restitution = 0.8;
 
         staticFriction = 0.5;
-        dynamicFriction = 0.3;
+        dynamicFriction = 0.4;
 
         orientation = 0;
         shape.orient.set(orientation);
@@ -48,17 +48,17 @@ public class Body {
         this.shape.calcMass(1.0);
         this.shape.createAABB();
 
-      //  trail = new Trail(20,0.01);
+        //  trail = new Trail(20,0.01);
     }
 
     public void setOrientation(double delta) {
         orientation = delta;
         shape.orient.set(orientation);
-        this.shape.createAABB();
+        shape.createAABB();
     }
 
     public void setDensity(int density) {
-        if (density != Integer.MAX_VALUE && density > 0) {
+        if (density > 0) {
             shape.calcMass(density);
         } else {
             setStatic();
@@ -66,13 +66,13 @@ public class Body {
     }
 
     private void setStatic() {
-        this.mass = Double.MAX_VALUE;
+        mass = Double.MAX_VALUE;
         invMass = 0;
         I = Double.MAX_VALUE;
         invI = 0;
     }
 
     public void setGravityEffect(boolean b) {
-        effectedByGravity = b;
+        affectedByGravity = b;
     }
 }

@@ -105,7 +105,7 @@ public class Polygon extends Shapes {
                 maxY = py;
             }
         }
-        body.aabb = new AABB(new Vectors2D(minX, minY).add(body.position), new Vectors2D(maxX, maxY).add(body.position));
+        body.aabb = new AABB(new Vectors2D(minX, minY), new Vectors2D(maxX, maxY));
     }
 
     @Override

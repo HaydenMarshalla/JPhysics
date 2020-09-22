@@ -1,6 +1,8 @@
 package testbed.junittests;
 
 import library.AABB;
+import library.Body;
+import library.Circle;
 import library.math.Vectors2D;
 import org.junit.Test;
 
@@ -10,7 +12,6 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 public class AABBTest {
-
     @Test
     public void set() {
         AABB b = new AABB();
@@ -25,7 +26,8 @@ public class AABBTest {
     }
 
     @Test
-    public void getMin() {  AABB b = new AABB();
+    public void getMin() {
+        AABB b = new AABB();
         AABB a = new AABB(new Vectors2D(10, 10), new Vectors2D(20, 20));
         b.set(a);
         Vectors2D val = new Vectors2D(10, 10);
@@ -213,5 +215,40 @@ public class AABBTest {
         assertFalse(b.AABBOverLap(point));
         point = new Vectors2D(500, 100);
         assertFalse(b.AABBOverLap(point));
+    }
+
+    @Test
+    public void copy() {
+        AABB a = new AABB(new Vectors2D(-10, 10), new Vectors2D(10, 10));
+        AABB b = a.copy();
+
+        assertNotSame(b,a);
+        assertEquals(a.getMin().x, b.getMin().x);
+        assertEquals(a.getMin().y, b.getMin().y);
+        assertEquals(a.getMax().x, b.getMax().x);
+        assertEquals(a.getMax().y, b.getMax().y);
+    }
+
+    @Test
+    public void addOffset() {
+        AABB a = new AABB(new Vectors2D(-10, 10), new Vectors2D(10, 10));
+        a.addOffset(new Vectors2D(10, 10));
+        assertEquals(a.getMin().x, 0.0);
+        assertEquals(a.getMin().y, 20.0);
+        assertEquals(a.getMax().x, 20.0);
+        assertEquals(a.getMax().y, 20.0);
+    }
+
+    @Test
+    public void BodyOverlap() {
+        Body a = new Body(new Circle(20), 0, 0);
+        Body b = new Body(new Circle(20), 0, 0);
+        assertTrue(AABB.BodyOverlapCheck(a, b));
+        a.position.add(new Vectors2D(41, 0));
+        assertFalse(AABB.BodyOverlapCheck(a, b));
+        a.position.add(new Vectors2D(-6, 10));
+        assertTrue(AABB.BodyOverlapCheck(a, b));
+        a.position.add(new Vectors2D(-34, -38));
+        assertTrue(AABB.BodyOverlapCheck(a, b));
     }
 }

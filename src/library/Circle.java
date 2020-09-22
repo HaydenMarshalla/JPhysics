@@ -22,8 +22,7 @@ public class Circle extends Shapes {
 
     @Override
     public void createAABB() {
-        body.aabb = new AABB(new Vectors2D(body.position.x - radius, body.position.y - radius),
-                new Vectors2D(body.position.x + radius, body.position.y + radius));
+        body.aabb = new AABB(new Vectors2D(-radius, -radius), new Vectors2D(radius, radius));
     }
 
     @Override
@@ -32,7 +31,7 @@ public class Circle extends Shapes {
         gi.setColor(paintSettings.shapeFill);
         Vectors2D circlePotion = camera.scaleToScreen(body.position);
         double drawnRadius = camera.scaleToScreenXValue(radius);
-        gi.fill(new Ellipse2D.Double(circlePotion.x  - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
+        gi.fill(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
         gi.setColor(paintSettings.shapeOutLine);
         gi.draw(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
     }

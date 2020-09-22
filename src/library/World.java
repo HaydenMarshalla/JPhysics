@@ -60,18 +60,18 @@ public class World {
             Vectors2D posChange = b.velocity.scalar(dt);
             b.position.add(posChange);
 
-            if (b.angularVelocity != 0) {
+            if (b.angularVelocity != 0 && b.shape instanceof Polygon) {
                 b.setOrientation(b.orientation + (dt * b.angularVelocity));
-            } else {
-                b.aabb.getMin().add(posChange);
-                b.aabb.getMax().add(posChange);
             }
+
             b.force.set(0, 0);
             b.torque = 0;
         }
 
         //Correct positional errors from the discrete collisions
-
+        for (Arbiter contact : contacts) {
+            contact.penetrationResolution();
+        }
     }
 
     private void broadPhaseCheck() {
@@ -85,7 +85,7 @@ public class World {
                     continue;
                 }
 
-                if (AABB.AABBOverLap(a.aabb, b.aabb)) {
+                if (AABB.BodyOverlapCheck(a, b)) {
                     narrowPhaseCheck(a, b);
                 }
             }
