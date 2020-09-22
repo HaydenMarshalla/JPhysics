@@ -4,13 +4,14 @@ import library.math.Vectors2D;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
 
 public class Polygon extends Shapes {
     public Vectors2D[] vertices;
     public Vectors2D[] normals;
 
     public Polygon(Vectors2D[] vertList) {
-        this.vertices = vertList;
+        this.vertices = generateHull(vertList, vertList.length);
         calcNormals();
     }
 
@@ -120,7 +121,7 @@ public class Polygon extends Shapes {
             if (i == 0) {
                 s.moveTo(v.x, v.y);
             } else {
-                s.lineTo(v.x,v.y);
+                s.lineTo(v.x, v.y);
             }
         }
         s.closePath();
@@ -134,6 +135,50 @@ public class Polygon extends Shapes {
             g2.setColor(paintSettings.shapeOutLine);
         }
         g2.draw(s);
+    }
+
+    private Vectors2D[] generateHull(Vectors2D[] vertices, int n) {
+        ArrayList<Vectors2D> hull = new ArrayList<>();
+
+        int firstPointIndex = 0;
+        double minX = Double.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            double x = vertices[i].x;
+            if (x < minX) {
+                firstPointIndex = i;
+                minX = x;
+            }
+        }
+
+        int point = firstPointIndex, currentEvalPoint;
+        boolean first = true;
+        while (point != firstPointIndex || first) {
+            first = false;
+            hull.add(vertices[point]);
+            currentEvalPoint = (point + 1) % n;
+            for (int i = 0; i < n; i++) {
+                if (sideOfLine(vertices[point], vertices[i], vertices[currentEvalPoint]) == -1)
+                    currentEvalPoint = i;
+            }
+            point = currentEvalPoint;
+        }
+
+        Vectors2D[] hulls = new Vectors2D[hull.size()];
+        for (int i = 0; i < hull.size(); i++) {
+            hulls[i] = hull.get(i);
+        }
+
+        return hulls;
+    }
+
+    private int sideOfLine(Vectors2D p1, Vectors2D p2, Vectors2D point) {
+        double val = (p2.y - p1.y) * (point.x - p2.x) - (p2.x - p1.x) * (point.y - p2.y);
+        if (val > 0)
+            return 1;
+        else if (val == 0)
+            return 0;
+        else
+            return -1;
     }
 
     @Override
