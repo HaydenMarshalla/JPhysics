@@ -24,19 +24,20 @@ public class World {
     public ArrayList<Arbiter> contacts = new ArrayList<>();
     public ArrayList<Joint> joints = new ArrayList<>();
 
-    public void step(double dt, int iterations) {
+    public void step() {
+        double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
         contacts.clear();
 
-        broadPhase();
+        broadPhaseCheck();
 
         //Applies tentative velocities
         for (Body b : bodies) {
-            if (b.invMass == 0.0) {
+            if (b.invMass == 0) {
                 continue;
             }
 
             //Separated gravity integration to allow explosion particles to not be affected by gravity
-            if (b.effectedByGravity) {
+            if (b.affectedByGravity) {
                 b.velocity.add(gravity.scalar(dt));
             }
 
@@ -45,7 +46,7 @@ public class World {
         }
 
         //Resolve collisions
-        for (int i = 0; i < iterations; i++) {
+        for (int i = 0; i < Settings.ITERATIONS; i++) {
             for (Arbiter contact : contacts) {
                 contact.solve();
             }
@@ -70,30 +71,32 @@ public class World {
         }
 
         //Correct positional errors from the discrete collisions
+
     }
 
-    private void broadPhase() {
+    private void broadPhaseCheck() {
         for (int i = 0; i < bodies.size(); i++) {
             Body a = bodies.get(i);
 
             for (int x = i + 1; x < bodies.size(); x++) {
                 Body b = bodies.get(x);
-                contactGeneration(a, b);
+
+                if (a.invMass == 0 && b.invMass == 0) {
+                    continue;
+                }
+
+                if (AABB.AABBOverLap(a.aabb, b.aabb)) {
+                    narrowPhaseCheck(a, b);
+                }
             }
         }
     }
 
-    private void contactGeneration(Body a, Body b) {
-        if (a.invMass == 0.0 && b.invMass == 0) {
-            return;
-        }
-
+    private void narrowPhaseCheck(Body a, Body b) {
         Arbiter contactQuery = new Arbiter(a, b);
-        if (AABB.AABBOverLap(a.aabb, b.aabb)) {
-            contactQuery.narrowPhase();
-            if (contactQuery.contactCount > 0) {
-                contacts.add(contactQuery);
-            }
+        contactQuery.narrowPhase();
+        if (contactQuery.contactCount > 0) {
+            contacts.add(contactQuery);
         }
     }
 

@@ -46,33 +46,30 @@ public class TestBedWindow extends JPanel implements Runnable {
     private World world = new World();
 
     public void startThread() {
-        //ExplosionParticles.load(this);
-        //Restitution.load(this);
-        MixedShapes.load(this);
-        running = true;
+        Friction.load(this);
         physicsThread.start();
     }
 
-    private boolean running = false;
+    private boolean running = true;
 
     @Override
     public void run() {
         while (running) {
-            world.step(0.0001, 10);
+            world.step();
             repaint();
         }
     }
 
+    private ColourSettings paintSettings = new ColourSettings();
+
     private boolean drawShapes = true;
     private boolean drawJoints = true;
-    private boolean drawAABBs = false;
+    private boolean drawAABBs = true;
     private boolean drawContactPoints = false;
     private boolean drawContactNormals = false;
     private boolean drawContactImpulse = false;
     private boolean drawFrictionImpulse = false;
-    private boolean drawCOMs = false;
-
-    private ColourSettings paintSettings = new ColourSettings();
+    private boolean drawCOMs = true;
 
     @Override
     public void paintComponent(Graphics g) {
@@ -80,7 +77,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         Graphics2D gi = (Graphics2D) g;
         if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
-         /*   //GRID CODE
+         /*   //GRID CODE work in progress
             gi.setColor(Color.WHITE);
             int spacing = 50;
             int projection = 100000;

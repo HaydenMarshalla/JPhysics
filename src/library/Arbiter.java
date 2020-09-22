@@ -14,7 +14,7 @@ public class Arbiter {
     public final Vectors2D[] contacts = {new Vectors2D(), new Vectors2D()};
     public Vectors2D normal = new Vectors2D();
     public int contactCount = 0;
-    public double restitution;
+    public double restitution = 0;
 
     public void narrowPhase() {
         restitution = Math.min(A.restitution, B.restitution);
@@ -24,7 +24,9 @@ public class Arbiter {
             circleVsPolygon(A, B);
         } else if (A.shape instanceof Polygon && B.shape instanceof Circle) {
             circleVsPolygon(B, A);
-            this.normal.negative();
+            if (this.contactCount > 0) {
+                this.normal.negative();
+            }
         } else if (A.shape instanceof Polygon && B.shape instanceof Polygon) {
             polygonVsPolygon();
         }
@@ -41,13 +43,21 @@ public class Arbiter {
         double distance = normal.length();
         double radius = ca.radius + cb.radius;
 
-        if (distance < radius) {
-            this.contactCount = 1;
+        if (distance >= radius) {
+            contactCount = 0;
+            return;
+        }
+
+        this.contactCount = 1;
+
+        if (distance == 0) {
+            this.penetration = radius;
+            this.normal = new Vectors2D(0, 1);
+            this.contacts[0].set(A.position);
+        } else {
             this.penetration = radius - distance;
             this.normal = normal.normalize();
-            normal.normalize();
-            Vectors2D circleContactPoint = normal.scalar(ca.radius);
-            this.contacts[0].set(circleContactPoint.addi(A.position));
+            this.contacts[0].set(this.normal.scalar(ca.radius).addi(A.position));
         }
     }
 
@@ -215,13 +225,15 @@ public class Arbiter {
         Vectors2D[] contactVectorsFound = new Vectors2D[2];
         double totalPen = 0;
         int contactsFound = 0;
+        System.out.println();
         for (int i = 0; i < 2; i++) {
             double separation = refFaceNormal.dotProduct(incidentFaceVertexes[i]) - refFaceNormal.dotProduct(v1);
-            if (separation <= 0.0) {
+            if (separation <= 0.0 + Settings.EPSILON) {
                 contactVectorsFound[contactsFound] = incidentFaceVertexes[i];
                 totalPen += -separation;
                 contactsFound++;
             }
+
         }
 
         Vectors2D contactPoint;
@@ -369,9 +381,7 @@ public class Arbiter {
     }
 
     private static boolean selectionBias(double a, double b) {
-        double BIAS_RELATIVE = 0.95;
-        double BIAS_ABSOLUTE = 0.01;
-        return a >= b * BIAS_RELATIVE + a * BIAS_ABSOLUTE;
+        return a >= b * Settings.BIAS_RELATIVE + a * Settings.BIAS_ABSOLUTE;
     }
 }
 
