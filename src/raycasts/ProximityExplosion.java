@@ -7,6 +7,7 @@ import library.World;
 import library.math.Vectors2D;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 public class ProximityExplosion extends RayCast {
@@ -17,6 +18,7 @@ public class ProximityExplosion extends RayCast {
     public ProximityExplosion(Vectors2D centrePoint, World world, int radius) {
         super(centrePoint, world);
         proximity = radius;
+        world.addRaycastObject(this);
     }
 
     public void proximityCheck() {
@@ -48,6 +50,10 @@ public class ProximityExplosion extends RayCast {
 
     @Override
     public void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
-
+        Graphics2D gi = (Graphics2D) g;
+        gi.setColor(paintSettings.proximity);
+        Vectors2D circlePotion = camera.scaleToScreen(epicentre);
+        double drawnRadius = camera.scaleToScreenXValue(proximity);
+        gi.draw(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
     }
 }

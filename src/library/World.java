@@ -2,6 +2,7 @@ package library;
 
 import library.joints.Joint;
 import library.math.Vectors2D;
+import raycasts.RayCast;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,13 @@ public class World {
 
     public World() {
         gravity = new Vectors2D(0, 0);
+    }
+
+    public ArrayList<RayCast> raycastObjects = new ArrayList<>();
+
+    public RayCast addRaycastObject(RayCast i) {
+        raycastObjects.add(i);
+        return i;
     }
 
     public ArrayList<Body> bodies = new ArrayList<>();

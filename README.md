@@ -1,7 +1,11 @@
-# 2D-Physics-Engine
-A 2D sequential impulse based physics engine with no third-party-library dependencies.
+# JPhysics
+JPhysics is a 2D physics engine with no third-party-library dependencies.
 
 The engine is written in Java and has been created with the intention of being used in games. 
+
+## Tech demos
+
+The testbed includes numerous tech demos to show what the engine is capable of. Some examples are given below:
 
 ## Feature List
 ### Physics

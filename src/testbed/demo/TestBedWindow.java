@@ -4,6 +4,7 @@ import library.*;
 import library.Timer;
 import library.joints.Joint;
 import library.math.Vectors2D;
+import raycasts.RayCast;
 import testbed.demo.input.KeyBoardInput;
 import testbed.demo.input.MouseInput;
 import testbed.demo.input.MouseScroll;
@@ -12,8 +13,6 @@ import testbed.demo.tests.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ConcurrentModificationException;
-import java.util.NoSuchElementException;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final boolean antiAliasing;
@@ -49,7 +48,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private World world = new World();
 
     public void startThread() {
-        StackedObjects.load(this);
+        ProximityTestExplosion.load(this);
         physicsThread.start();
     }
 
@@ -140,6 +139,9 @@ public class TestBedWindow extends JPanel implements Runnable {
                 for (Joint j : world.joints) {
                     j.draw(gi, camera);
                 }
+            }
+            for (RayCast r : world.raycastObjects) {
+                r.draw(g, paintSettings, camera);
             }
         }
     }

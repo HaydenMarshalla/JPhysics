@@ -66,9 +66,9 @@ public class Body {
     }
 
     private void setStatic() {
-        mass = Double.MAX_VALUE;
+        mass = 0;
         invMass = 0;
-        I = Double.MAX_VALUE;
+        I = 0;
         invI = 0;
     }
 

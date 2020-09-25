@@ -225,7 +225,7 @@ public class Arbiter {
         Vectors2D[] contactVectorsFound = new Vectors2D[2];
         double totalPen = 0;
         int contactsFound = 0;
-        System.out.println();
+
         for (int i = 0; i < 2; i++) {
             double separation = refFaceNormal.dotProduct(incidentFaceVertexes[i]) - refFaceNormal.dotProduct(v1);
             if (separation <= 0.0 + Settings.EPSILON) {
