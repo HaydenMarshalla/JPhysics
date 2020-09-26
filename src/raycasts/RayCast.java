@@ -16,6 +16,8 @@ public abstract class RayCast {
         this.world = world;
     }
 
+    public abstract void update();
+
     public abstract void applyBlastImpulse(double blastPower);
 
     public abstract void draw(Graphics g, ColourSettings paintSettings, Camera camera);

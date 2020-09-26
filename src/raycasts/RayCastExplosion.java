@@ -19,6 +19,12 @@ public class RayCastExplosion extends RayCast {
         n = rays;
 
     }
+
+    @Override
+    public void update() {
+
+    }
+
     @Override
     public void applyBlastImpulse(double blastPower) {
     }

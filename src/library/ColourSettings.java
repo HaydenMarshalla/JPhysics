@@ -19,7 +19,8 @@ public class ColourSettings {
         centreOfMass = new Color(201, 151, 157, 255);
         staticFill = new Color(120,233,233,255);
         staticOutLine = new Color(240,73,70,255);
-        proximity = new Color(255,255,0,255);
+        proximity = new Color(255,255,0,200);
+        linesToObjects = new Color(255,255,0,100);
     }
 
     public Color background;
@@ -32,7 +33,11 @@ public class ColourSettings {
     public Color frictionImpulse;
     public Color centreOfMass;
     public Color proximity;
+    public Color linesToObjects;
 
     public Color staticFill;
     public Color staticOutLine;
+
+    //The circle radius drawn at the end of a line to an object.
+    public final int CIRCLE_RADIUS = 5;
 }

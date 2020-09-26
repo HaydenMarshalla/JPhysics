@@ -33,6 +33,11 @@ public class ParticleExplosion extends RayCast {
     }
 
     @Override
+    public void update() {
+
+    }
+
+    @Override
     public void applyBlastImpulse(double blastPower) {
         for (Body b : particles) {
             Vectors2D blastDir = b.position.subtract(epicentre);

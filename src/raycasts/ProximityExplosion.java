@@ -8,6 +8,7 @@ import library.math.Vectors2D;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 public class ProximityExplosion extends RayCast {
@@ -21,12 +22,17 @@ public class ProximityExplosion extends RayCast {
         world.addRaycastObject(this);
     }
 
-    public void proximityCheck() {
+    @Override
+    public void update() {
+        proximityCheck();
+    }
+
+    public synchronized void proximityCheck() {
         linesToBodies.clear();
         inRangeBodies.clear();
         for (Body b : world.bodies) {
             Vectors2D blastDist = b.position.subtract(epicentre);
-            if (blastDist.length() < proximity) {
+            if (blastDist.length() <= proximity) {
                 inRangeBodies.add(b);
                 linesToBodies.add(b.position);
             }
@@ -49,11 +55,21 @@ public class ProximityExplosion extends RayCast {
     }
 
     @Override
-    public void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
+    public synchronized void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
         Graphics2D gi = (Graphics2D) g;
         gi.setColor(paintSettings.proximity);
         Vectors2D circlePotion = camera.scaleToScreen(epicentre);
-        double drawnRadius = camera.scaleToScreenXValue(proximity);
-        gi.draw(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
+        double proximityRadius = camera.scaleToScreenXValue(proximity);
+        gi.draw(new Ellipse2D.Double(circlePotion.x - proximityRadius, circlePotion.y - proximityRadius, 2 * proximityRadius, 2 * proximityRadius));
+
+        for (Vectors2D p : linesToBodies) {
+            g.setColor(paintSettings.proximity);
+            Vectors2D worldCoord = camera.scaleToScreen(p);
+            gi.draw(new Line2D.Double(circlePotion.x, circlePotion.y, worldCoord.x, worldCoord.y));
+
+            g.setColor(paintSettings.linesToObjects);
+            double lineToRadius = camera.scaleToScreenXValue(paintSettings.CIRCLE_RADIUS);
+            gi.fill(new Ellipse2D.Double(worldCoord.x - lineToRadius, worldCoord.y - lineToRadius, 2 * lineToRadius, 2 * lineToRadius));
+        }
     }
 }

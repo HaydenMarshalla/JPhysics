@@ -23,9 +23,8 @@ public class World {
 
     public ArrayList<RayCast> raycastObjects = new ArrayList<>();
 
-    public RayCast addRaycastObject(RayCast i) {
+    public void addRaycastObject(RayCast i) {
         raycastObjects.add(i);
-        return i;
     }
 
     public ArrayList<Body> bodies = new ArrayList<>();
@@ -34,6 +33,11 @@ public class World {
 
     public void step() {
         double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
+
+        for (RayCast r : raycastObjects) {
+            r.update();
+        }
+
         contacts.clear();
 
         broadPhaseCheck();
