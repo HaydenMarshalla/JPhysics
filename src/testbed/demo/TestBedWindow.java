@@ -13,6 +13,7 @@ import testbed.demo.tests.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Path2D;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final boolean antiAliasing;
@@ -48,7 +49,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private World world = new World();
 
     public void startThread() {
-        ProximityTestExplosion.load(this);
+        BouncingObject.load(this);
         physicsThread.start();
     }
 
@@ -66,6 +67,11 @@ public class TestBedWindow extends JPanel implements Runnable {
             while (time.timePassed() + excessTime < frameTime) {
                 world.step();
                 updates++;
+            }
+            for (Body b : world.bodies) {
+                if (b.trailObj != null) {
+                    b.trailObj.updateTrail(b);
+                }
             }
             updates = 0;
             repaint();
@@ -134,6 +140,7 @@ public class TestBedWindow extends JPanel implements Runnable {
                     //TO DO
                     b.shape.drawCOMS(g, paintSettings, camera);
                 }
+                drawTrails(gi, b);
             }
             if (drawJoints) {
                 for (Joint j : world.joints) {
@@ -143,6 +150,27 @@ public class TestBedWindow extends JPanel implements Runnable {
             for (RayCast r : world.raycastObjects) {
                 r.draw(g, paintSettings, camera);
             }
+        }
+    }
+
+    private void drawTrails(Graphics2D g, Body b) {
+        if (b.trailObj != null) {
+            g.setColor(paintSettings.trail);
+            Path2D.Double s = new Path2D.Double();
+            for (int i = 0; i < b.trailObj.getTrailPoints().length; i++) {
+                Vectors2D v = b.trailObj.getTrailPoints()[i];
+                if (v == null) {
+                    break;
+                } else {
+                    v = camera.scaleToScreen(v);
+                    if (i == 0) {
+                        s.moveTo(v.x, v.y);
+                    } else {
+                        s.lineTo(v.x, v.y);
+                    }
+                }
+            }
+            g.draw(s);
         }
     }
 
