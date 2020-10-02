@@ -16,7 +16,7 @@ public class StackedObjects {
             Body b = temp.addBody(new Body(new Polygon(200.0, 10.0), 0, -100));
             b.setDensity(0);
 
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 1; i++) {
                 Body b1 = temp.addBody(new Body(new Polygon(30.0, 30.0), -100, 100+ (i*100)));
                 b1.setDensity(100);
             }

@@ -1,10 +1,10 @@
 package testbed.demo;
 
+import explosions.ProximityExplosion;
 import library.*;
 import library.Timer;
 import library.joints.Joint;
 import library.math.Vectors2D;
-import raycasts.RayCast;
 import testbed.demo.input.KeyBoardInput;
 import testbed.demo.input.MouseInput;
 import testbed.demo.input.MouseScroll;
@@ -49,7 +49,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private World world = new World();
 
     public void startThread() {
-        BouncingObject.load(this);
+        ProximityTestExplosion.load(this);
         physicsThread.start();
     }
 
@@ -147,8 +147,8 @@ public class TestBedWindow extends JPanel implements Runnable {
                     j.draw(gi, camera);
                 }
             }
-            for (RayCast r : world.raycastObjects) {
-                r.draw(g, paintSettings, camera);
+            for (ProximityExplosion p : world.proximityPoints) {
+                p.draw(g, paintSettings, camera);
             }
         }
     }

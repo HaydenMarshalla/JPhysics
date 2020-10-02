@@ -22,7 +22,7 @@ public class Body {
 
     public boolean affectedByGravity;
 
-    //public Trail trail;
+    public Trail trailObj;
 
     public Body(Shapes shape, double x, double y) {
         this.shape = shape;
@@ -47,8 +47,10 @@ public class Body {
 
         this.shape.calcMass(1.0);
         this.shape.createAABB();
+    }
 
-        //  trail = new Trail(20,0.01);
+    public void addTrail(int trailPoints, int skipSteps){
+        trailObj = new Trail(trailPoints,skipSteps);
     }
 
     public void setOrientation(double delta) {

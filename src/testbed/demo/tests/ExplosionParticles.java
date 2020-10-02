@@ -1,10 +1,8 @@
 package testbed.demo.tests;
 
-import library.Body;
-import library.Polygon;
 import library.World;
 import library.math.Vectors2D;
-import raycasts.ParticleExplosion;
+import explosions.ParticleExplosion;
 import testbed.demo.TestBedWindow;
 
 public class ExplosionParticles {

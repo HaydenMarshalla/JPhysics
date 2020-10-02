@@ -1,8 +1,9 @@
 package library;
 
+import explosions.Explosions;
+import explosions.ProximityExplosion;
 import library.joints.Joint;
 import library.math.Vectors2D;
-import raycasts.RayCast;
 
 import java.util.ArrayList;
 
@@ -21,21 +22,16 @@ public class World {
         gravity = new Vectors2D(0, 0);
     }
 
-    public ArrayList<RayCast> raycastObjects = new ArrayList<>();
-
-    public void addRaycastObject(RayCast i) {
-        raycastObjects.add(i);
-    }
-
     public ArrayList<Body> bodies = new ArrayList<>();
     public ArrayList<Arbiter> contacts = new ArrayList<>();
     public ArrayList<Joint> joints = new ArrayList<>();
+    public ArrayList<ProximityExplosion> proximityPoints = new ArrayList<>();
 
     public void step() {
         double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
 
-        for (RayCast r : raycastObjects) {
-            r.update();
+        for (ProximityExplosion p : proximityPoints) {
+            p.proximityCheck();
         }
 
         contacts.clear();

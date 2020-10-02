@@ -4,7 +4,7 @@ import library.Body;
 import library.Polygon;
 import library.World;
 import library.math.Vectors2D;
-import raycasts.ProximityExplosion;
+import explosions.ProximityExplosion;
 import testbed.demo.TestBedWindow;
 
 public class ProximityTestExplosion {

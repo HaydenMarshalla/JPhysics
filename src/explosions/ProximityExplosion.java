@@ -1,4 +1,4 @@
-package raycasts;
+package explosions;
 
 import library.Body;
 import library.Camera;
@@ -11,50 +11,28 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
-public class ProximityExplosion extends RayCast {
-    public ArrayList<Body> inRangeBodies = new ArrayList<>();
+public class ProximityExplosion extends Explosions {
     private ArrayList<Vectors2D> linesToBodies = new ArrayList<>();
-    private int proximity;
+    private final int proximity;
 
     public ProximityExplosion(Vectors2D centrePoint, World world, int radius) {
         super(centrePoint, world);
         proximity = radius;
-        world.addRaycastObject(this);
-    }
-
-    @Override
-    public void update() {
-        proximityCheck();
+        world.proximityPoints.add(this);
     }
 
     public synchronized void proximityCheck() {
         linesToBodies.clear();
-        inRangeBodies.clear();
+        bodiesEffected.clear();
         for (Body b : world.bodies) {
             Vectors2D blastDist = b.position.subtract(epicentre);
             if (blastDist.length() <= proximity) {
-                inRangeBodies.add(b);
+                bodiesEffected.add(b);
                 linesToBodies.add(b.position);
             }
         }
     }
 
-    @Override
-    public void applyBlastImpulse(double blastPower) {
-        for (Body b : inRangeBodies) {
-            Vectors2D blastDir = b.position.subtract(epicentre);
-            double distance = blastDir.length();
-            if (distance == 0) return;
-
-            double invDistance = 1 / distance;
-            double impulseMag = blastPower * invDistance;
-
-            Vectors2D force = b.force.addi(blastDir.normalize().scalar(impulseMag));
-            b.velocity.add(force.scalar(b.invMass));
-        }
-    }
-
-    @Override
     public synchronized void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
         Graphics2D gi = (Graphics2D) g;
         gi.setColor(paintSettings.proximity);
