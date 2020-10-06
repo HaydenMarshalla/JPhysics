@@ -1,5 +1,7 @@
-package library;
+package library.dynamics;
 
+import library.collision.AABB;
+import library.geometry.Shapes;
 import library.math.Vectors2D;
 
 public class Body {

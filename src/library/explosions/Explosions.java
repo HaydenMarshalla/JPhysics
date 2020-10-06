@@ -1,14 +1,15 @@
-package explosions;
+package library.explosions;
 
-import library.Body;
-import library.World;
+import library.dynamics.Body;
 import library.math.Vectors2D;
 
 import java.util.ArrayList;
 
-public abstract class Explosions extends WorldSpacePoint {
-    public Explosions(Vectors2D centrePoint, World world) {
-        super(centrePoint, world);
+public abstract class Explosions {
+    public Vectors2D epicentre;
+
+    public Explosions(Vectors2D centrePoint) {
+        this.epicentre = centrePoint;
     }
 
     public ArrayList<Body> bodiesEffected = new ArrayList<>();

@@ -19,6 +19,11 @@ public class Vectors2D {
         this.y = vector.y;
     }
 
+    public Vectors2D(double direction) {
+        this.x = Math.cos(direction);
+        this.y = Math.sin(direction);
+    }
+
     public Vectors2D set(double x, double y) {
         this.x = x;
         this.y = y;
@@ -69,6 +74,15 @@ public class Vectors2D {
         return this;
     }
 
+    public Vectors2D getNormalized() {
+        double d = Math.sqrt(x * x + y * y);
+
+        if (d == 0) {
+            d = 1;
+        }
+        return new Vectors2D(x / d, y / d);
+    }
+
     public double distance(Vectors2D v) {
         double dx = this.x - v.x;
         double dy = this.y - v.y;
@@ -110,6 +124,10 @@ public class Vectors2D {
 
     public final boolean isValid() {
         return !Double.isNaN(x) && !Double.isInfinite(x) && !Double.isNaN(y) && !Double.isInfinite(y);
+    }
+
+    public boolean isZero() {
+        return Math.abs(this.x) == 0 && Math.abs(this.y) == 0 ;
     }
 
     public static Vectors2D[] createArray(int n) {

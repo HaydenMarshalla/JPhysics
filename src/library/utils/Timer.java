@@ -1,4 +1,4 @@
-package library;
+package library.utils;
 
 /**
  * Timer class.

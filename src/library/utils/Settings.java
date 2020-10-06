@@ -1,4 +1,4 @@
-package library;
+package library.utils;
 
 public class Settings {
     public static final double PENETRATION_ALLOWANCE = 0.2;

@@ -1,7 +1,7 @@
 package library.joints;
 
-import library.Body;
-import library.Camera;
+import library.dynamics.Body;
+import testbed.Camera;
 import library.math.Matrix2D;
 import library.math.Vectors2D;
 

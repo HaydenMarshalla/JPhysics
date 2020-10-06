@@ -1,15 +1,19 @@
-package explosions;
+package library.explosions;
 
-import library.*;
+import library.dynamics.Body;
+import library.dynamics.World;
+import library.geometry.Circle;
 import library.math.Matrix2D;
 import library.math.Vectors2D;
 
 public class ParticleExplosion extends Explosions {
     private final int noOfParticles;
+    private final World world;
 
-    public ParticleExplosion(Vectors2D location, World world, int noOfParticles) {
-        super(location, world);
+    public ParticleExplosion(Vectors2D epicentre, World world, int noOfParticles) {
+        super(epicentre);
         this.noOfParticles = noOfParticles;
+        this.world = world;
     }
 
     public void createParticles(int spacing, int size, int density) {

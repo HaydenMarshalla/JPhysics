@@ -1,8 +1,8 @@
 package testbed.junittests;
 
-import library.AABB;
-import library.Body;
-import library.Circle;
+import library.collision.AABB;
+import library.dynamics.Body;
+import library.geometry.Circle;
 import library.math.Vectors2D;
 import org.junit.Test;
 

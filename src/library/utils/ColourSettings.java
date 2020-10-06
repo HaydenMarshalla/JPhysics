@@ -1,4 +1,4 @@
-package library;
+package library.utils;
 
 import java.awt.*;
 
@@ -22,6 +22,8 @@ public class ColourSettings {
         proximity = new Color(255, 255, 0, 200);
         linesToObjects = new Color(255, 255, 0, 100);
         trail = new Color(255, 255, 0, 255);
+        rayToBody = new Color(255, 255, 255, 255);
+        projectedRay = new Color(127, 127, 127, 150);
     }
 
     public Color background;
@@ -35,6 +37,8 @@ public class ColourSettings {
     public Color centreOfMass;
     public Color proximity;
     public Color linesToObjects;
+    public Color rayToBody;
+    public Color projectedRay;
 
     public Color trail;
 
@@ -43,4 +47,5 @@ public class ColourSettings {
 
     //The circle radius drawn at the end of a line to an object.
     public final int CIRCLE_RADIUS = 5;
+    public final double rayEndPointCircleSize = 2;
 }

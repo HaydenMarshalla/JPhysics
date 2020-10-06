@@ -1,10 +1,10 @@
 package testbed.demo.tests;
 
-import library.Body;
-import library.Polygon;
-import library.World;
+import library.dynamics.Body;
+import library.geometry.Polygon;
+import library.dynamics.World;
 import library.math.Vectors2D;
-import explosions.ProximityExplosion;
+import library.explosions.ProximityExplosion;
 import testbed.demo.TestBedWindow;
 
 public class ProximityTestExplosion {
@@ -21,7 +21,8 @@ public class ProximityTestExplosion {
                 Body b1 = temp.addBody(new Body(new Polygon(30.0, 30.0), -100, 100 + (i * 100)));
                 b1.setDensity(100);
             }
-            ProximityExplosion p = new ProximityExplosion(new Vectors2D(-20, 0), temp, 100);
+            ProximityExplosion p = new ProximityExplosion(new Vectors2D(-20, 0), 150);
+            testBedWindow.add(p);
         }
     }
 }

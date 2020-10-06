@@ -1,6 +1,6 @@
 package testbed.demo.tests;
 
-import library.World;
+import library.dynamics.World;
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 

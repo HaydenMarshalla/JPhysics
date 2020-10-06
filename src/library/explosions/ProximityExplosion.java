@@ -1,9 +1,9 @@
-package explosions;
+package library.explosions;
 
-import library.Body;
-import library.Camera;
-import library.ColourSettings;
-import library.World;
+import library.dynamics.Body;
+import testbed.Camera;
+import library.utils.ColourSettings;
+import library.dynamics.World;
 import library.math.Vectors2D;
 
 import java.awt.*;
@@ -12,19 +12,18 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 public class ProximityExplosion extends Explosions {
-    private ArrayList<Vectors2D> linesToBodies = new ArrayList<>();
+    private final ArrayList<Vectors2D> linesToBodies = new ArrayList<>();
     private final int proximity;
 
-    public ProximityExplosion(Vectors2D centrePoint, World world, int radius) {
-        super(centrePoint, world);
+    public ProximityExplosion(Vectors2D centrePoint, int radius) {
+        super(centrePoint);
         proximity = radius;
-        world.proximityPoints.add(this);
     }
 
-    public synchronized void proximityCheck() {
+    public synchronized void updateProximity(ArrayList<Body> bodiesToEvaluate) {
         linesToBodies.clear();
         bodiesEffected.clear();
-        for (Body b : world.bodies) {
+        for (Body b : bodiesToEvaluate) {
             Vectors2D blastDist = b.position.subtract(epicentre);
             if (blastDist.length() <= proximity) {
                 bodiesEffected.add(b);

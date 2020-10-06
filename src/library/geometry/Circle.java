@@ -1,12 +1,15 @@
-package library;
+package library.geometry;
 
+import testbed.Camera;
+import library.collision.AABB;
 import library.math.Vectors2D;
+import library.utils.ColourSettings;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 public class Circle extends Shapes {
-    double radius;
+    public double radius;
 
     public Circle(double radius) {
         this.radius = radius;
@@ -26,18 +29,12 @@ public class Circle extends Shapes {
     }
 
     @Override
-    public void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
-        Graphics2D gi = (Graphics2D) g;
-        gi.setColor(paintSettings.shapeFill);
+    public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
+        g.setColor(paintSettings.shapeFill);
         Vectors2D circlePotion = camera.scaleToScreen(body.position);
         double drawnRadius = camera.scaleToScreenXValue(radius);
-        gi.fill(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
-        gi.setColor(paintSettings.shapeOutLine);
-        gi.draw(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
-    }
-
-    @Override
-    public Type getType() {
-        return Type.eCircle;
+        g.fill(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
+        g.setColor(paintSettings.shapeOutLine);
+        g.draw(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
     }
 }

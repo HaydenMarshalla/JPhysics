@@ -1,8 +1,8 @@
 package testbed.demo.tests;
 
-import library.World;
+import library.dynamics.World;
 import library.math.Vectors2D;
-import explosions.ParticleExplosion;
+import library.explosions.ParticleExplosion;
 import testbed.demo.TestBedWindow;
 
 public class ExplosionParticles {
@@ -11,7 +11,7 @@ public class ExplosionParticles {
         World temp = testBedWindow.getWorld();
 
         {
-            //ArrayList<ParticleExplosion> explosions = new ArrayList<>();
+            //ArrayList<ParticleExplosion> library.explosions = new ArrayList<>();
             ParticleExplosion explosion1 = new ParticleExplosion(new Vectors2D(0,0),temp,20);
             explosion1.createParticles(20, 3, 10);
             explosion1.applyBlastImpulse(500000);

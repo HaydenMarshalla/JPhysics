@@ -1,9 +1,12 @@
-package library;
+package library.dynamics;
 
-import explosions.Explosions;
-import explosions.ProximityExplosion;
+import library.collision.AABB;
+import library.collision.Arbiter;
+import library.explosions.ProximityExplosion;
+import library.geometry.Polygon;
 import library.joints.Joint;
 import library.math.Vectors2D;
+import library.utils.Settings;
 
 import java.util.ArrayList;
 
@@ -25,14 +28,9 @@ public class World {
     public ArrayList<Body> bodies = new ArrayList<>();
     public ArrayList<Arbiter> contacts = new ArrayList<>();
     public ArrayList<Joint> joints = new ArrayList<>();
-    public ArrayList<ProximityExplosion> proximityPoints = new ArrayList<>();
 
     public void step() {
         double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
-
-        for (ProximityExplosion p : proximityPoints) {
-            p.proximityCheck();
-        }
 
         contacts.clear();
 

@@ -1,4 +1,4 @@
-package library;
+package testbed;
 
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;

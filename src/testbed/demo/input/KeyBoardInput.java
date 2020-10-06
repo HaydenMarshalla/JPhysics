@@ -1,6 +1,6 @@
 package testbed.demo.input;
 
-import library.Camera;
+import testbed.Camera;
 import library.math.Vectors2D;
 
 import java.awt.event.KeyEvent;

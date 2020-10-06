@@ -1,6 +1,9 @@
-package library;
+package library.geometry;
 
+import testbed.Camera;
+import library.collision.AABB;
 import library.math.Vectors2D;
+import library.utils.ColourSettings;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -110,8 +113,7 @@ public class Polygon extends Shapes {
     }
 
     @Override
-    public void draw(Graphics g, ColourSettings paintSettings, Camera camera) {
-        Graphics2D g2 = (Graphics2D) g;
+    public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         Path2D.Double s = new Path2D.Double();
         for (int i = 0; i < vertices.length; i++) {
             Vectors2D v = new Vectors2D(this.vertices[i]);
@@ -126,15 +128,15 @@ public class Polygon extends Shapes {
         }
         s.closePath();
         if (body.mass == 0.0) {
-            g2.setColor(paintSettings.staticFill);
-            g2.fill(s);
-            g2.setColor(paintSettings.staticOutLine);
+            g.setColor(paintSettings.staticFill);
+            g.fill(s);
+            g.setColor(paintSettings.staticOutLine);
         } else {
-            g2.setColor(paintSettings.shapeFill);
-            g2.fill(s);
-            g2.setColor(paintSettings.shapeOutLine);
+            g.setColor(paintSettings.shapeFill);
+            g.fill(s);
+            g.setColor(paintSettings.shapeOutLine);
         }
-        g2.draw(s);
+        g.draw(s);
     }
 
     private Vectors2D[] generateHull(Vectors2D[] vertices, int n) {
@@ -179,10 +181,5 @@ public class Polygon extends Shapes {
             return 0;
         else
             return -1;
-    }
-
-    @Override
-    public Type getType() {
-        return Type.ePolygon;
     }
 }

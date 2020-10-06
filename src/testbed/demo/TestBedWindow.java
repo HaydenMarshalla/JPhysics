@@ -1,10 +1,16 @@
 package testbed.demo;
 
-import explosions.ProximityExplosion;
-import library.*;
-import library.Timer;
+import library.dynamics.Body;
+import library.dynamics.Raycast;
+import library.dynamics.World;
+import library.dynamics.RaycastScatter;
+import library.explosions.ProximityExplosion;
+import library.utils.ColourSettings;
+import library.utils.Settings;
+import library.utils.Timer;
 import library.joints.Joint;
 import library.math.Vectors2D;
+import testbed.Camera;
 import testbed.demo.input.KeyBoardInput;
 import testbed.demo.input.MouseInput;
 import testbed.demo.input.MouseScroll;
@@ -14,6 +20,7 @@ import testbed.demo.tests.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final boolean antiAliasing;
@@ -48,8 +55,26 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     private World world = new World();
 
+    public ArrayList<Raycast> rays = new ArrayList<>();
+
+    public void add(Raycast r) {
+        rays.add(r);
+    }
+
+    public ArrayList<RaycastScatter> scatterRays = new ArrayList<>();
+
+    public void add(RaycastScatter r) {
+        scatterRays.add(r);
+    }
+
+    public ArrayList<ProximityExplosion> proximityPoints = new ArrayList<>();
+
+    public void add(ProximityExplosion r) {
+        proximityPoints.add(r);
+    }
+
     public void startThread() {
-        ProximityTestExplosion.load(this);
+        Raycasting.load(this);
         physicsThread.start();
     }
 
@@ -73,6 +98,15 @@ public class TestBedWindow extends JPanel implements Runnable {
                     b.trailObj.updateTrail(b);
                 }
             }
+            for (ProximityExplosion p : proximityPoints) {
+                p.updateProximity(world.bodies);
+            }
+            for (Raycast r : rays) {
+                r.updateProjection(world.bodies);
+            }
+            for (RaycastScatter r : scatterRays) {
+                r.updateRays();
+            }
             updates = 0;
             repaint();
             excessTime = time.timePassed() - frameTime;
@@ -83,46 +117,28 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     private boolean drawShapes = true;
     private boolean drawJoints = true;
-    private boolean drawAABBs = true;
+    private boolean drawAABBs = false;
     private boolean drawContactPoints = false;
     private boolean drawContactNormals = false;
     private boolean drawContactImpulse = false;
     private boolean drawFrictionImpulse = false;
-    private boolean drawCOMs = true;
+    private boolean drawCOMs = false;
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D gi = (Graphics2D) g;
-        if (antiAliasing) gi.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Graphics2D g2d = (Graphics2D) g;
+        if (antiAliasing) g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         if (world != null) {
-         /*   //GRID CODE work in progress
-            gi.setColor(Color.WHITE);
-            int spacing = 50;
-            int projection = 100000;
-            int loop = projection;
-            Vectors2D x = new Vectors2D(0, -projection);
-            for (int i = 0; i < loop; i += spacing/2) {
-                Vectors2D v = camera.scaleToScreen(new Vectors2D(projection, x.y));
-                Vectors2D v2 = camera.scaleToScreen(new Vectors2D(-projection, x.y));
-                x.add(new Vectors2D(0, spacing));
-                gi.draw(new Line2D.Double(v.x, v.y, v2.x, v2.y));
-            }
-
-            Vectors2D y = new Vectors2D(-projection, 0);
-            for (int i = 0; i < loop; i += spacing/2) {
-                Vectors2D v = camera.scaleToScreen(new Vectors2D(y.x,projection));
-                Vectors2D v2 = camera.scaleToScreen(new Vectors2D(y.x,-projection));
-                y.add(new Vectors2D(spacing,0));
-                gi.draw(new Line2D.Double(v.x, v.y, v2.x, v2.y));
-            }*/
-
+            /*
+             * grid code to do
+             * */
             for (Body b : world.bodies) {
                 if (drawShapes) {
-                    b.shape.draw(g, paintSettings, camera);
+                    b.shape.draw(g2d, paintSettings, camera);
                 }
                 if (drawAABBs) {
-                    b.shape.drawAABB(g, paintSettings, camera);
+                    b.shape.drawAABB(g2d, paintSettings, camera);
                 }
                 if (drawContactPoints) {
                     //TO DO
@@ -138,17 +154,23 @@ public class TestBedWindow extends JPanel implements Runnable {
                 }
                 if (drawCOMs) {
                     //TO DO
-                    b.shape.drawCOMS(g, paintSettings, camera);
+                    b.shape.drawCOMS(g2d, paintSettings, camera);
                 }
-                drawTrails(gi, b);
+                drawTrails(g2d, b);
             }
             if (drawJoints) {
                 for (Joint j : world.joints) {
-                    j.draw(gi, camera);
+                    j.draw(g2d, camera);
                 }
             }
-            for (ProximityExplosion p : world.proximityPoints) {
-                p.draw(g, paintSettings, camera);
+            for (ProximityExplosion p : proximityPoints) {
+                p.draw(g2d, paintSettings, camera);
+            }
+            for (Raycast r : rays) {
+                r.draw(g2d, paintSettings, camera);
+            }
+            for (RaycastScatter r : scatterRays) {
+                r.draw(g2d, paintSettings, camera);
             }
         }
     }
@@ -207,3 +229,23 @@ public class TestBedWindow extends JPanel implements Runnable {
         return camera;
     }
 }
+/*   //GRID CODE work in progress
+            gi.setColor(Color.WHITE);
+            int spacing = 50;
+            int projection = 100000;
+            int loop = projection;
+            Vectors2D x = new Vectors2D(0, -projection);
+            for (int i = 0; i < loop; i += spacing/2) {
+                Vectors2D v = camera.scaleToScreen(new Vectors2D(projection, x.y));
+                Vectors2D v2 = camera.scaleToScreen(new Vectors2D(-projection, x.y));
+                x.add(new Vectors2D(0, spacing));
+                gi.draw(new Line2D.Double(v.x, v.y, v2.x, v2.y));
+            }
+
+            Vectors2D y = new Vectors2D(-projection, 0);
+            for (int i = 0; i < loop; i += spacing/2) {
+                Vectors2D v = camera.scaleToScreen(new Vectors2D(y.x,projection));
+                Vectors2D v2 = camera.scaleToScreen(new Vectors2D(y.x,-projection));
+                y.add(new Vectors2D(spacing,0));
+                gi.draw(new Line2D.Double(v.x, v.y, v2.x, v2.y));
+            }*/

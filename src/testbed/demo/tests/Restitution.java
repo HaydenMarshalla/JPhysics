@@ -1,8 +1,8 @@
 package testbed.demo.tests;
 
-import library.Body;
-import library.Polygon;
-import library.World;
+import library.dynamics.Body;
+import library.geometry.Polygon;
+import library.dynamics.World;
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 

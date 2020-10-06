@@ -1,7 +1,11 @@
 package testbed.demo.tests;
 
-import library.*;
+import library.dynamics.Body;
+import library.dynamics.World;
+import library.geometry.Circle;
+import library.geometry.Polygon;
 import library.math.Vectors2D;
+import testbed.Camera;
 import testbed.demo.TestBedWindow;
 
 import java.util.Random;

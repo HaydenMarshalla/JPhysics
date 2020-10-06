@@ -1,4 +1,4 @@
-package library;
+package library.dynamics;
 
 import library.math.Vectors2D;
 

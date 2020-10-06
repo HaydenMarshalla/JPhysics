@@ -1,12 +1,17 @@
-package library;
+package library.collision;
 
+
+import library.dynamics.Body;
+import library.geometry.Circle;
+import library.geometry.Polygon;
+import library.utils.Settings;
 import library.math.Vectors2D;
 
 public class Arbiter {
     Body A;
     Body B;
 
-    Arbiter(Body a, Body b) {
+    public Arbiter(Body a, Body b) {
         this.A = a;
         this.B = b;
     }

@@ -1,5 +1,6 @@
-package library;
+package library.collision;
 
+import library.dynamics.Body;
 import library.math.Vectors2D;
 
 public class AABB {
