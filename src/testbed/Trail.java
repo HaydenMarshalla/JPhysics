@@ -1,5 +1,6 @@
-package library.dynamics;
+package testbed;
 
+import library.dynamics.Body;
 import library.math.Vectors2D;
 
 public class Trail {
@@ -7,24 +8,26 @@ public class Trail {
     private final int arrayEndPos;
     private final int skipInterval;
     private int counter;
+    private Body body;
 
-    public Trail(int noOfTrailPoints, int skipInterval) {
+    public Trail(int noOfTrailPoints, int skipInterval, Body b) {
         trailPoints = Vectors2D.createArray(noOfTrailPoints);
         arrayEndPos = noOfTrailPoints - 1;
         this.skipInterval = skipInterval;
         counter = 0;
+        body = b;
     }
 
     private int trailEndPointIndex = 0;
 
-    public void updateTrail(Body b) {
-        if (counter >= skipInterval) {
+    public void updateTrail() {
+        if (counter >= skipInterval || skipInterval == 0) {
             if (trailEndPointIndex <= arrayEndPos) {
-                trailPoints[trailEndPointIndex] = b.position.copy();
+                trailPoints[trailEndPointIndex] = body.position.copy();
                 trailEndPointIndex++;
             } else {
                 System.arraycopy(trailPoints, 1, trailPoints, 0, arrayEndPos);
-                trailPoints[arrayEndPos] = b.position.copy();
+                trailPoints[arrayEndPos] = body.position.copy();
             }
             counter = 0;
         } else {

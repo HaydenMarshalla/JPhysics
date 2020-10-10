@@ -10,7 +10,7 @@ public class Timer {
      * No-argument constructor initializes instance variables to current time
      */
     public Timer() {
-        prevTime = System.nanoTime();
+        reset();
     }
 
     /**

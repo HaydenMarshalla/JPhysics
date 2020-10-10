@@ -2,7 +2,6 @@ package library.dynamics;
 
 import library.collision.AABB;
 import library.collision.Arbiter;
-import library.explosions.ProximityExplosion;
 import library.geometry.Polygon;
 import library.joints.Joint;
 import library.math.Vectors2D;

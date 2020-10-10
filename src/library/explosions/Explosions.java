@@ -37,10 +37,4 @@ public abstract class Explosions {
             b.velocity.add(blastDir.normalize().scalar(velocity));
         }
     }
-
-    public void applyTrailsToAll(int trailPoints, int skipSteps) {
-        for (Body b : bodiesEffected) {
-            b.addTrail(trailPoints, skipSteps);
-        }
-    }
 }

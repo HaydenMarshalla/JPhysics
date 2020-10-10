@@ -24,8 +24,6 @@ public class Body {
 
     public boolean affectedByGravity;
 
-    public Trail trailObj;
-
     public Body(Shapes shape, double x, double y) {
         this.shape = shape;
         this.shape.body = this;
@@ -49,10 +47,6 @@ public class Body {
 
         this.shape.calcMass(1.0);
         this.shape.createAABB();
-    }
-
-    public void addTrail(int trailPoints, int skipSteps){
-        trailObj = new Trail(trailPoints,skipSteps);
     }
 
     public void setOrientation(double delta) {

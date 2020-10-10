@@ -17,35 +17,48 @@ public class ColourSettings {
         contactImpulse = new Color(255, 255, 255, 255);
         frictionImpulse = new Color(255, 255, 255, 255);
         centreOfMass = new Color(201, 151, 157, 255);
-        staticFill = new Color(120, 233, 233, 255);
-        staticOutLine = new Color(240, 73, 70, 255);
+        staticFill = new Color(0, 0, 0, 255);
+        staticOutLine = new Color(0, 0, 0, 255);
         proximity = new Color(255, 255, 0, 200);
         linesToObjects = new Color(255, 255, 0, 100);
         trail = new Color(255, 255, 0, 255);
         rayToBody = new Color(255, 255, 255, 255);
         projectedRay = new Color(127, 127, 127, 150);
+        gridLines = new Color(255, 255, 255, 70);
+        gridAxis = new Color(255, 255, 255, 150);
     }
 
-    public Color background;
-    public Color shapeOutLine;
+    //All objects
     public Color aabb;
-    public Color shapeFill;
-    public Color drawJoints;
+    public Color centreOfMass;
     public Color contactNormals;
     public Color contactImpulse;
     public Color frictionImpulse;
-    public Color centreOfMass;
-    public Color proximity;
-    public Color linesToObjects;
-    public Color rayToBody;
-    public Color projectedRay;
-
     public Color trail;
 
+    //Static objects
     public Color staticFill;
     public Color staticOutLine;
 
-    //The circle radius drawn at the end of a line to an object.
+    //Non static objects
+    public Color shapeFill;
+    public Color shapeOutLine;
+    public Color drawJoints;
+
+    //Proximity explosion
+    public Color proximity;
+    public Color linesToObjects;
     public final int CIRCLE_RADIUS = 5;
+
+    //Rays
+    public Color rayToBody;
+    public Color projectedRay;
     public final double rayEndPointCircleSize = 2;
+
+    //Testbed related drawing
+    public Color gridLines;
+    public Color gridAxis;
+    public Color background;
+    public Stroke axisStrokeWidth = new BasicStroke(2);
+    public Stroke defaultStrokeWidth = new BasicStroke(1);
 }
