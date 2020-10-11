@@ -8,7 +8,7 @@ import testbed.demo.TestBedWindow;
 
 public class Restitution {
     public static void load(TestBedWindow testBedWindow) {
-        testBedWindow.createWorld(new World(new Vectors2D(0, -9.81)));
+        testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
 
         //Three squares fall onto a a static platform

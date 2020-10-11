@@ -17,8 +17,8 @@ public class ColourSettings {
         contactImpulse = new Color(255, 255, 255, 255);
         frictionImpulse = new Color(255, 255, 255, 255);
         centreOfMass = new Color(201, 151, 157, 255);
-        staticFill = new Color(0, 0, 0, 255);
-        staticOutLine = new Color(0, 0, 0, 255);
+        staticFill = new Color(37, 66, 31, 255);
+        staticOutLine = new Color(98, 142, 83, 255);
         proximity = new Color(255, 255, 0, 200);
         linesToObjects = new Color(255, 255, 0, 100);
         trail = new Color(255, 255, 0, 255);

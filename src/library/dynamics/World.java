@@ -10,11 +10,7 @@ import library.utils.Settings;
 import java.util.ArrayList;
 
 public class World {
-    public Vectors2D gravity;
-
-    public void setGravity(Vectors2D gravity) {
-        this.gravity = gravity;
-    }
+    private Vectors2D gravity;
 
     public World(Vectors2D gravity) {
         this.gravity = gravity;
@@ -24,13 +20,36 @@ public class World {
         gravity = new Vectors2D(0, 0);
     }
 
+    public void setGravity(Vectors2D gravity) {
+        this.gravity = gravity;
+    }
+
     public ArrayList<Body> bodies = new ArrayList<>();
-    public ArrayList<Arbiter> contacts = new ArrayList<>();
+
+    public Body addBody(Body b) {
+        bodies.add(b);
+        return b;
+    }
+
+    public void removeBody(Body b) {
+        bodies.remove(b);
+    }
+
     public ArrayList<Joint> joints = new ArrayList<>();
+
+    public Joint addJoint(Joint j) {
+        joints.add(j);
+        return j;
+    }
+
+    public void removeJoint(Joint j) {
+        joints.remove(j);
+    }
+
+    public ArrayList<Arbiter> contacts = new ArrayList<>();
 
     public void step() {
         double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
-
         contacts.clear();
 
         broadPhaseCheck();
@@ -41,12 +60,7 @@ public class World {
                 continue;
             }
 
-            //Separated gravity integration to allow explosion particles to not be affected by gravity
-            if (b.affectedByGravity) {
-                b.velocity.add(gravity.scalar(dt));
-            }
-
-            b.velocity.add(b.force.scalar(b.invMass).scalar(dt));
+            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
 
@@ -105,32 +119,14 @@ public class World {
         }
     }
 
-    public Body addBody(Body b) {
-        bodies.add(b);
-        return b;
-    }
-
-    public void removeBody(Body b) {
-        bodies.remove(b);
-    }
-
-    public Joint addJoint(Joint j) {
-        joints.add(j);
-        return j;
-    }
-
-    public void removeJoint(Joint j) {
-        joints.remove(j);
-    }
-
-    private double dragValue;
-
-    private void applyDrag(Body b) {
-        b.force = b.velocity.scalar(-dragValue * b.mass);
-    }
+    private double dragValue = 0;
 
     public void setDragValue(double i) {
         dragValue = i;
+    }
+
+    private void applyDrag(Body b) {
+        b.force = b.velocity.scalar(-dragValue * b.mass);
     }
 
     public void clearWorld() {

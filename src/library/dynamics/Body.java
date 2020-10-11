@@ -22,13 +22,9 @@ public class Body {
     public Shapes shape;
     public AABB aabb;
 
-    public boolean affectedByGravity;
-
     public Body(Shapes shape, double x, double y) {
         this.shape = shape;
         this.shape.body = this;
-
-        affectedByGravity = true;
 
         position = new Vectors2D(x, y);
         velocity = new Vectors2D(0, 0);
@@ -68,9 +64,5 @@ public class Body {
         invMass = 0;
         I = 0;
         invI = 0;
-    }
-
-    public void setGravityEffect(boolean b) {
-        affectedByGravity = b;
     }
 }

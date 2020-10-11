@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class MixedShapes {
     public static void load(TestBedWindow testBedWindow) {
-        testBedWindow.createWorld(new World(new Vectors2D(0, -9.81)));
+        testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
         testBedWindow.setCamera(new Vectors2D(-0, 200), 2.2);
 

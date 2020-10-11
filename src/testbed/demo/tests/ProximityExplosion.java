@@ -4,12 +4,11 @@ import library.dynamics.Body;
 import library.geometry.Polygon;
 import library.dynamics.World;
 import library.math.Vectors2D;
-import library.explosions.ProximityExplosion;
 import testbed.demo.TestBedWindow;
 
-public class ProximityTestExplosion {
+public class ProximityExplosion {
     public static void load(TestBedWindow testBedWindow) {
-        testBedWindow.createWorld(new World(new Vectors2D(0, -9.81)));
+        testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
 
         //Three squares fall onto a a static platform
@@ -21,8 +20,6 @@ public class ProximityTestExplosion {
                 Body b1 = temp.addBody(new Body(new Polygon(30.0, 30.0), -100, 100 + (i * 100)));
                 b1.setDensity(100);
             }
-            ProximityExplosion p = new ProximityExplosion(new Vectors2D(-20, 0), 150);
-            testBedWindow.add(p);
         }
     }
 }
