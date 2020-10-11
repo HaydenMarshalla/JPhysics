@@ -1,6 +1,7 @@
 package testbed.demo;
 
 import library.dynamics.Body;
+import library.dynamics.Ray;
 import library.dynamics.World;
 import library.utils.ColourSettings;
 import library.joints.Joint;
@@ -59,16 +60,15 @@ public class TestBedWindow extends JPanel implements Runnable {
         mouseScrollInput = new MouseScroll(camera);
         addMouseWheelListener(mouseScrollInput);
 
-        Raycast.load(this);
         physicsThread.start();
     }
 
-/*    public ArrayList<Ray> rays = new ArrayList<>();
+    public ArrayList<Ray> rays = new ArrayList<>();
 
     public void add(Ray ray) {
         rays.add(ray);
     }
-
+/*
     public ArrayList<RayScatter> scatterRays = new ArrayList<>();
 
     public void add(RayScatter rays) {
@@ -80,6 +80,15 @@ public class TestBedWindow extends JPanel implements Runnable {
     public void add(ProximityExplosion ex) {
         proximityRays.add(ex);
     }*/
+
+    public void clearTestbedObjects() {
+        camera.setCentre(new Vectors2D());
+        camera.setZoom(1.0);
+        trailsToBodies.clear();
+        rays.clear();
+        //scatterRays.clear();
+        //proximityRays.clear();
+    }
 
     private World world = new World();
 
@@ -125,14 +134,19 @@ public class TestBedWindow extends JPanel implements Runnable {
             updateTrails();
           /*  for (ProximityExplosion p : proximityPoints) {
                 p.updateProximity(world.bodies);
-            }
-            for (Ray r : rays) {
-                r.updateProjection(world.bodies);
-            }
+            }*/
+            updateRays();/*
             for (RayScatter r : scatterRays) {
                 r.updateRays(world.bodies);
             }*/
             repaint();
+        }
+    }
+
+    private void updateRays() {
+        for (Ray r : rays) {
+            Raycast.action(r);
+            r.updateProjection(world.bodies);
         }
     }
 
@@ -213,10 +227,10 @@ public class TestBedWindow extends JPanel implements Runnable {
             }
           /*  for (ProximityExplosion p : proximityPoints) {
                 p.draw(g2d, paintSettings, camera);
-            }
+            }*/
             for (Ray r : rays) {
                 r.draw(g2d, paintSettings, camera);
-            }
+            }/*
             for (RayScatter r : scatterRays) {
                 r.draw(g2d, paintSettings, camera);
             }*/

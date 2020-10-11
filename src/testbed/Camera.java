@@ -29,13 +29,13 @@ public class Camera {
 
         Vectors2D output = new Vectors2D();
         output.x = w * panel.getWidth();
-        output.y = (1.0 - h) * (panel.getWidth()/aspectRatio);
+        output.y = (1.0 - h) * (panel.getWidth() / aspectRatio);
         return output;
     }
 
     public double scaleToScreenXValue(double radius) {
         double aspectRatio = width * 1.0 / height;
-        Vectors2D extents = new Vectors2D(aspectRatio *  200, 200);
+        Vectors2D extents = new Vectors2D(aspectRatio * 200, 200);
         extents = extents.scalar(zoom);
         Vectors2D upperBound = centre.addi(extents);
         Vectors2D lowerBound = centre.subtract(extents);
@@ -47,11 +47,12 @@ public class Camera {
         centre.add(v);
     }
 
-    public void setCentre(Vectors2D centre){
+    public void setCentre(Vectors2D centre) {
         this.centre = centre;
     }
 
-    public void setZoom(double zoom){
+    public void setZoom(double zoom) {
+        assert (zoom > 0);
         this.zoom = zoom;
     }
 }

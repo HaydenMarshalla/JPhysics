@@ -15,6 +15,7 @@ public class MenuInput implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
+        testbed.clearTestbedObjects();
         if (event.getActionCommand().equals("Arched bridged")) {
             ArchedBridge.load(testbed);
         } else if (event.getActionCommand().equals("Bouncing ball")) {
