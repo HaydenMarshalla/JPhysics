@@ -37,11 +37,11 @@ public class MenuInput implements ActionListener {
         } else if (event.getActionCommand().equals("Newtons cradle")) {
             NewtonsCradle.load(testbed);
         } else if (event.getActionCommand().equals("Particle explosion")) {
-            ParticleExplosion.load(testbed);
+            ParticleExplosionTest.load(testbed);
         } else if (event.getActionCommand().equals("Proximity explosion")) {
-            ProximityExplosion.load(testbed);
+            ProximityExplosionTest.load(testbed);
         } else if (event.getActionCommand().equals("Raycast explosion")) {
-            RaycastExplosion.load(testbed);
+            RaycastExplosionTest.load(testbed);
         } else if (event.getActionCommand().equals("Raycast")) {
             Raycast.load(testbed);
         } else if (event.getActionCommand().equals("Restitution")) {

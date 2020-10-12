@@ -48,7 +48,7 @@ public class ColourSettings {
     //Proximity explosion
     public Color proximity;
     public Color linesToObjects;
-    public final int CIRCLE_RADIUS = 5;
+    public final int CIRCLE_RADIUS = 3;
 
     //Rays
     public Color rayToBody;

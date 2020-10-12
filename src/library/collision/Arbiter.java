@@ -360,7 +360,11 @@ public class Arbiter {
         A.velocity.add(impulse.negativeVec().scalar(A.invMass));
         A.angularVelocity += A.invI * contactA.crossProduct(impulse.negativeVec());
 
-      /*  Vectors2D rv = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
+       // applyFriction(inverseMassSum, contactA, contactB);
+    }
+
+    private void applyFriction(double inverseMassSum, Vectors2D contactA, Vectors2D contactB) {
+        Vectors2D rv = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
         Vectors2D t = new Vectors2D(rv);
         t = t.add(normal.scalar(-rv.dotProduct(normal))).normalize();
@@ -372,17 +376,17 @@ public class Arbiter {
         Vectors2D tangentImpulse;
         double staticFriction = Math.min(A.staticFriction, B.staticFriction);
         double dynamicFriction = Math.min(A.dynamicFriction, B.dynamicFriction);
-        if (StrictMath.abs(jt) < j * staticFriction) {
+        if (StrictMath.abs(jt) < jt * staticFriction) {
             tangentImpulse = t.scalar(jt);
         } else {
-            tangentImpulse = t.scalar(j * -dynamicFriction);
+            tangentImpulse = t.scalar(jt * -dynamicFriction);
         }
 
         B.velocity.add(tangentImpulse.scalar(B.invMass));
         B.angularVelocity += B.invI * contactB.crossProduct(tangentImpulse);
 
         A.velocity.add(tangentImpulse.negativeVec().scalar(A.invMass));
-        A.angularVelocity += A.invI * contactA.crossProduct(tangentImpulse.negativeVec());*/
+        A.angularVelocity += A.invI * contactA.crossProduct(tangentImpulse.negativeVec());
     }
 
     private static boolean selectionBias(double a, double b) {

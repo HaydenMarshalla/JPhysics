@@ -3,8 +3,9 @@ package testbed.demo;
 import library.dynamics.Body;
 import library.dynamics.Ray;
 import library.dynamics.World;
-import library.utils.ColourSettings;
+import library.explosions.ProximityExplosion;
 import library.joints.Joint;
+import library.utils.ColourSettings;
 import library.math.Vectors2D;
 import testbed.Camera;
 import testbed.Trail;
@@ -73,13 +74,13 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     public void add(RayScatter rays) {
         scatterRays.add(rays);
-    }
+    }*/
 
-    public ArrayList<ProximityExplosion> proximityRays = new ArrayList<>();
+    public ArrayList<ProximityExplosion> proximityExp = new ArrayList<>();
 
     public void add(ProximityExplosion ex) {
-        proximityRays.add(ex);
-    }*/
+        proximityExp.add(ex);
+    }
 
     public void clearTestbedObjects() {
         camera.setCentre(new Vectors2D());
@@ -132,9 +133,7 @@ public class TestBedWindow extends JPanel implements Runnable {
             }
             world.step();
             updateTrails();
-          /*  for (ProximityExplosion p : proximityPoints) {
-                p.updateProximity(world.bodies);
-            }*/
+            updateProximityCast();
             updateRays();/*
             for (RayScatter r : scatterRays) {
                 r.updateRays(world.bodies);
@@ -143,8 +142,15 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
     }
 
+    private void updateProximityCast() {
+        for (ProximityExplosion p : proximityExp) {
+            p.updateProximity(world.bodies);
+        }
+    }
+
     private void updateRays() {
         for (Ray r : rays) {
+            //Remove this if you dont want the rays to rotate
             Raycast.action(r);
             r.updateProjection(world.bodies);
         }
@@ -222,12 +228,12 @@ public class TestBedWindow extends JPanel implements Runnable {
             }
             if (drawJoints) {
                 for (Joint j : world.joints) {
-                    j.draw(g2d, camera);
+                    j.draw(g2d, paintSettings, camera);
                 }
             }
-          /*  for (ProximityExplosion p : proximityPoints) {
+            for (ProximityExplosion p : proximityExp) {
                 p.draw(g2d, paintSettings, camera);
-            }*/
+            }
             for (Ray r : rays) {
                 r.draw(g2d, paintSettings, camera);
             }/*

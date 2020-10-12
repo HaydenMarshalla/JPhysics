@@ -21,12 +21,20 @@ public class Raycast {
             temp.addBody(b1);
 
             Body b2 = new Body(new Circle(20), 0, 100);
-            b2.setDensity(1);
+            b2.setDensity(0);
             temp.addBody(b2);
+
+            Body b3 = new Body(new Polygon(20.0, 20.0), 46, -140);
+            b3.setDensity(0);
+            temp.addBody(b3);
+
+            Body b4 = new Body(new Circle(20), 230, 400);
+            b4.setDensity(0);
+            temp.addBody(b4);
         }
 
         {
-            Ray r = new Ray(new Vectors2D(0, 1), 100);
+            Ray r = new Ray(new Vectors2D(0, 1), 1000);
             testBedWindow.add(r);
         }
     }
