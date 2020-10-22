@@ -1,16 +1,19 @@
 package testbed.demo.input;
 
 import library.math.Vectors2D;
+import testbed.Camera;
 import testbed.demo.TestBedWindow;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class MouseInput implements MouseListener {
-    private TestBedWindow testBed;
+    private final TestBedWindow TESTBED;
+    private final Camera CAMERA;
 
     public MouseInput(TestBedWindow testBedWindow) {
-        testBed = testBedWindow;
+        this.TESTBED = testBedWindow;
+        this.CAMERA = testBedWindow.getCamera();
     }
 
     @Override

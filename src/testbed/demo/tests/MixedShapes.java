@@ -18,8 +18,6 @@ public class MixedShapes {
 
         //Polygon containers
         {
-            Camera camera = testBedWindow.getCamera();
-
             Body b1 = new Body(new Polygon(15.0, 100.0), -300, 0);
             b1.setDensity(0);
             temp.addBody(b1);
@@ -31,36 +29,6 @@ public class MixedShapes {
             Body b3 = new Body(new Polygon(315.0, 15.0), 0, -115);
             b3.setDensity(0);
             temp.addBody(b3);
-        }
-
-        //Circle obstacles
-        {
-            for (int i = 0; i < 3; i++){
-                Body b1 = new Body(new Circle(20.0), -200 + (200*i), 150);
-                b1.setDensity(0);
-                temp.addBody(b1);
-            }
-
-            for (int i = 0; i < 2; i++){
-                Body b1 = new Body(new Circle(20.0), -100 + (200*i), 300);
-                b1.setDensity(0);
-                temp.addBody(b1);
-            }
-        }
-
-        {
-            Random r = new Random();
-            for (int i = 0; i < 20; i++) {
-                Body b = temp.addBody(new Body(new Circle(r.nextInt(30)+10), r.nextInt(400)-200,r.nextInt(300)+500));
-                b.restitution = 0.8;
-                temp.addBody(b);
-            }
-
-            for (int i = 0; i < 20; i++) {
-                Body b = temp.addBody(new Body(new Polygon(r.nextInt(40)+10,r.nextInt(7)+3), r.nextInt(400)-200,r.nextInt(300)+500));
-                b.restitution = 0.8;
-                temp.addBody(b);
-            }
         }
     }
 }

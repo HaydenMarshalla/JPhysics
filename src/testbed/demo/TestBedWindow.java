@@ -14,8 +14,6 @@ import testbed.demo.input.MenuInput;
 import testbed.demo.input.MouseInput;
 import testbed.demo.input.MouseScroll;
 
-import testbed.demo.tests.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -23,45 +21,48 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class TestBedWindow extends JPanel implements Runnable {
-    private final Camera camera;
+    private final Camera CAMERA;
 
     public void setCamera(Vectors2D centre, double zoom) {
-        camera.setCentre(centre);
-        camera.setZoom(zoom);
+        CAMERA.setCentre(centre);
+        CAMERA.setZoom(zoom);
     }
 
     public Camera getCamera() {
-        return camera;
+        return CAMERA;
     }
 
-    private final boolean antiAliasing;
-    private final Thread physicsThread;
+    private final boolean ANTIALIASING;
+    private final Thread PHYSICS_THREAD;
 
     //Input handler classes
-    KeyBoardInput keyInput;
-    MouseInput mouseInput;
-    MouseScroll mouseScrollInput;
+    private final KeyBoardInput KEY_INPUT;
+    private final MouseInput MOUSE_INPUT;
+    private final MouseScroll MOUSE_SCROLL_INPUT;
 
     public TestBedWindow(boolean antiAliasing) {
-        this.antiAliasing = antiAliasing;
+        this.ANTIALIASING = antiAliasing;
 
-        physicsThread = new Thread(this);
+        PHYSICS_THREAD = new Thread(this);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        camera = new Camera((int) screenSize.getWidth(), (int) screenSize.getHeight(), this);
+        CAMERA = new Camera((int) screenSize.getWidth(), (int) screenSize.getHeight(), this);
 
-        mouseInput = new MouseInput(this);
-        addMouseListener(mouseInput);
+        MOUSE_INPUT = new MouseInput(this);
+        addMouseListener(MOUSE_INPUT);
 
-        keyInput = new KeyBoardInput(camera);
-        addKeyListener(keyInput);
+        KEY_INPUT = new KeyBoardInput(this);
+        addKeyListener(KEY_INPUT);
 
-        mouseScrollInput = new MouseScroll(camera);
-        addMouseWheelListener(mouseScrollInput);
+        MOUSE_SCROLL_INPUT = new MouseScroll(this);
+        addMouseWheelListener(MOUSE_SCROLL_INPUT);
+    }
 
-        physicsThread.start();
+    public void startThread() {
+        PHYSICS_THREAD.start();
     }
 
     public ArrayList<Ray> rays = new ArrayList<>();
@@ -69,26 +70,11 @@ public class TestBedWindow extends JPanel implements Runnable {
     public void add(Ray ray) {
         rays.add(ray);
     }
-/*
-    public ArrayList<RayScatter> scatterRays = new ArrayList<>();
-
-    public void add(RayScatter rays) {
-        scatterRays.add(rays);
-    }*/
 
     public ArrayList<ProximityExplosion> proximityExp = new ArrayList<>();
 
     public void add(ProximityExplosion ex) {
         proximityExp.add(ex);
-    }
-
-    public void clearTestbedObjects() {
-        camera.setCentre(new Vectors2D());
-        camera.setZoom(1.0);
-        trailsToBodies.clear();
-        rays.clear();
-        //scatterRays.clear();
-        //proximityRays.clear();
     }
 
     private World world = new World();
@@ -101,14 +87,52 @@ public class TestBedWindow extends JPanel implements Runnable {
         return world;
     }
 
-    private boolean running = true;
-    private volatile boolean paused = false;
-    private final Object pauseLock = new Object();
-
     public ArrayList<Trail> trailsToBodies = new ArrayList<>();
 
     public void add(Trail trail) {
         trailsToBodies.add(trail);
+    }
+
+    private boolean running = true;
+    private volatile boolean paused = false;
+    private final Object pauseLock = new Object();
+
+    public void stop() {
+        running = false;
+        resume();
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void resume() {
+        synchronized (pauseLock) {
+            paused = false;
+            pauseLock.notifyAll();
+        }
+    }
+
+    private void updateProximityCast() {
+        for (ProximityExplosion p : proximityExp) {
+            p.updateProximity(world.bodies);
+        }
+    }
+
+    private void updateRays() {
+        for (Ray r : rays) {
+            r.updateProjection(world.bodies);
+        }
+    }
+
+    private void updateTrails() {
+        for (Trail t : trailsToBodies) {
+            t.updateTrail();
+        }
     }
 
     @Override
@@ -131,51 +155,29 @@ public class TestBedWindow extends JPanel implements Runnable {
                     }
                 }
             }
-            world.step();
-            updateTrails();
-            updateProximityCast();
-            updateRays();/*
+            try {
+                world.step();
+                updateTrails();
+                updateProximityCast();
+                updateRays();
+            /*
             for (RayScatter r : scatterRays) {
                 r.updateRays(world.bodies);
             }*/
-            repaint();
+                repaint();
+            } catch (ConcurrentModificationException e) {
+            }
         }
     }
 
-    private void updateProximityCast() {
-        for (ProximityExplosion p : proximityExp) {
-            p.updateProximity(world.bodies);
-        }
-    }
-
-    private void updateRays() {
-        for (Ray r : rays) {
-            //Remove this if you dont want the rays to rotate
-            Raycast.action(r);
-            r.updateProjection(world.bodies);
-        }
-    }
-
-    public void stop() {
-        running = false;
-        resume();
-    }
-
-    public void pause() {
-        paused = true;
-    }
-
-    public void resume() {
-        synchronized (pauseLock) {
-            paused = false;
-            pauseLock.notifyAll();
-        }
-    }
-
-    private void updateTrails() {
-        for (Trail t : trailsToBodies) {
-            t.updateTrail();
-        }
+    public synchronized void clearTestbedObjects() {
+        CAMERA.setCentre(new Vectors2D());
+        CAMERA.setZoom(1.0);
+        world.clearWorld();
+        trailsToBodies.clear();
+        rays.clear();
+        //scatterRays.clear();
+        proximityExp.clear();
     }
 
     private ColourSettings paintSettings = new ColourSettings();
@@ -187,14 +189,14 @@ public class TestBedWindow extends JPanel implements Runnable {
     private boolean drawContactNormals = false;
     private boolean drawContactImpulse = false;
     private boolean drawFrictionImpulse = false;
-    private boolean drawCOMs = false;
+    private boolean drawCOMs = true;
     private boolean drawGrid = false;
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        if (antiAliasing) {
+        if (ANTIALIASING) {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
         if (world != null) {
@@ -204,10 +206,10 @@ public class TestBedWindow extends JPanel implements Runnable {
             drawTrails(g2d);
             for (Body b : world.bodies) {
                 if (drawShapes) {
-                    b.shape.draw(g2d, paintSettings, camera);
+                    b.shape.draw(g2d, paintSettings, CAMERA);
                 }
                 if (drawAABBs) {
-                    b.shape.drawAABB(g2d, paintSettings, camera);
+                    b.shape.drawAABB(g2d, paintSettings, CAMERA);
                 }
                 if (drawContactPoints) {
                     //TO DO
@@ -223,19 +225,19 @@ public class TestBedWindow extends JPanel implements Runnable {
                 }
                 if (drawCOMs) {
                     //TO DO
-                    b.shape.drawCOMS(g2d, paintSettings, camera);
+                    b.shape.drawCOMS(g2d, paintSettings, CAMERA);
                 }
             }
             if (drawJoints) {
                 for (Joint j : world.joints) {
-                    j.draw(g2d, paintSettings, camera);
+                    j.draw(g2d, paintSettings, CAMERA);
                 }
             }
             for (ProximityExplosion p : proximityExp) {
-                p.draw(g2d, paintSettings, camera);
+                p.draw(g2d, paintSettings, CAMERA);
             }
             for (Ray r : rays) {
-                r.draw(g2d, paintSettings, camera);
+                r.draw(g2d, paintSettings, CAMERA);
             }/*
             for (RayScatter r : scatterRays) {
                 r.draw(g2d, paintSettings, camera);
@@ -256,12 +258,12 @@ public class TestBedWindow extends JPanel implements Runnable {
                 g2d.setColor(paintSettings.gridAxis);
             }
 
-            Vectors2D currentMinY = camera.scaleToScreen(new Vectors2D(minXY + i, minXY));
-            Vectors2D currentMaxY = camera.scaleToScreen(new Vectors2D(minXY + i, maxXY));
+            Vectors2D currentMinY = CAMERA.scaleToScreen(new Vectors2D(minXY + i, minXY));
+            Vectors2D currentMaxY = CAMERA.scaleToScreen(new Vectors2D(minXY + i, maxXY));
             g2d.draw(new Line2D.Double(currentMinY.x, currentMinY.y, currentMaxY.x, currentMaxY.y));
 
-            Vectors2D currentMinX = camera.scaleToScreen(new Vectors2D(minXY, minXY + i));
-            Vectors2D currentMaxX = camera.scaleToScreen(new Vectors2D(maxXY, minXY + i));
+            Vectors2D currentMinX = CAMERA.scaleToScreen(new Vectors2D(minXY, minXY + i));
+            Vectors2D currentMaxX = CAMERA.scaleToScreen(new Vectors2D(maxXY, minXY + i));
             g2d.draw(new Line2D.Double(currentMinX.x, currentMinX.y, currentMaxX.x, currentMaxX.y));
 
             if (i == projection) {
@@ -280,7 +282,7 @@ public class TestBedWindow extends JPanel implements Runnable {
                 if (v == null) {
                     break;
                 } else {
-                    v = camera.scaleToScreen(v);
+                    v = CAMERA.scaleToScreen(v);
                     if (i == 0) {
                         s.moveTo(v.x, v.y);
                     } else {
@@ -301,7 +303,6 @@ public class TestBedWindow extends JPanel implements Runnable {
             window.setPreferredSize(new Dimension(windowWidth, windowHeight));
             window.pack();
             window.setLocationRelativeTo(null);
-            window.setVisible(true);
             gameScreen.setFocusable(true);
             gameScreen.setOpaque(true);
             gameScreen.setBackground(gameScreen.paintSettings.background);
@@ -311,11 +312,6 @@ public class TestBedWindow extends JPanel implements Runnable {
             menu.setMnemonic(KeyEvent.VK_M);
             menuBar.add(menu);
             window.setJMenuBar(menuBar);
-
-            JMenuItem archedBridgedItem = new JMenuItem("Arched bridged");
-            archedBridgedItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.ALT_DOWN_MASK));
-            menu.add(archedBridgedItem);
-            archedBridgedItem.addActionListener(new MenuInput(gameScreen));
 
             JMenuItem bouncingBall = new JMenuItem("Bouncing ball");
             bouncingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK));
@@ -401,6 +397,8 @@ public class TestBedWindow extends JPanel implements Runnable {
             wreckingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.ALT_DOWN_MASK));
             menu.add(wreckingBall);
             wreckingBall.addActionListener(new MenuInput(gameScreen));
+
+            window.setVisible(true);
         }
     }
 }

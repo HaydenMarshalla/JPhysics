@@ -1,5 +1,6 @@
 package testbed.demo.input;
 
+import testbed.Camera;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.*;
 
@@ -7,51 +8,51 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuInput implements ActionListener {
-    private final TestBedWindow testbed;
+    private final TestBedWindow TESTBED;
+    private final Camera CAMERA;
 
-    public MenuInput(TestBedWindow gameScreen) {
-        this.testbed = gameScreen;
+    public MenuInput(TestBedWindow testBedWindow) {
+        this.TESTBED = testBedWindow;
+        this.CAMERA = testBedWindow.getCamera();
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        testbed.clearTestbedObjects();
-        if (event.getActionCommand().equals("Arched bridged")) {
-            ArchedBridge.load(testbed);
-        } else if (event.getActionCommand().equals("Bouncing ball")) {
-            BouncingBall.load(testbed);
+        TESTBED.clearTestbedObjects();
+        if (event.getActionCommand().equals("Bouncing ball")) {
+            BouncingBall.load(TESTBED);
         } else if (event.getActionCommand().equals("Car")) {
-            Car.load(testbed);
+            Car.load(TESTBED);
         } else if (event.getActionCommand().equals("Chains")) {
-            Chains.load(testbed);
+            Chains.load(TESTBED);
         } else if (event.getActionCommand().equals("Compound bodies")) {
-            CompoundBodies.load(testbed);
+            CompoundBodies.load(TESTBED);
         } else if (event.getActionCommand().equals("Drag")) {
-            Drag.load(testbed);
+            Drag.load(TESTBED);
         } else if (event.getActionCommand().equals("Friction")) {
-            Friction.load(testbed);
+            Friction.load(TESTBED);
         } else if (event.getActionCommand().equals("Line of sight")) {
-            LineOfSight.load(testbed);
+            LineOfSight.load(TESTBED);
         } else if (event.getActionCommand().equals("Mixed shapes")) {
-            MixedShapes.load(testbed);
+            MixedShapes.load(TESTBED);
         } else if (event.getActionCommand().equals("Newtons cradle")) {
-            NewtonsCradle.load(testbed);
+            NewtonsCradle.load(TESTBED);
         } else if (event.getActionCommand().equals("Particle explosion")) {
-            ParticleExplosionTest.load(testbed);
+            ParticleExplosionTest.load(TESTBED);
         } else if (event.getActionCommand().equals("Proximity explosion")) {
-            ProximityExplosionTest.load(testbed);
+            ProximityExplosionTest.load(TESTBED);
         } else if (event.getActionCommand().equals("Raycast explosion")) {
-            RaycastExplosionTest.load(testbed);
+            RaycastExplosionTest.load(TESTBED);
         } else if (event.getActionCommand().equals("Raycast")) {
-            Raycast.load(testbed);
+            Raycast.load(TESTBED);
         } else if (event.getActionCommand().equals("Restitution")) {
-            Restitution.load(testbed);
+            Restitution.load(TESTBED);
         } else if (event.getActionCommand().equals("Stacked objects")) {
-            StackedObjects.load(testbed);
+            StackedObjects.load(TESTBED);
         } else if (event.getActionCommand().equals("Trebuchet")) {
-            Trebuchet.load(testbed);
+            Trebuchet.load(TESTBED);
         } else if (event.getActionCommand().equals("Wrecking ball")) {
-            WreckingBall.load(testbed);
+            WreckingBall.load(TESTBED);
         }
     }
 }

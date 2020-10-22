@@ -2,17 +2,20 @@ package testbed.demo.input;
 
 import testbed.Camera;
 import library.math.Vectors2D;
+import testbed.demo.TestBedWindow;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyBoardInput implements KeyListener {
-    private final Camera camera;
+    private final TestBedWindow TESTBED;
+    private final Camera CAMERA;
 
     private boolean shift = false;
 
-    public KeyBoardInput(Camera camera) {
-        this.camera = camera;
+    public KeyBoardInput(TestBedWindow testBedWindow) {
+        this.TESTBED = testBedWindow;
+        this.CAMERA = testBedWindow.getCamera();
     }
 
     @Override
@@ -25,14 +28,20 @@ public class KeyBoardInput implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
             shift = true;
         }
-        if (e.getKeyCode() == KeyEvent.VK_D && shift) {
-            camera.transformCentre(new Vectors2D(10, 0));
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if (TESTBED.isPaused()) {
+                TESTBED.resume();
+            } else {
+                TESTBED.pause();
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_D && shift) {
+            CAMERA.transformCentre(new Vectors2D(10, 0));
         } else if (e.getKeyCode() == KeyEvent.VK_A && shift) {
-            camera.transformCentre(new Vectors2D(-10, 0));
+            CAMERA.transformCentre(new Vectors2D(-10, 0));
         } else if (e.getKeyCode() == KeyEvent.VK_W && shift) {
-            camera.transformCentre(new Vectors2D(0, 10));
+            CAMERA.transformCentre(new Vectors2D(0, 10));
         } else if (e.getKeyCode() == KeyEvent.VK_S && shift) {
-            camera.transformCentre(new Vectors2D(0, -10));
+            CAMERA.transformCentre(new Vectors2D(0, -10));
         }
     }
 

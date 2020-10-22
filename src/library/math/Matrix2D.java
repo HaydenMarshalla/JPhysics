@@ -43,4 +43,12 @@ public class Matrix2D {
         out.y = col2.x * v.x + col2.y * v.y;
         return out;
     }
+
+    public static void main(String[] args) {
+        Vectors2D test = new Vectors2D(5, 0);
+        Matrix2D m = new Matrix2D();
+        m.set(0.2);
+        m.mul(test);
+        System.out.println(test);
+    }
 }

@@ -55,14 +55,8 @@ public class World {
         broadPhaseCheck();
 
         //Applies tentative velocities
-        for (Body b : bodies) {
-            if (b.invMass == 0) {
-                continue;
-            }
 
-            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).scalar(dt));
-            b.angularVelocity += dt * b.invI * b.torque;
-        }
+        applyForces(dt);
 
         //Resolve collisions
         for (int i = 0; i < Settings.ITERATIONS; i++) {
@@ -76,6 +70,10 @@ public class World {
 
         //Integrate positions
         for (Body b : bodies) {
+            if (b.invMass == 0) {
+                continue;
+            }
+
             Vectors2D posChange = b.velocity.scalar(dt);
             b.position.add(posChange);
 
@@ -90,6 +88,27 @@ public class World {
         //Correct positional errors from the discrete collisions
         for (Arbiter contact : contacts) {
             contact.penetrationResolution();
+        }
+    }
+
+    private double dragValue = 0;
+
+    public void setDragValue(double i) {
+        dragValue = i;
+    }
+
+    private Vectors2D applyDrag(Body b) {
+        return b.velocity.scalar(-dragValue * b.mass);
+    }
+
+    private void applyForces(double dt) {
+        for (Body b : bodies) {
+            if (b.invMass == 0) {
+                continue;
+            }
+
+            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).addi(applyDrag(b)).scalar(dt));
+            b.angularVelocity += dt * b.invI * b.torque;
         }
     }
 
@@ -117,16 +136,6 @@ public class World {
         if (contactQuery.contactCount > 0) {
             contacts.add(contactQuery);
         }
-    }
-
-    private double dragValue = 0;
-
-    public void setDragValue(double i) {
-        dragValue = i;
-    }
-
-    private void applyDrag(Body b) {
-        b.force = b.velocity.scalar(-dragValue * b.mass);
     }
 
     public void clearWorld() {

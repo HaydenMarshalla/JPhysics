@@ -34,8 +34,6 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 - Explosions
 - Multi body shapes
     - collisions optimizations for said shapes
-- Tech demos
-- GUI
 - Demos illustrating limitations within the engine
 - Position resolution handling
 - Dynamic tree broadphase

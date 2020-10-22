@@ -326,6 +326,14 @@ public class Arbiter {
     }
 
     public void penetrationResolution() {
+        if (penetration < 0) {
+            return;
+        }
+
+        double correction = penetration / (A.invMass + B.invMass) * Settings.PENETRATION_CORRECTION;
+
+        A.position = A.position.add(normal.scalar(-A.invMass * correction));
+        B.position = B.position.add(normal.scalar(B.invMass * correction));
 
     }
 
@@ -360,26 +368,25 @@ public class Arbiter {
         A.velocity.add(impulse.negativeVec().scalar(A.invMass));
         A.angularVelocity += A.invI * contactA.crossProduct(impulse.negativeVec());
 
-       // applyFriction(inverseMassSum, contactA, contactB);
+        applyFriction(inverseMassSum, contactA, contactB, j);
     }
 
-    private void applyFriction(double inverseMassSum, Vectors2D contactA, Vectors2D contactB) {
+    private void applyFriction(double inverseMassSum, Vectors2D contactA, Vectors2D contactB, double j) {
         Vectors2D rv = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
         Vectors2D t = new Vectors2D(rv);
-        t = t.add(normal.scalar(-rv.dotProduct(normal))).normalize();
+        t = t.addi(normal.scalar(-rv.dotProduct(normal))).getNormalized();
 
         double jt = -rv.dotProduct(t);
         jt /= inverseMassSum;
-        jt /= contactCount;
 
         Vectors2D tangentImpulse;
         double staticFriction = Math.min(A.staticFriction, B.staticFriction);
         double dynamicFriction = Math.min(A.dynamicFriction, B.dynamicFriction);
-        if (StrictMath.abs(jt) < jt * staticFriction) {
+        if (StrictMath.abs(jt) < j * staticFriction) {
             tangentImpulse = t.scalar(jt);
         } else {
-            tangentImpulse = t.scalar(jt * -dynamicFriction);
+            tangentImpulse = t.scalar(j * -dynamicFriction);
         }
 
         B.velocity.add(tangentImpulse.scalar(B.invMass));

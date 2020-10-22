@@ -22,6 +22,10 @@ public class Body {
     public Shapes shape;
     public AABB aabb;
 
+    public double linearDampening;
+    public double angularDampening;
+    public double gravityScale;
+
     public Body(Shapes shape, double x, double y) {
         this.shape = shape;
         this.shape.body = this;
@@ -35,8 +39,12 @@ public class Body {
 
         restitution = 0.8;
 
-        staticFriction = 0.5;
-        dynamicFriction = 0.4;
+        staticFriction = 0.2;
+        dynamicFriction = 0.2;
+
+        linearDampening = 0;
+        angularDampening = 0;
+        gravityScale = 1;
 
         orientation = 0;
         shape.orient.set(orientation);
