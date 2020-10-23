@@ -3,6 +3,7 @@ package testbed.demo;
 import library.dynamics.Body;
 import library.dynamics.Ray;
 import library.dynamics.World;
+import library.explosions.ParticleExplosion;
 import library.explosions.ProximityExplosion;
 import library.joints.Joint;
 import library.utils.ColourSettings;
@@ -13,6 +14,8 @@ import testbed.demo.input.KeyBoardInput;
 import testbed.demo.input.MenuInput;
 import testbed.demo.input.MouseInput;
 import testbed.demo.input.MouseScroll;
+import testbed.demo.tests.ParticleExplosionTest;
+import testbed.demo.tests.test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,6 +62,7 @@ public class TestBedWindow extends JPanel implements Runnable {
 
         MOUSE_SCROLL_INPUT = new MouseScroll(this);
         addMouseWheelListener(MOUSE_SCROLL_INPUT);
+        ParticleExplosionTest.load(this);
     }
 
     public void startThread() {
@@ -75,6 +79,15 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     public void add(ProximityExplosion ex) {
         proximityExp.add(ex);
+    }
+
+    public ArrayList<ParticleExplosion> particles = new ArrayList<>();
+
+    public void add(ParticleExplosion p) {
+        particles.add(p);
+        for (Body b : p.getParticles()){
+            trailsToBodies.add(new Trail(1000, 100, b));
+        }
     }
 
     private World world = new World();
@@ -99,7 +112,7 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     public void stop() {
         running = false;
-        resume();
+        PHYSICS_THREAD.interrupt();
     }
 
     public void pause() {
@@ -160,24 +173,19 @@ public class TestBedWindow extends JPanel implements Runnable {
                 updateTrails();
                 updateProximityCast();
                 updateRays();
-            /*
-            for (RayScatter r : scatterRays) {
-                r.updateRays(world.bodies);
-            }*/
                 repaint();
             } catch (ConcurrentModificationException e) {
             }
         }
     }
 
-    public synchronized void clearTestbedObjects() {
-        CAMERA.setCentre(new Vectors2D());
-        CAMERA.setZoom(1.0);
+    public void clearTestbedObjects() {
+        CAMERA.reset();
         world.clearWorld();
         trailsToBodies.clear();
         rays.clear();
-        //scatterRays.clear();
         proximityExp.clear();
+        repaint();
     }
 
     private ColourSettings paintSettings = new ColourSettings();
@@ -224,7 +232,6 @@ public class TestBedWindow extends JPanel implements Runnable {
                     //TO DO
                 }
                 if (drawCOMs) {
-                    //TO DO
                     b.shape.drawCOMS(g2d, paintSettings, CAMERA);
                 }
             }
@@ -238,10 +245,7 @@ public class TestBedWindow extends JPanel implements Runnable {
             }
             for (Ray r : rays) {
                 r.draw(g2d, paintSettings, CAMERA);
-            }/*
-            for (RayScatter r : scatterRays) {
-                r.draw(g2d, paintSettings, camera);
-            }*/
+            }
         }
     }
 

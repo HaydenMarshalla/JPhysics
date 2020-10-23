@@ -10,8 +10,10 @@ public class ParticleExplosionTest {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
 
-        ParticleExplosion p = new ParticleExplosion(new Vectors2D(), temp, 10);
-        p.createParticles(1, 100000);
+        ParticleExplosion p = new ParticleExplosion(new Vectors2D(), temp, 100);
+        p.createParticles(1, 100000,30);
         p.applyBlastImpulse(100);
+
+        testBedWindow.add(p);
     }
 }

@@ -4,6 +4,13 @@ public class Matrix2D {
     public Vectors2D col1 = new Vectors2D();
     public Vectors2D col2 = new Vectors2D();
 
+    public Matrix2D() {
+    }
+
+    public Matrix2D(double radians) {
+        this.set(radians);
+    }
+
     public void set(double radians) {
         double c = StrictMath.cos(radians);
         double s = StrictMath.sin(radians);

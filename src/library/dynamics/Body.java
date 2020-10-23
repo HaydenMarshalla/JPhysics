@@ -25,6 +25,7 @@ public class Body {
     public double linearDampening;
     public double angularDampening;
     public double gravityScale;
+    public boolean affectedByGravity;
 
     public Body(Shapes shape, double x, double y) {
         this.shape = shape;
@@ -39,8 +40,8 @@ public class Body {
 
         restitution = 0.8;
 
-        staticFriction = 0.2;
-        dynamicFriction = 0.2;
+        staticFriction = 0.5;
+        dynamicFriction = 0.3;
 
         linearDampening = 0;
         angularDampening = 0;
@@ -51,6 +52,8 @@ public class Body {
 
         this.shape.calcMass(1.0);
         this.shape.createAABB();
+
+        affectedByGravity = true;
     }
 
     public void setOrientation(double delta) {

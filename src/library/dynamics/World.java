@@ -55,7 +55,6 @@ public class World {
         broadPhaseCheck();
 
         //Applies tentative velocities
-
         applyForces(dt);
 
         //Resolve collisions
@@ -97,7 +96,7 @@ public class World {
         dragValue = i;
     }
 
-    private Vectors2D applyDrag(Body b) {
+    private Vectors2D applyLinearDrag(Body b) {
         return b.velocity.scalar(-dragValue * b.mass);
     }
 
@@ -107,7 +106,12 @@ public class World {
                 continue;
             }
 
-            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).addi(applyDrag(b)).scalar(dt));
+            Vectors2D acceleration = b.force.scalar(b.invMass);
+
+            if (b.affectedByGravity){
+                acceleration.add(gravity);
+            }
+            b.velocity.add(acceleration.addi(applyLinearDrag(b)).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
     }
