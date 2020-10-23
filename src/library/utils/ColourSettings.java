@@ -35,6 +35,7 @@ public class ColourSettings {
     public Color contactImpulse;
     public Color frictionImpulse;
     public Color trail;
+    public final int COM_RADIUS = 5;
 
     //Static objects
     public Color staticFill;

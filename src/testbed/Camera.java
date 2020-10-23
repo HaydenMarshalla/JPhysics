@@ -55,4 +55,9 @@ public class Camera {
         assert (zoom > 0);
         this.zoom = zoom;
     }
+
+    public void reset() {
+        setCentre(new Vectors2D());
+        setZoom(1.0);
+    }
 }

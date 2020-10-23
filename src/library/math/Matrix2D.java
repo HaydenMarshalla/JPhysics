@@ -47,8 +47,14 @@ public class Matrix2D {
     public static void main(String[] args) {
         Vectors2D test = new Vectors2D(5, 0);
         Matrix2D m = new Matrix2D();
-        m.set(0.2);
+        m.set(0);
+        System.out.println(m);
         m.mul(test);
         System.out.println(test);
+    }
+
+    @Override
+    public String toString() {
+        return col1.x + " : " + col1.y + "\n" + col2.x + " : " + col2.y;
     }
 }
