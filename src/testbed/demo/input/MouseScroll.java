@@ -6,13 +6,9 @@ import testbed.demo.TestBedWindow;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-public class MouseScroll implements MouseWheelListener {
-    private final TestBedWindow TESTBED;
-    private final Camera CAMERA;
-
+public class MouseScroll extends TestbedControls implements MouseWheelListener {
     public MouseScroll(TestBedWindow testBedWindow) {
-        this.TESTBED = testBedWindow;
-        this.CAMERA = testBedWindow.getCamera();
+        super(testBedWindow);
     }
 
     @Override

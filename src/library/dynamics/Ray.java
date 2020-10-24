@@ -121,13 +121,13 @@ public class Ray {
 
     public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         g.setColor(paintSettings.projectedRay);
-        Vectors2D epicenter = camera.scaleToScreen(startPoint);
-        Vectors2D endPoint = camera.scaleToScreen(direction.scalar(distance));
+        Vectors2D epicenter = camera.convertToScreen(startPoint);
+        Vectors2D endPoint = camera.convertToScreen(direction.scalar(distance));
         g.draw(new Line2D.Double(epicenter.x, epicenter.y, endPoint.x, endPoint.y));
 
         g.setColor(paintSettings.rayToBody);
         if (intersectingBodiesInfo != null) {
-            Vectors2D intersection = camera.scaleToScreen(intersectingBodiesInfo.getCoord());
+            Vectors2D intersection = camera.convertToScreen(intersectingBodiesInfo.getCoord());
             g.draw(new Line2D.Double(epicenter.x, epicenter.y, intersection.x, intersection.y));
 
             double circleRadius = camera.scaleToScreenXValue(paintSettings.rayEndPointCircleSize);

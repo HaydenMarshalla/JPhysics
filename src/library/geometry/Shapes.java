@@ -27,8 +27,8 @@ public abstract class Shapes {
         g.setColor(paintSettings.aabb);
 
         Path2D polyBB = new Path2D.Double();
-        Vectors2D min = camera.scaleToScreen(body.aabb.getMin().addi(body.position));
-        Vectors2D max = camera.scaleToScreen(body.aabb.getMax().addi(body.position));
+        Vectors2D min = camera.convertToScreen(body.aabb.getMin().addi(body.position));
+        Vectors2D max = camera.convertToScreen(body.aabb.getMax().addi(body.position));
 
         polyBB.moveTo(min.x, min.y);
         polyBB.lineTo(min.x, max.y);
@@ -45,13 +45,13 @@ public abstract class Shapes {
         Vectors2D line = new Vectors2D(paintSettings.COM_RADIUS, 0);
         orient.mul(line);
 
-        Vectors2D beginningOfLine = camera.scaleToScreen(circleCentre.addi(line));
-        Vectors2D endOfLine = camera.scaleToScreen(circleCentre.subtract(line));
+        Vectors2D beginningOfLine = camera.convertToScreen(circleCentre.addi(line));
+        Vectors2D endOfLine = camera.convertToScreen(circleCentre.subtract(line));
         Line2D lin1 = new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y);
         g.draw(lin1);
 
-        beginningOfLine = camera.scaleToScreen(circleCentre.addi(line.normal()));
-        endOfLine = camera.scaleToScreen(circleCentre.subtract(line.normal()));
+        beginningOfLine = camera.convertToScreen(circleCentre.addi(line.normal()));
+        endOfLine = camera.convertToScreen(circleCentre.subtract(line.normal()));
         Line2D lin2 = new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y);
         g.draw(lin2);
     }

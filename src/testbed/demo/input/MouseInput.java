@@ -1,19 +1,14 @@
 package testbed.demo.input;
 
 import library.math.Vectors2D;
-import testbed.Camera;
 import testbed.demo.TestBedWindow;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class MouseInput implements MouseListener {
-    private final TestBedWindow TESTBED;
-    private final Camera CAMERA;
-
+public class MouseInput extends TestbedControls implements MouseListener {
     public MouseInput(TestBedWindow testBedWindow) {
-        this.TESTBED = testBedWindow;
-        this.CAMERA = testBedWindow.getCamera();
+        super(testBedWindow);
     }
 
     @Override
@@ -28,7 +23,7 @@ public class MouseInput implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         Vectors2D clickPosition = new Vectors2D(e.getX(), e.getY());
-        //TO DO: screen to world
+        Vectors2D worldPosition = CAMERA.convertToScreen(clickPosition);
     }
 
     @Override

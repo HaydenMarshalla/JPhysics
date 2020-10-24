@@ -1,5 +1,6 @@
 package testbed.demo.input;
 
+import library.explosions.ProximityExplosion;
 import testbed.Camera;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.*;
@@ -7,18 +8,15 @@ import testbed.demo.tests.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MenuInput implements ActionListener {
-    private final TestBedWindow TESTBED;
-    private final Camera CAMERA;
-
+public class MenuInput extends TestbedControls implements ActionListener {
     public MenuInput(TestBedWindow testBedWindow) {
-        this.TESTBED = testBedWindow;
-        this.CAMERA = testBedWindow.getCamera();
+        super(testBedWindow);
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
         TESTBED.clearTestbedObjects();
+        resetUniquieEventHandlers();
         if (event.getActionCommand().equals("Bouncing ball")) {
             BouncingBall.load(TESTBED);
         } else if (event.getActionCommand().equals("Car")) {
@@ -54,5 +52,9 @@ public class MenuInput implements ActionListener {
         } else if (event.getActionCommand().equals("Wrecking ball")) {
             WreckingBall.load(TESTBED);
         }
+    }
+
+    private void resetUniquieEventHandlers() {
+        ProximityExplosionTest.active = false;
     }
 }

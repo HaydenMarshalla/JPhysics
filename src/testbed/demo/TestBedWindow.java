@@ -10,17 +10,14 @@ import library.utils.ColourSettings;
 import library.math.Vectors2D;
 import testbed.Camera;
 import testbed.Trail;
-import testbed.demo.input.KeyBoardInput;
-import testbed.demo.input.MenuInput;
-import testbed.demo.input.MouseInput;
-import testbed.demo.input.MouseScroll;
-import testbed.demo.tests.ParticleExplosionTest;
-import testbed.demo.tests.test;
+import testbed.demo.input.*;
+import testbed.demo.tests.ProximityExplosionTest;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -45,6 +42,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private final KeyBoardInput KEY_INPUT;
     private final MouseInput MOUSE_INPUT;
     private final MouseScroll MOUSE_SCROLL_INPUT;
+    private final MouseMotionListener MOUSE_MOTION_INPUT;
 
     public TestBedWindow(boolean antiAliasing) {
         this.ANTIALIASING = antiAliasing;
@@ -62,7 +60,11 @@ public class TestBedWindow extends JPanel implements Runnable {
 
         MOUSE_SCROLL_INPUT = new MouseScroll(this);
         addMouseWheelListener(MOUSE_SCROLL_INPUT);
-        ParticleExplosionTest.load(this);
+
+        MOUSE_MOTION_INPUT = new MouseMovement(this);
+        addMouseMotionListener(MOUSE_MOTION_INPUT);
+
+        ProximityExplosionTest.load(this);
     }
 
     public void startThread() {
@@ -75,6 +77,10 @@ public class TestBedWindow extends JPanel implements Runnable {
         rays.add(ray);
     }
 
+    public ArrayList<ProximityExplosion> getProximityExp() {
+        return proximityExp;
+    }
+
     public ArrayList<ProximityExplosion> proximityExp = new ArrayList<>();
 
     public void add(ProximityExplosion ex) {
@@ -85,7 +91,7 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     public void add(ParticleExplosion p) {
         particles.add(p);
-        for (Body b : p.getParticles()){
+        for (Body b : p.getParticles()) {
             trailsToBodies.add(new Trail(1000, 100, b));
         }
     }
@@ -262,12 +268,12 @@ public class TestBedWindow extends JPanel implements Runnable {
                 g2d.setColor(paintSettings.gridAxis);
             }
 
-            Vectors2D currentMinY = CAMERA.scaleToScreen(new Vectors2D(minXY + i, minXY));
-            Vectors2D currentMaxY = CAMERA.scaleToScreen(new Vectors2D(minXY + i, maxXY));
+            Vectors2D currentMinY = CAMERA.convertToScreen(new Vectors2D(minXY + i, minXY));
+            Vectors2D currentMaxY = CAMERA.convertToScreen(new Vectors2D(minXY + i, maxXY));
             g2d.draw(new Line2D.Double(currentMinY.x, currentMinY.y, currentMaxY.x, currentMaxY.y));
 
-            Vectors2D currentMinX = CAMERA.scaleToScreen(new Vectors2D(minXY, minXY + i));
-            Vectors2D currentMaxX = CAMERA.scaleToScreen(new Vectors2D(maxXY, minXY + i));
+            Vectors2D currentMinX = CAMERA.convertToScreen(new Vectors2D(minXY, minXY + i));
+            Vectors2D currentMaxX = CAMERA.convertToScreen(new Vectors2D(maxXY, minXY + i));
             g2d.draw(new Line2D.Double(currentMinX.x, currentMinX.y, currentMaxX.x, currentMaxX.y));
 
             if (i == projection) {
@@ -286,7 +292,7 @@ public class TestBedWindow extends JPanel implements Runnable {
                 if (v == null) {
                     break;
                 } else {
-                    v = CAMERA.scaleToScreen(v);
+                    v = CAMERA.convertToScreen(v);
                     if (i == 0) {
                         s.moveTo(v.x, v.y);
                     } else {

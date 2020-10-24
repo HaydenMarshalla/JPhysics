@@ -1,21 +1,16 @@
 package testbed.demo.input;
 
-import testbed.Camera;
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyBoardInput implements KeyListener {
-    private final TestBedWindow TESTBED;
-    private final Camera CAMERA;
-
+public class KeyBoardInput extends TestbedControls implements KeyListener {
     private boolean shift = false;
 
     public KeyBoardInput(TestBedWindow testBedWindow) {
-        this.TESTBED = testBedWindow;
-        this.CAMERA = testBedWindow.getCamera();
+        super(testBedWindow);
     }
 
     @Override

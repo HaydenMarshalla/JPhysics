@@ -119,7 +119,7 @@ public class Polygon extends Shapes {
             Vectors2D v = new Vectors2D(this.vertices[i]);
             orient.mul(v);
             v.add(body.position);
-            v = camera.scaleToScreen(v);
+            v = camera.convertToScreen(v);
             if (i == 0) {
                 s.moveTo(v.x, v.y);
             } else {

@@ -18,18 +18,34 @@ public class Camera {
         panel = testWindow;
     }
 
-    public Vectors2D scaleToScreen(Vectors2D v) {
+    public Vectors2D convertToScreen(Vectors2D v) {
         double aspectRatio = width * 1.0 / height;
         Vectors2D extents = new Vectors2D(aspectRatio * 200, 200);
         extents = extents.scalar(zoom);
         Vectors2D upperBound = centre.addi(extents);
         Vectors2D lowerBound = centre.subtract(extents);
-        double w = (v.x - lowerBound.x) / (upperBound.x - lowerBound.x);
-        double h = (v.y - lowerBound.y) / (upperBound.y - lowerBound.y);
+        double boxWidth = (v.x - lowerBound.x) / (upperBound.x - lowerBound.x);
+        double boxHeight = (v.y - lowerBound.y) / (upperBound.y - lowerBound.y);
 
         Vectors2D output = new Vectors2D();
-        output.x = w * panel.getWidth();
-        output.y = (1.0 - h) * (panel.getWidth() / aspectRatio);
+        output.x = boxWidth * panel.getWidth();
+        output.y = (1.0 - boxHeight) * panel.getHeight();
+        return output;
+    }
+
+    public Vectors2D convertToWorld(Vectors2D vec) {
+        double aspectRatio = width * 1.0 / height;
+        Vectors2D extents = new Vectors2D(aspectRatio * 200, 200);
+        extents = extents.scalar(zoom);
+        Vectors2D upperBound = centre.addi(extents);
+        Vectors2D lowerBound = centre.subtract(extents);
+
+        Vectors2D output = new Vectors2D();
+        double distAlongWindowXAxis = vec.x / panel.getWidth();
+        output.x = (1.0 - distAlongWindowXAxis) * lowerBound.x + distAlongWindowXAxis * upperBound.x;
+
+        double distAlongWindowYAxis = (panel.getHeight() - vec.y) / panel.getHeight();
+        output.y = (1.0 - distAlongWindowYAxis) * lowerBound.y + distAlongWindowYAxis * upperBound.y;
         return output;
     }
 
