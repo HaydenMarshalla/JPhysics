@@ -4,7 +4,7 @@ import library.dynamics.Body;
 import testbed.Camera;
 import library.math.Matrix2D;
 import library.math.Vectors2D;
-import library.utils.ColourSettings;
+import testbed.ColourSettings;
 
 import java.awt.*;
 import java.awt.geom.Line2D;

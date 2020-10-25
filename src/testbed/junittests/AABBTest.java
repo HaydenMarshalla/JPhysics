@@ -243,12 +243,12 @@ public class AABBTest {
     public void BodyOverlap() {
         Body a = new Body(new Circle(20), 0, 0);
         Body b = new Body(new Circle(20), 0, 0);
-        assertTrue(AABB.BodyOverlapCheck(a, b));
+        assertTrue(AABB.AABBOverLap(a, b));
         a.position.add(new Vectors2D(41, 0));
-        assertFalse(AABB.BodyOverlapCheck(a, b));
+        assertFalse(AABB.AABBOverLap(a, b));
         a.position.add(new Vectors2D(-6, 10));
-        assertTrue(AABB.BodyOverlapCheck(a, b));
+        assertTrue(AABB.AABBOverLap(a, b));
         a.position.add(new Vectors2D(-34, -38));
-        assertTrue(AABB.BodyOverlapCheck(a, b));
+        assertTrue(AABB.AABBOverLap(a, b));
     }
 }

@@ -3,7 +3,7 @@ package library.joints;
 import library.dynamics.Body;
 import library.math.Matrix2D;
 import library.math.Vectors2D;
-import library.utils.ColourSettings;
+import testbed.ColourSettings;
 import testbed.Camera;
 
 import java.awt.*;

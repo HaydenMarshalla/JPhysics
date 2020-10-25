@@ -9,12 +9,14 @@ import testbed.demo.TestBedWindow;
 
 public class ProximityExplosionTest {
     public static boolean active = false;
+    public static ProximityExplosion p;
+
     public static void load(TestBedWindow testBedWindow) {
         active = true;
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
 
-      /*  //Three squares fall onto a a static platform
+        //Three squares fall onto a a static platform
         {
             Body b = temp.addBody(new Body(new Polygon(200.0, 10.0), 0, -100));
             b.setDensity(0);
@@ -23,11 +25,10 @@ public class ProximityExplosionTest {
                 Body b1 = temp.addBody(new Body(new Polygon(30.0, 30.0), -100, 100 + (i * 100)));
                 b1.setDensity(100);
             }
-        }*/
-        Body b = temp.addBody(new Body(new Polygon(200.0, 10.0), 0, 0));
-        b.setDensity(0);
+        }
+
         {
-            ProximityExplosion p = new ProximityExplosion(new Vectors2D(), 200);
+            p = new ProximityExplosion(new Vectors2D(), 200);
             testBedWindow.add(p);
         }
     }

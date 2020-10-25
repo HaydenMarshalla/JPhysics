@@ -4,6 +4,7 @@ import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 
 public class Camera {
+    private final double aspectRatio;
     public double zoom;
     public int width;
     public int height;
@@ -16,37 +17,40 @@ public class Camera {
         this.width = windowWidth;
         this.height = windowHeight;
         panel = testWindow;
+        aspectRatio = width * 1.0 / height;
     }
 
+    Vectors2D upperBound = new Vectors2D();
+    Vectors2D lowerBound = new Vectors2D();
+
     public Vectors2D convertToScreen(Vectors2D v) {
-        double aspectRatio = width * 1.0 / height;
-        Vectors2D extents = new Vectors2D(aspectRatio * 200, 200);
-        extents = extents.scalar(zoom);
-        Vectors2D upperBound = centre.addi(extents);
-        Vectors2D lowerBound = centre.subtract(extents);
+        updateViewSize(aspectRatio);
         double boxWidth = (v.x - lowerBound.x) / (upperBound.x - lowerBound.x);
         double boxHeight = (v.y - lowerBound.y) / (upperBound.y - lowerBound.y);
 
         Vectors2D output = new Vectors2D();
         output.x = boxWidth * panel.getWidth();
-        output.y = (1.0 - boxHeight) * panel.getHeight();
+        output.y = (1.0 - boxHeight) * (panel.getWidth() / aspectRatio);
         return output;
     }
 
     public Vectors2D convertToWorld(Vectors2D vec) {
-        double aspectRatio = width * 1.0 / height;
-        Vectors2D extents = new Vectors2D(aspectRatio * 200, 200);
-        extents = extents.scalar(zoom);
-        Vectors2D upperBound = centre.addi(extents);
-        Vectors2D lowerBound = centre.subtract(extents);
-
+        updateViewSize(aspectRatio);
         Vectors2D output = new Vectors2D();
         double distAlongWindowXAxis = vec.x / panel.getWidth();
         output.x = (1.0 - distAlongWindowXAxis) * lowerBound.x + distAlongWindowXAxis * upperBound.x;
 
-        double distAlongWindowYAxis = (panel.getHeight() - vec.y) / panel.getHeight();
+        double aspectHeight = panel.getWidth() / aspectRatio;
+        double distAlongWindowYAxis = (aspectHeight - vec.y) / aspectHeight;
         output.y = (1.0 - distAlongWindowYAxis) * lowerBound.y + distAlongWindowYAxis * upperBound.y;
         return output;
+    }
+
+    private void updateViewSize(double aspectRatio) {
+        Vectors2D extents = new Vectors2D(aspectRatio * 200, 200);
+        extents = extents.scalar(zoom);
+        upperBound = centre.addi(extents);
+        lowerBound = centre.subtract(extents);
     }
 
     public double scaleToScreenXValue(double radius) {

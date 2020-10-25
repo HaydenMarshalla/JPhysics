@@ -3,7 +3,7 @@ package library.geometry;
 import testbed.Camera;
 import library.collision.AABB;
 import library.math.Vectors2D;
-import library.utils.ColourSettings;
+import testbed.ColourSettings;
 
 import java.awt.*;
 import java.awt.geom.Path2D;

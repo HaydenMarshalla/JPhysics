@@ -5,8 +5,12 @@ import library.collision.Arbiter;
 import library.geometry.Polygon;
 import library.joints.Joint;
 import library.math.Vectors2D;
+import testbed.ColourSettings;
 import library.utils.Settings;
+import testbed.Camera;
 
+import java.awt.*;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 public class World {
@@ -86,7 +90,7 @@ public class World {
 
         //Correct positional errors from the discrete collisions
         for (Arbiter contact : contacts) {
-            contact.penetrationResolution();
+          //  contact.penetrationResolution();
         }
     }
 
@@ -108,7 +112,7 @@ public class World {
 
             Vectors2D acceleration = b.force.scalar(b.invMass);
 
-            if (b.affectedByGravity){
+            if (b.affectedByGravity) {
                 acceleration.add(gravity);
             }
             b.velocity.add(acceleration.addi(applyLinearDrag(b)).scalar(dt));
@@ -127,7 +131,7 @@ public class World {
                     continue;
                 }
 
-                if (AABB.BodyOverlapCheck(a, b)) {
+                if (AABB.AABBOverLap(a, b)) {
                     narrowPhaseCheck(a, b);
                 }
             }
@@ -163,4 +167,27 @@ public class World {
             }
         }
     }
+
+    public void drawContact(Graphics2D g2d, ColourSettings paint_settings, Camera camera) {
+        g2d.setColor(paint_settings.contactPoint);
+        for (Arbiter contact : contacts) {
+            for (int i = 0; i < contact.contactCount; i++) {
+                Vectors2D point = camera.convertToScreen(contact.contacts[i]);
+                if (paint_settings.getDrawContactPoints()) {
+                    g2d.draw(new Line2D.Double(point.x, point.y, point.x, point.y));
+                }
+                if (paint_settings.getDrawContactImpulse()) {
+
+                }
+                if (paint_settings.getDrawContactNormals()) {
+                    Vectors2D normal = camera.convertToScreen(contact.normal.scalar(paint_settings.NORMAL_SCALAR));
+                    g2d.draw(new Line2D.Double(point.x, point.y, point.x + normal.x, point.y + normal.y));
+                }
+                if (paint_settings.getDrawFrictionImpulse()) {
+
+                }
+            }
+        }
+    }
+
 }

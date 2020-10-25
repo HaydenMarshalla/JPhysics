@@ -70,7 +70,7 @@ public class AABB {
         return new AABB(this.min, this.max);
     }
 
-    public static boolean BodyOverlapCheck(Body A, Body B) {
+    public static boolean AABBOverLap(Body A, Body B) {
         AABB aCopy = A.aabb.copy();
         AABB bCopy = B.aabb.copy();
 

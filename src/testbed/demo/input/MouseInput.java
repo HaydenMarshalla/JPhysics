@@ -2,9 +2,11 @@ package testbed.demo.input;
 
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
+import testbed.demo.tests.ProximityExplosionTest;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ConcurrentModificationException;
 
 public class MouseInput extends TestbedControls implements MouseListener {
     public MouseInput(TestBedWindow testBedWindow) {
@@ -22,8 +24,9 @@ public class MouseInput extends TestbedControls implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        Vectors2D clickPosition = new Vectors2D(e.getX(), e.getY());
-        Vectors2D worldPosition = CAMERA.convertToScreen(clickPosition);
+        if (ProximityExplosionTest.active) {
+            ProximityExplosionTest.p.applyBlastImpulse(400);
+        }
     }
 
     @Override

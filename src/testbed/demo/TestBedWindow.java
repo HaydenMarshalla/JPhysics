@@ -1,17 +1,21 @@
 package testbed.demo;
 
+import library.collision.AABB;
 import library.dynamics.Body;
 import library.dynamics.Ray;
 import library.dynamics.World;
 import library.explosions.ParticleExplosion;
 import library.explosions.ProximityExplosion;
+import library.geometry.Circle;
+import library.geometry.Polygon;
 import library.joints.Joint;
-import library.utils.ColourSettings;
+import library.utils.Settings;
+import testbed.ColourSettings;
 import library.math.Vectors2D;
 import testbed.Camera;
 import testbed.Trail;
 import testbed.demo.input.*;
-import testbed.demo.tests.ProximityExplosionTest;
+import testbed.demo.tests.Raycast;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +68,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         MOUSE_MOTION_INPUT = new MouseMovement(this);
         addMouseMotionListener(MOUSE_MOTION_INPUT);
 
-        ProximityExplosionTest.load(this);
+        Raycast.load(this);
     }
 
     public void startThread() {
@@ -144,6 +148,9 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     private void updateRays() {
         for (Ray r : rays) {
+            if (Raycast.active) {
+                Raycast.action(r);
+            }
             r.updateProjection(world.bodies);
         }
     }
@@ -194,17 +201,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         repaint();
     }
 
-    private ColourSettings paintSettings = new ColourSettings();
-
-    private boolean drawShapes = true;
-    private boolean drawJoints = true;
-    private boolean drawAABBs = false;
-    private boolean drawContactPoints = false;
-    private boolean drawContactNormals = false;
-    private boolean drawContactImpulse = false;
-    private boolean drawFrictionImpulse = false;
-    private boolean drawCOMs = true;
-    private boolean drawGrid = false;
+    private final ColourSettings PAINT_SETTINGS = new ColourSettings();
 
     @Override
     public void paintComponent(Graphics g) {
@@ -214,43 +211,34 @@ public class TestBedWindow extends JPanel implements Runnable {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
         if (world != null) {
-            if (drawGrid) {
+            if (PAINT_SETTINGS.getDrawGrid()) {
                 drawGridMethod(g2d);
             }
             drawTrails(g2d);
             for (Body b : world.bodies) {
-                if (drawShapes) {
-                    b.shape.draw(g2d, paintSettings, CAMERA);
+                if (PAINT_SETTINGS.getDrawShapes()) {
+                    b.shape.draw(g2d, PAINT_SETTINGS, CAMERA);
                 }
-                if (drawAABBs) {
-                    b.shape.drawAABB(g2d, paintSettings, CAMERA);
+                if (PAINT_SETTINGS.getDrawAABBs()) {
+                    b.shape.drawAABB(g2d, PAINT_SETTINGS, CAMERA);
                 }
-                if (drawContactPoints) {
-                    //TO DO
+                if (PAINT_SETTINGS.getDrawContactPoints()) {
+                    world.drawContact(g2d, PAINT_SETTINGS, CAMERA);
                 }
-                if (drawContactNormals) {
-                    //TO DO
-                }
-                if (drawContactImpulse) {
-                    //TO DO
-                }
-                if (drawFrictionImpulse) {
-                    //TO DO
-                }
-                if (drawCOMs) {
-                    b.shape.drawCOMS(g2d, paintSettings, CAMERA);
+                if (PAINT_SETTINGS.getDrawCOMs()) {
+                    b.shape.drawCOMS(g2d, PAINT_SETTINGS, CAMERA);
                 }
             }
-            if (drawJoints) {
+            if (PAINT_SETTINGS.getDrawJoints()) {
                 for (Joint j : world.joints) {
-                    j.draw(g2d, paintSettings, CAMERA);
+                    j.draw(g2d, PAINT_SETTINGS, CAMERA);
                 }
             }
             for (ProximityExplosion p : proximityExp) {
-                p.draw(g2d, paintSettings, CAMERA);
+                p.draw(g2d, PAINT_SETTINGS, CAMERA);
             }
             for (Ray r : rays) {
-                r.draw(g2d, paintSettings, CAMERA);
+                r.draw(g2d, PAINT_SETTINGS, CAMERA);
             }
         }
     }
@@ -261,11 +249,11 @@ public class TestBedWindow extends JPanel implements Runnable {
         int minXY = -projection;
         int maxXY = projection;
         int totalProjectionDistance = projection + projection;
-        g2d.setColor(paintSettings.gridLines);
+        g2d.setColor(PAINT_SETTINGS.gridLines);
         for (int i = 0; i <= totalProjectionDistance; i += spacing) {
             if (i == projection) {
-                g2d.setStroke(paintSettings.axisStrokeWidth);
-                g2d.setColor(paintSettings.gridAxis);
+                g2d.setStroke(PAINT_SETTINGS.axisStrokeWidth);
+                g2d.setColor(PAINT_SETTINGS.gridAxis);
             }
 
             Vectors2D currentMinY = CAMERA.convertToScreen(new Vectors2D(minXY + i, minXY));
@@ -277,14 +265,14 @@ public class TestBedWindow extends JPanel implements Runnable {
             g2d.draw(new Line2D.Double(currentMinX.x, currentMinX.y, currentMaxX.x, currentMaxX.y));
 
             if (i == projection) {
-                g2d.setStroke(paintSettings.defaultStrokeWidth);
-                g2d.setColor(paintSettings.gridLines);
+                g2d.setStroke(PAINT_SETTINGS.defaultStrokeWidth);
+                g2d.setColor(PAINT_SETTINGS.gridLines);
             }
         }
     }
 
     private void drawTrails(Graphics2D g) {
-        g.setColor(paintSettings.trail);
+        g.setColor(PAINT_SETTINGS.trail);
         for (Trail t : trailsToBodies) {
             Path2D.Double s = new Path2D.Double();
             for (int i = 0; i < t.getTrailPoints().length; i++) {
@@ -315,7 +303,7 @@ public class TestBedWindow extends JPanel implements Runnable {
             window.setLocationRelativeTo(null);
             gameScreen.setFocusable(true);
             gameScreen.setOpaque(true);
-            gameScreen.setBackground(gameScreen.paintSettings.background);
+            gameScreen.setBackground(gameScreen.PAINT_SETTINGS.background);
 
             JMenuBar menuBar = new JMenuBar();
             JMenu menu = new JMenu("Demos");
@@ -409,6 +397,52 @@ public class TestBedWindow extends JPanel implements Runnable {
             wreckingBall.addActionListener(new MenuInput(gameScreen));
 
             window.setVisible(true);
+        }
+    }
+
+    public void generateRandomObjects(Vectors2D lowerBound, Vectors2D upperBound, int totalObjects, int maxRadius) {
+        while (totalObjects > 0) {
+            Body b = createRandomObject(lowerBound, upperBound, maxRadius);
+            if (overlap(b)) {
+                world.addBody(b);
+                totalObjects--;
+            }
+        }
+    }
+
+    private boolean overlap(Body b) {
+        for (Body a : world.bodies) {
+            if (AABB.AABBOverLap(a, b)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Body createRandomObject(Vectors2D lowerBound, Vectors2D upperBound, int maxRadius) {
+        int objectType = Settings.generateRandomNoInRange(1, 2);
+        Body b = null;
+        int radius = Settings.generateRandomNoInRange(1, maxRadius);
+        double x = Settings.generateRandomNoInRange(lowerBound.x + radius, upperBound.x - radius);
+        double y = Settings.generateRandomNoInRange(lowerBound.y + radius, upperBound.y - radius);
+        double rotation = Settings.generateRandomNoInRange(0.0, 7.0);
+        switch (objectType) {
+            case 1:
+                b = new Body(new Circle(radius), x, y);
+                b.setOrientation(rotation);
+                break;
+            case 2:
+                int sides = Settings.generateRandomNoInRange(1, 10);
+                b = new Body(new Polygon(radius, sides), x, y);
+                b.setOrientation(rotation);
+                break;
+        }
+        return b;
+    }
+
+    public void setStaticWorldBodies() {
+        for (Body b : world.bodies){
+            b.setDensity(0);
         }
     }
 }
