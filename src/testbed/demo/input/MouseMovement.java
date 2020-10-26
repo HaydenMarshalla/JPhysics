@@ -1,5 +1,6 @@
 package testbed.demo.input;
 
+import library.explosions.ProximityExplosion;
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.ProximityExplosionTest;
@@ -21,7 +22,8 @@ public class MouseMovement extends TestbedControls implements MouseMotionListene
     public void mouseMoved(MouseEvent e) {
         Vectors2D v = findWorldPosition(e);
         if (ProximityExplosionTest.active) {
-            TESTBED.getProximityExp().get(0).changeEpicentre(v);
+            ProximityExplosion p = (ProximityExplosion) TESTBED.getProximityExp().get(0);
+            p.changeEpicentre(v);
         }
     }
 }

@@ -110,12 +110,11 @@ public class World {
                 continue;
             }
 
-            Vectors2D acceleration = b.force.scalar(b.invMass);
-
             if (b.affectedByGravity) {
-                acceleration.add(gravity);
+                b.applyForceToCentre(gravity);
             }
-            b.velocity.add(acceleration.addi(applyLinearDrag(b)).scalar(dt));
+
+            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).addi(applyLinearDrag(b)).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
     }

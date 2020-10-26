@@ -56,6 +56,24 @@ public class Body {
         affectedByGravity = true;
     }
 
+    public void applyForce(Vectors2D force, Vectors2D contactPoint) {
+        this.force.add(force);
+        torque += contactPoint.crossProduct(force);
+    }
+
+    public void applyForceToCentre(Vectors2D force) {
+        this.force.add(force);
+    }
+
+    public void applyLinearImpulse(Vectors2D impulse, Vectors2D contactPoint) {
+        velocity.add(impulse.scalar(invMass));
+        angularVelocity += invI * contactPoint.crossProduct(impulse);
+    }
+
+    public void applyLinearImpulseToCentre(Vectors2D impulse) {
+        velocity.add(impulse.scalar(invMass));
+    }
+
     public void setOrientation(double delta) {
         orientation = delta;
         shape.orient.set(orientation);

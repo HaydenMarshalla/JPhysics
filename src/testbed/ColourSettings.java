@@ -3,6 +3,7 @@ package testbed;
 import java.awt.*;
 
 public class ColourSettings {
+
     public ColourSettings() {
         defaultColourScheme();
     }
@@ -27,6 +28,7 @@ public class ColourSettings {
         gridLines = new Color(255, 255, 255, 70);
         gridAxis = new Color(255, 255, 255, 150);
         contactPoint = new Color(255, 255, 255, 255);
+        scatterRays = new Color(255, 255, 0, 255);
     }
 
     //All objects
@@ -58,6 +60,7 @@ public class ColourSettings {
     public Color rayToBody;
     public Color projectedRay;
     public final double RAY_DOT = 2;
+    public Color scatterRays;
 
     //Testbed related drawing
     public Color gridLines;

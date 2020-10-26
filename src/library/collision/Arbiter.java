@@ -360,40 +360,31 @@ public class Arbiter {
         double j = -(restitution + 1) * contactVel;
         j /= inverseMassSum;
 
-        //Apply contact impulse
         Vectors2D impulse = normal.scalar(j);
-        B.velocity.add(impulse.scalar(B.invMass));
-        B.angularVelocity += B.invI * contactB.crossProduct(impulse);
+        B.applyLinearImpulse(impulse, contactB);
+        A.applyLinearImpulse(impulse.negativeVec(), contactA);
 
-        A.velocity.add(impulse.negativeVec().scalar(A.invMass));
-        A.angularVelocity += A.invI * contactA.crossProduct(impulse.negativeVec());
+        relativeVel = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
-        applyFriction(inverseMassSum, contactA, contactB, j);
-    }
+        Vectors2D t = new Vectors2D(relativeVel);
+        t.add(normal.scalar(-relativeVel.dotProduct(normal)));
+        t.normalize();
 
-    private void applyFriction(double inverseMassSum, Vectors2D contactA, Vectors2D contactB, double j) {
-        Vectors2D rv = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
-
-        Vectors2D t = new Vectors2D(rv);
-        t = t.addi(normal.scalar(-rv.dotProduct(normal))).getNormalized();
-
-        double jt = -rv.dotProduct(t);
+        double jt = -relativeVel.dotProduct(t);
         jt /= inverseMassSum;
 
+        double sf = 0.5;
+        double df = 0.3;
+
         Vectors2D tangentImpulse;
-        double staticFriction = Math.min(A.staticFriction, B.staticFriction);
-        double dynamicFriction = Math.min(A.dynamicFriction, B.dynamicFriction);
-        if (StrictMath.abs(jt) < j * staticFriction) {
+        if (StrictMath.abs(jt) < j * sf) {
             tangentImpulse = t.scalar(jt);
         } else {
-            tangentImpulse = t.scalar(j * -dynamicFriction);
+            tangentImpulse = t.scalar(j).scalar(-df);
         }
 
-        B.velocity.add(tangentImpulse.scalar(B.invMass));
-        B.angularVelocity += B.invI * contactB.crossProduct(tangentImpulse);
-
-        A.velocity.add(tangentImpulse.negativeVec().scalar(A.invMass));
-        A.angularVelocity += A.invI * contactA.crossProduct(tangentImpulse.negativeVec());
+        B.applyLinearImpulse(tangentImpulse, contactB);
+        A.applyLinearImpulse(tangentImpulse.negativeVec(), contactA);
     }
 
     private static boolean selectionBias(double a, double b) {

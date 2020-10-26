@@ -18,6 +18,7 @@ public class Polygon extends Shapes {
         calcNormals();
     }
 
+
     public Polygon(double width, double height) {
         vertices = new Vectors2D[4];
         vertices[0] = new Vectors2D(-width, -height);
@@ -65,8 +66,8 @@ public class Polygon extends Shapes {
             area += triangleArea;
 
             double weight = triangleArea * k;
-            centroidDistVec.addi(point1.scalar(weight));
-            centroidDistVec.addi(point2.scalar(weight));
+            centroidDistVec.add(point1.scalar(weight));
+            centroidDistVec.add(point2.scalar(weight));
 
             double intx2 = point1.x * point1.x + point2.x * point1.x + point2.x * point2.x;
             double inty2 = point1.y * point1.y + point2.y * point1.y + point2.y * point2.y;
@@ -74,7 +75,7 @@ public class Polygon extends Shapes {
         }
         centroidDistVec = centroidDistVec.scalar(1.0 / area);
 
-        for (int i = 0; i < vertices.length; ++i) {
+        for (int i = 0; i < vertices.length; i++) {
             vertices[i] = vertices[i].subtract(centroidDistVec);
         }
 

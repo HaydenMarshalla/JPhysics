@@ -10,7 +10,6 @@ public class ParticleExplosion {
     private final int noOfParticles;
     private final World world;
     private Vectors2D epicentre;
-    private double seperationAngle;
     private final Body[] particles;
 
     public Body[] getParticles() {
@@ -22,11 +21,11 @@ public class ParticleExplosion {
         this.noOfParticles = noOfParticles;
         this.world = world;
         particles = new Body[noOfParticles];
-        seperationAngle = 6.28319 / noOfParticles;
     }
 
-    public void createParticles(int size, int density, int distance) {
-        Vectors2D distanceFromCentre = new Vectors2D(0, distance);
+    public void createParticles(double size, int density, int radius) {
+        double seperationAngle = 6.28319 / noOfParticles;
+        Vectors2D distanceFromCentre = new Vectors2D(0, radius);
         Matrix2D rotate = new Matrix2D(seperationAngle);
         for (int i = 0; i < noOfParticles; i++) {
             Vectors2D particlePlacement = epicentre.addi(distanceFromCentre);
@@ -43,12 +42,10 @@ public class ParticleExplosion {
     }
 
     public void applyBlastImpulse(double power) {
-        Vectors2D line = new Vectors2D(0, 1);
-        Matrix2D rotate = new Matrix2D();
-        rotate.set(seperationAngle);
+        Vectors2D line;
         for (Body b : particles) {
+            line = b.position.subtract(epicentre);
             b.velocity.set(line.scalar(power));
-            rotate.mul(line);
         }
     }
 }

@@ -4,8 +4,10 @@ import library.collision.AABB;
 import library.dynamics.Body;
 import library.dynamics.Ray;
 import library.dynamics.World;
+import library.explosions.Explosion;
 import library.explosions.ParticleExplosion;
 import library.explosions.ProximityExplosion;
+import library.explosions.RaycastExplosion;
 import library.geometry.Circle;
 import library.geometry.Polygon;
 import library.joints.Joint;
@@ -16,6 +18,7 @@ import testbed.Camera;
 import testbed.Trail;
 import testbed.demo.input.*;
 import testbed.demo.tests.Raycast;
+import testbed.demo.tests.RaycastExplosionTest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,7 +71,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         MOUSE_MOTION_INPUT = new MouseMovement(this);
         addMouseMotionListener(MOUSE_MOTION_INPUT);
 
-        Raycast.load(this);
+        RaycastExplosionTest.load(this);
     }
 
     public void startThread() {
@@ -81,14 +84,14 @@ public class TestBedWindow extends JPanel implements Runnable {
         rays.add(ray);
     }
 
-    public ArrayList<ProximityExplosion> getProximityExp() {
-        return proximityExp;
+    public ArrayList<Explosion> explosionObj = new ArrayList<>();
+
+    public ArrayList<Explosion> getProximityExp() {
+        return explosionObj;
     }
 
-    public ArrayList<ProximityExplosion> proximityExp = new ArrayList<>();
-
-    public void add(ProximityExplosion ex) {
-        proximityExp.add(ex);
+    public void add(Explosion ex) {
+        explosionObj.add(ex);
     }
 
     public ArrayList<ParticleExplosion> particles = new ArrayList<>();
@@ -141,8 +144,8 @@ public class TestBedWindow extends JPanel implements Runnable {
     }
 
     private void updateProximityCast() {
-        for (ProximityExplosion p : proximityExp) {
-            p.updateProximity(world.bodies);
+        for (Explosion p : explosionObj) {
+            p.update(world.bodies);
         }
     }
 
@@ -197,7 +200,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         world.clearWorld();
         trailsToBodies.clear();
         rays.clear();
-        proximityExp.clear();
+        explosionObj.clear();
         repaint();
     }
 
@@ -234,7 +237,7 @@ public class TestBedWindow extends JPanel implements Runnable {
                     j.draw(g2d, PAINT_SETTINGS, CAMERA);
                 }
             }
-            for (ProximityExplosion p : proximityExp) {
+            for (Explosion p : explosionObj) {
                 p.draw(g2d, PAINT_SETTINGS, CAMERA);
             }
             for (Ray r : rays) {
@@ -441,7 +444,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     }
 
     public void setStaticWorldBodies() {
-        for (Body b : world.bodies){
+        for (Body b : world.bodies) {
             b.setDensity(0);
         }
     }
