@@ -10,17 +10,21 @@ public class ParticleExplosion {
     private final int noOfParticles;
     private final World world;
     private Vectors2D epicentre;
+    private final double lifeSpan;
     private final Body[] particles;
+    private double timePassed;
 
     public Body[] getParticles() {
         return particles;
     }
 
-    public ParticleExplosion(Vectors2D epicentre, World world, int noOfParticles) {
+    public ParticleExplosion(Vectors2D epicentre, World world, int noOfParticles, double life) {
         this.epicentre = epicentre;
         this.noOfParticles = noOfParticles;
         this.world = world;
         particles = new Body[noOfParticles];
+        lifeSpan = life;
+        timePassed = 0;
     }
 
     public void createParticles(double size, int density, int radius) {
@@ -35,6 +39,7 @@ public class ParticleExplosion {
             b.staticFriction = 0;
             b.dynamicFriction = 0;
             b.affectedByGravity = false;
+            b.particle = true;
             world.addBody(b);
             particles[i] = b;
             rotate.mul(distanceFromCentre);
@@ -47,5 +52,10 @@ public class ParticleExplosion {
             line = b.position.subtract(epicentre);
             b.velocity.set(line.scalar(power));
         }
+    }
+
+    public boolean checkLifespan(double p) {
+        timePassed += p;
+        return timePassed > lifeSpan;
     }
 }

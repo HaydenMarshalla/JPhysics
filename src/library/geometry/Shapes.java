@@ -41,17 +41,17 @@ public abstract class Shapes {
 
     public void drawCOMS(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         g.setColor(paintSettings.centreOfMass);
-        Vectors2D circleCentre = body.position;
+        Vectors2D centre = body.position;
         Vectors2D line = new Vectors2D(paintSettings.COM_RADIUS, 0);
         orient.mul(line);
 
-        Vectors2D beginningOfLine = camera.convertToScreen(circleCentre.addi(line));
-        Vectors2D endOfLine = camera.convertToScreen(circleCentre.subtract(line));
+        Vectors2D beginningOfLine = camera.convertToScreen(centre.addi(line));
+        Vectors2D endOfLine = camera.convertToScreen(centre.subtract(line));
         Line2D lin1 = new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y);
         g.draw(lin1);
 
-        beginningOfLine = camera.convertToScreen(circleCentre.addi(line.normal()));
-        endOfLine = camera.convertToScreen(circleCentre.subtract(line.normal()));
+        beginningOfLine = camera.convertToScreen(centre.addi(line.normal()));
+        endOfLine = camera.convertToScreen(centre.subtract(line.normal()));
         Line2D lin2 = new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y);
         g.draw(lin2);
     }

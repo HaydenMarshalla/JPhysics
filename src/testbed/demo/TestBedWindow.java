@@ -6,8 +6,6 @@ import library.dynamics.Ray;
 import library.dynamics.World;
 import library.explosions.Explosion;
 import library.explosions.ParticleExplosion;
-import library.explosions.ProximityExplosion;
-import library.explosions.RaycastExplosion;
 import library.geometry.Circle;
 import library.geometry.Polygon;
 import library.joints.Joint;
@@ -17,8 +15,8 @@ import library.math.Vectors2D;
 import testbed.Camera;
 import testbed.Trail;
 import testbed.demo.input.*;
+import testbed.demo.tests.ParticleExplosionTest;
 import testbed.demo.tests.Raycast;
-import testbed.demo.tests.RaycastExplosionTest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,7 +69,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         MOUSE_MOTION_INPUT = new MouseMovement(this);
         addMouseMotionListener(MOUSE_MOTION_INPUT);
 
-        RaycastExplosionTest.load(this);
+        ParticleExplosionTest.load(this);
     }
 
     public void startThread() {
@@ -185,12 +183,24 @@ public class TestBedWindow extends JPanel implements Runnable {
                 }
             }
             try {
-                world.step();
+                double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
+                world.step(dt);
                 updateTrails();
                 updateProximityCast();
                 updateRays();
+                checkParticleLifetime(dt);
                 repaint();
             } catch (ConcurrentModificationException e) {
+            }
+        }
+    }
+
+    private void checkParticleLifetime(double timePassed) {
+        for (ParticleExplosion t : particles) {
+            if (t.checkLifespan(timePassed)) {
+                for (Body b : t.getParticles()) {
+                    world.removeBody(b);
+                }
             }
         }
     }

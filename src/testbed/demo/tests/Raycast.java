@@ -2,7 +2,6 @@ package testbed.demo.tests;
 
 import library.dynamics.Body;
 import library.dynamics.Ray;
-import library.geometry.Circle;
 import library.geometry.Polygon;
 import library.dynamics.World;
 import library.math.Matrix2D;

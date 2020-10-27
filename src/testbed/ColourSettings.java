@@ -22,7 +22,7 @@ public class ColourSettings {
         staticOutLine = new Color(98, 142, 83, 255);
         proximity = new Color(255, 255, 0, 200);
         linesToObjects = new Color(255, 255, 0, 100);
-        trail = new Color(255, 255, 0, 255);
+        trail = new Color(255, 255, 0, 200);
         rayToBody = new Color(255, 255, 255, 255);
         projectedRay = new Color(127, 127, 127, 150);
         gridLines = new Color(255, 255, 255, 70);
@@ -77,7 +77,7 @@ public class ColourSettings {
     private boolean drawContactNormals = false;
     private boolean drawContactImpulse = false;
     private boolean drawFrictionImpulse = false;
-    private boolean drawCOMs = false;
+    private boolean drawCOMs = true;
     private boolean drawGrid = false;
 
     public boolean getDrawShapes() {

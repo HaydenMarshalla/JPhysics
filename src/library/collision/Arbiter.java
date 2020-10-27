@@ -11,9 +11,15 @@ public class Arbiter {
     Body A;
     Body B;
 
+    double staticFriction;
+    double dynamicFriction;
+
     public Arbiter(Body a, Body b) {
         this.A = a;
         this.B = b;
+
+        staticFriction = (a.staticFriction + b.staticFriction) / 2;
+        dynamicFriction = (a.dynamicFriction + b.dynamicFriction) / 2;
     }
 
     public final Vectors2D[] contacts = {new Vectors2D(), new Vectors2D()};
@@ -366,21 +372,17 @@ public class Arbiter {
 
         relativeVel = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
-        Vectors2D t = new Vectors2D(relativeVel);
-        t.add(normal.scalar(-relativeVel.dotProduct(normal)));
-        t.normalize();
+        Vectors2D t = relativeVel.copy();
+        t.add(normal.scalar(-relativeVel.dotProduct(normal))).normalize();
 
         double jt = -relativeVel.dotProduct(t);
         jt /= inverseMassSum;
 
-        double sf = 0.5;
-        double df = 0.3;
-
         Vectors2D tangentImpulse;
-        if (StrictMath.abs(jt) < j * sf) {
+        if (StrictMath.abs(jt) < j * staticFriction) {
             tangentImpulse = t.scalar(jt);
         } else {
-            tangentImpulse = t.scalar(j).scalar(-df);
+            tangentImpulse = t.scalar(j).scalar(-dynamicFriction);
         }
 
         B.applyLinearImpulse(tangentImpulse, contactB);

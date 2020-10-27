@@ -52,8 +52,7 @@ public class World {
 
     public ArrayList<Arbiter> contacts = new ArrayList<>();
 
-    public void step() {
-        double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
+    public void step(double dt) {
         contacts.clear();
 
         broadPhaseCheck();
@@ -77,12 +76,8 @@ public class World {
                 continue;
             }
 
-            Vectors2D posChange = b.velocity.scalar(dt);
-            b.position.add(posChange);
-
-            if (b.angularVelocity != 0 && b.shape instanceof Polygon) {
-                b.setOrientation(b.orientation + (dt * b.angularVelocity));
-            }
+            b.position.add(b.velocity.scalar(dt));
+            b.setOrientation(b.orientation + (dt * b.angularVelocity));
 
             b.force.set(0, 0);
             b.torque = 0;
@@ -90,7 +85,7 @@ public class World {
 
         //Correct positional errors from the discrete collisions
         for (Arbiter contact : contacts) {
-          //  contact.penetrationResolution();
+            contact.penetrationResolution();
         }
     }
 
@@ -126,7 +121,7 @@ public class World {
             for (int x = i + 1; x < bodies.size(); x++) {
                 Body b = bodies.get(x);
 
-                if (a.invMass == 0 && b.invMass == 0) {
+                if (a.invMass == 0 && b.invMass == 0 || a.particle && b.particle) {
                     continue;
                 }
 
