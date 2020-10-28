@@ -8,14 +8,22 @@ public class Trail {
     private final int arrayEndPos;
     private final int skipInterval;
     private int counter;
+    private final double lifeSpan;
     private Body body;
+    private double timeActive;
 
-    public Trail(int noOfTrailPoints, int skipInterval, Body b) {
+    public Body getBody() {
+        return body;
+    }
+
+    public Trail(int noOfTrailPoints, int skipInterval, Body b, double life) {
         trailPoints = Vectors2D.createArray(noOfTrailPoints);
         arrayEndPos = noOfTrailPoints - 1;
         this.skipInterval = skipInterval;
         counter = 0;
         body = b;
+        lifeSpan = life;
+        timeActive = 0.0;
     }
 
     private int trailEndPointIndex = 0;
@@ -37,5 +45,11 @@ public class Trail {
 
     public Vectors2D[] getTrailPoints() {
         return trailPoints;
+    }
+
+    public boolean checkLifespan(double p) {
+        if (lifeSpan == 0) return false;
+        timeActive += p;
+        return timeActive > lifeSpan;
     }
 }

@@ -9,6 +9,7 @@ import testbed.demo.TestBedWindow;
 
 public class ParticleExplosionTest {
     public static boolean active = false;
+
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
@@ -35,10 +36,10 @@ public class ParticleExplosionTest {
         }
 
         {
-            ParticleExplosion p = new ParticleExplosion(new Vectors2D(), temp, 100,10);
+            ParticleExplosion p = new ParticleExplosion(new Vectors2D(), temp, 100, 1);
             p.createParticles(10, 100000, 20);
             p.applyBlastImpulse(100);
-            testBedWindow.add(p);
+            testBedWindow.add(p, 1);
         }
     }
 }

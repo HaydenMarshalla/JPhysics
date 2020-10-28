@@ -10,7 +10,6 @@ public class ParticleExplosion {
     private final int noOfParticles;
     private final World world;
     private Vectors2D epicentre;
-    private final double lifeSpan;
     private final Body[] particles;
     private double timePassed;
 
@@ -23,7 +22,6 @@ public class ParticleExplosion {
         this.noOfParticles = noOfParticles;
         this.world = world;
         particles = new Body[noOfParticles];
-        lifeSpan = life;
         timePassed = 0;
     }
 
@@ -52,10 +50,5 @@ public class ParticleExplosion {
             line = b.position.subtract(epicentre);
             b.velocity.set(line.scalar(power));
         }
-    }
-
-    public boolean checkLifespan(double p) {
-        timePassed += p;
-        return timePassed > lifeSpan;
     }
 }

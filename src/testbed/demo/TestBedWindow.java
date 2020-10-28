@@ -94,10 +94,10 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     public ArrayList<ParticleExplosion> particles = new ArrayList<>();
 
-    public void add(ParticleExplosion p) {
+    public void add(ParticleExplosion p, double lifespan) {
         particles.add(p);
         for (Body b : p.getParticles()) {
-            trailsToBodies.add(new Trail(1000, 100, b));
+            trailsToBodies.add(new Trail(1000, 100, b, lifespan));
         }
     }
 
@@ -196,11 +196,31 @@ public class TestBedWindow extends JPanel implements Runnable {
     }
 
     private void checkParticleLifetime(double timePassed) {
-        for (ParticleExplosion t : particles) {
+        for (Trail t : trailsToBodies) {
             if (t.checkLifespan(timePassed)) {
-                for (Body b : t.getParticles()) {
-                    world.removeBody(b);
+                for (ParticleExplosion p : particles) {
+                    boolean found = false;
+                    for (Body b : p.getParticles()) {
+                        if (b == t.getBody()) {
+                            removeTrailsFromWorld(p.getParticles());
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        particles.remove(p);
+                        break;
+                    }
                 }
+            }
+        }
+    }
+
+    private void removeTrailsFromWorld(Body[] bodies) {
+        for (Body b : bodies) {
+            trailsToBodies.removeIf(t -> t.getBody() == b);
+            for (Body c : world.bodies) {
+                if (c == b) world.bodies.remove(b);
             }
         }
     }

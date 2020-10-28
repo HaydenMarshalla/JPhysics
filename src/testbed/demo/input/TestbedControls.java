@@ -31,6 +31,6 @@ public abstract class TestbedControls {
         ParticleExplosion p = new ParticleExplosion(findWorldPosition(e), TESTBED.getWorld(), 100, 10);
         p.createParticles(0.1, 100000, 10);
         p.applyBlastImpulse(100);
-        TESTBED.add(p);
+        TESTBED.add(p, 1);
     }
 }
