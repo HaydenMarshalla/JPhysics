@@ -336,11 +336,11 @@ public class Arbiter {
             return;
         }
 
-        double correction = penetration / (A.invMass + B.invMass) * Settings.PENETRATION_CORRECTION;
+        double totalMass = A.mass + B.mass;
+        double correction = (penetration * Settings.PENETRATION_CORRECTION) / totalMass;
 
-        A.position = A.position.add(normal.scalar(-A.invMass * correction));
-        B.position = B.position.add(normal.scalar(B.invMass * correction));
-
+        A.position = A.position.add(normal.scalar(-A.mass * correction));
+        B.position = B.position.add(normal.scalar(B.mass * correction));
     }
 
     public void solve() {

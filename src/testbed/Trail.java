@@ -29,7 +29,7 @@ public class Trail {
     private int trailEndPointIndex = 0;
 
     public void updateTrail() {
-        if (counter >= skipInterval || skipInterval == 0) {
+        if (counter >= skipInterval) {
             if (trailEndPointIndex <= arrayEndPos) {
                 trailPoints[trailEndPointIndex] = body.position.copy();
                 trailEndPointIndex++;

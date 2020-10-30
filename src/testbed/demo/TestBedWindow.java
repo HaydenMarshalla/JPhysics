@@ -15,7 +15,6 @@ import library.math.Vectors2D;
 import testbed.Camera;
 import testbed.Trail;
 import testbed.demo.input.*;
-import testbed.demo.tests.ParticleExplosionTest;
 import testbed.demo.tests.Raycast;
 
 import javax.swing.*;
@@ -26,7 +25,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final Camera CAMERA;
@@ -68,8 +67,6 @@ public class TestBedWindow extends JPanel implements Runnable {
 
         MOUSE_MOTION_INPUT = new MouseMovement(this);
         addMouseMotionListener(MOUSE_MOTION_INPUT);
-
-        ParticleExplosionTest.load(this);
     }
 
     public void startThread() {
@@ -97,7 +94,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     public void add(ParticleExplosion p, double lifespan) {
         particles.add(p);
         for (Body b : p.getParticles()) {
-            trailsToBodies.add(new Trail(1000, 100, b, lifespan));
+            trailsToBodies.add(new Trail(1000, 1, b, lifespan));
         }
     }
 
@@ -182,47 +179,52 @@ public class TestBedWindow extends JPanel implements Runnable {
                     }
                 }
             }
-            try {
-                double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
-                world.step(dt);
-                updateTrails();
-                updateProximityCast();
-                updateRays();
-                checkParticleLifetime(dt);
-                repaint();
-            } catch (ConcurrentModificationException e) {
-            }
+            repaint();
         }
+    }
+
+    private void update() {
+        double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
+        world.step(dt);
+        updateTrails();
+        updateProximityCast();
+        updateRays();
+        checkParticleLifetime(dt);
     }
 
     private void checkParticleLifetime(double timePassed) {
-        for (Trail t : trailsToBodies) {
-            if (t.checkLifespan(timePassed)) {
-                for (ParticleExplosion p : particles) {
-                    boolean found = false;
-                    for (Body b : p.getParticles()) {
-                        if (b == t.getBody()) {
-                            removeTrailsFromWorld(p.getParticles());
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found) {
-                        particles.remove(p);
-                        break;
-                    }
-                }
+        ArrayList<Body> bodiesToRemove = new ArrayList<>();
+        Iterator<Trail> i = trailsToBodies.iterator();
+        while (i.hasNext()) {
+            Trail s = i.next();
+            if (s.checkLifespan(timePassed)) {
+                bodiesToRemove.add(s.getBody());
+                i.remove();
+            }
+        }
+        Iterator<ParticleExplosion> p = particles.iterator();
+        while (p.hasNext()) {
+            Body[] s = p.next().getParticles();
+            if (containsBody(s, bodiesToRemove)) {
+                removeParticlesFromWorld(s);
+                p.remove();
             }
         }
     }
 
-    private void removeTrailsFromWorld(Body[] bodies) {
-        for (Body b : bodies) {
-            trailsToBodies.removeIf(t -> t.getBody() == b);
-            for (Body c : world.bodies) {
-                if (c == b) world.bodies.remove(b);
+    private void removeParticlesFromWorld(Body[] s) {
+        for (Body b : s) {
+            world.removeBody(b);
+        }
+    }
+
+    private boolean containsBody(Body[] s, ArrayList<Body> bodiesToRemove) {
+        for (Body a : s) {
+            if (bodiesToRemove.contains(a)) {
+                return true;
             }
         }
+        return false;
     }
 
     public void clearTestbedObjects() {
@@ -244,6 +246,7 @@ public class TestBedWindow extends JPanel implements Runnable {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
         if (world != null) {
+            update();
             if (PAINT_SETTINGS.getDrawGrid()) {
                 drawGridMethod(g2d);
             }
@@ -455,7 +458,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private Body createRandomObject(Vectors2D lowerBound, Vectors2D upperBound, int maxRadius) {
         int objectType = Settings.generateRandomNoInRange(1, 2);
         Body b = null;
-        int radius = Settings.generateRandomNoInRange(1, maxRadius);
+        int radius = Settings.generateRandomNoInRange(5, maxRadius);
         double x = Settings.generateRandomNoInRange(lowerBound.x + radius, upperBound.x - radius);
         double y = Settings.generateRandomNoInRange(lowerBound.y + radius, upperBound.y - radius);
         double rotation = Settings.generateRandomNoInRange(0.0, 7.0);
@@ -465,7 +468,7 @@ public class TestBedWindow extends JPanel implements Runnable {
                 b.setOrientation(rotation);
                 break;
             case 2:
-                int sides = Settings.generateRandomNoInRange(1, 10);
+                int sides = Settings.generateRandomNoInRange(3, 10);
                 b = new Body(new Polygon(radius, sides), x, y);
                 b.setOrientation(rotation);
                 break;

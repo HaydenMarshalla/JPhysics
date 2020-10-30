@@ -11,15 +11,24 @@ public class StackedObjects {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
 
-        //Three squares fall onto a a static platform
         {
-            Body b = temp.addBody(new Body(new Polygon(200.0, 10.0), 0, -100));
-            b.setDensity(0);
-
-            for (int i = 0; i < 1; i++) {
-                Body b1 = temp.addBody(new Body(new Polygon(30.0, 30.0), -100, 100+ (i*100)));
-                b1.setDensity(100);
+            for (int x = 0; x < 15; x++) {
+                for (int y = 0; y < 25; y++) {
+                    Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), -100 + (y * 20));
+                    temp.addBody(b);
+                }
             }
+            for (int x = 0; x < 15; x++) {
+                for (int y = 0; y < 1; y++) {
+                    Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), 400);
+                    b.setDensity(100);
+                    temp.addBody(b);
+                }
+            }
+
+            Body b = new Body(new Polygon(150.0, 10.0), 0, -120);
+            b.setDensity(0);
+            temp.addBody(b);
         }
     }
 }

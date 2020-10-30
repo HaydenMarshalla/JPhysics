@@ -53,8 +53,8 @@ public class JointToBody extends Joint {
     public double rateOfChangeOfExtension() {
         Vectors2D distance = object2AttachmentPoint.subtract(object1AttachmentPoint);
         distance.normalize();
-        Vectors2D relativeVelocity = object2.velocity.subtract(object1.velocity);
 
+        Vectors2D relativeVelocity = object2.velocity.addi(object2AttachmentPoint.subtract(object2.position).crossProduct(object2.angularVelocity)).subtract(object1.velocity).subtract(object1AttachmentPoint.subtract(object1.position).crossProduct(object1.angularVelocity));
         return relativeVelocity.dotProduct(distance);
     }
 

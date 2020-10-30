@@ -25,10 +25,14 @@ public class ColourSettings {
         trail = new Color(255, 255, 0, 200);
         rayToBody = new Color(255, 255, 255, 255);
         projectedRay = new Color(127, 127, 127, 150);
-        gridLines = new Color(255, 255, 255, 70);
-        gridAxis = new Color(255, 255, 255, 150);
+        gridLines = new Color(255, 255, 255, 50);
+        gridAxis = new Color(255, 255, 255, 130);
         contactPoint = new Color(255, 255, 255, 255);
         scatterRays = new Color(255, 255, 0, 255);
+    }
+
+    public void box2dColourScheme() {
+
     }
 
     //All objects
@@ -72,13 +76,13 @@ public class ColourSettings {
     //Flags for testbed
     private boolean drawShapes = true;
     private boolean drawJoints = true;
-    private boolean drawAABBs = false;
-    private boolean drawContactPoints = false;
+    private boolean drawAABBs = true;
+    private boolean drawContactPoints = true;
     private boolean drawContactNormals = false;
     private boolean drawContactImpulse = false;
     private boolean drawFrictionImpulse = false;
     private boolean drawCOMs = true;
-    private boolean drawGrid = false;
+    private boolean drawGrid = true;
 
     public boolean getDrawShapes() {
         return drawShapes;

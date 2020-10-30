@@ -13,17 +13,19 @@ public class Friction {
         testBedWindow.setCamera(new Vectors2D(0, 0), 1.4);
 
         {
-            Body ramp1 = world.addBody(new Body(new Polygon(200.0, 10.0), -150, 175));
-            ramp1.setOrientation(-0.2);
-            ramp1.setDensity(0);
+            for (int i = 0; i < 3; i++) {
+                Body ramp1 = world.addBody(new Body(new Polygon(200.0, 10.0), -150, 200 - (150 * i)));
+                ramp1.setOrientation(-0.2);
+                ramp1.setDensity(0);
+            }
 
-         /*   Body ramp2 = world.addBody(new Body(new Polygon(200.0, 10.0), 50, 25));
-            ramp2.setOrientation(0.2);
-            ramp2.setDensity(0);
-
-            Body ramp3 = world.addBody(new Body(new Polygon(200.0, 10.0), -150, -125));
-            ramp3.setOrientation(-0.2);
-            ramp3.setDensity(0);*/
+            for (int i = 0; i < 3; i++) {
+                Body ramp1 = world.addBody(new Body(new Polygon(20.0, 20.0), -240, 250 - (150 * i)));
+                ramp1.setOrientation(-0.2);
+                ramp1.staticFriction = 0.5 - (i * 0.1);
+                ramp1.dynamicFriction = 0.3 - (i * 0.1);
+                ramp1.setDensity(1);
+            }
         }
     }
 }

@@ -30,11 +30,19 @@ public class Circle extends Shapes {
 
     @Override
     public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
-        g.setColor(paintSettings.shapeFill);
+        if (body.mass == 0.0) {
+            g.setColor(paintSettings.staticFill);
+        } else {
+            g.setColor(paintSettings.shapeFill);
+        }
         Vectors2D circlePotion = camera.convertToScreen(body.position);
         double drawnRadius = camera.scaleToScreenXValue(radius);
         g.fill(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
-        g.setColor(paintSettings.shapeOutLine);
+        if (body.mass == 0.0) {
+            g.setColor(paintSettings.staticOutLine);
+        } else {
+            g.setColor(paintSettings.shapeOutLine);
+        }
         g.draw(new Ellipse2D.Double(circlePotion.x - drawnRadius, circlePotion.y - drawnRadius, 2 * drawnRadius, 2 * drawnRadius));
     }
 }

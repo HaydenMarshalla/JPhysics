@@ -9,6 +9,8 @@ public class NewtonsCradle {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
 
+        {
 
+        }
     }
 }

@@ -30,5 +30,7 @@ public class MixedShapes {
             b3.setDensity(0);
             temp.addBody(b3);
         }
+
+        testBedWindow.generateRandomObjects(new Vectors2D(-280, -100), new Vectors2D(280, 800), 30, 80);
     }
 }

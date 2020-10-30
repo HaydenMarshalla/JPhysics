@@ -70,10 +70,10 @@ public class ProximityExplosion implements Explosion {
             double distance = blastDir.length();
             if (distance == 0) return;
 
-            double invDistance = 1 / distance;
             //Not physically correct as it should be blast * radius to object ^ 2 as the pressure of an explosion in 2D dissipates
+            double invDistance = 1 / distance;
             double impulseMag = blastPower * invDistance;
-            b.force.add(blastDir.normalize().scalar(impulseMag));
+            b.applyLinearImpulseToCentre(blastDir.normalize().scalar(impulseMag));
         }
     }
 }

@@ -23,7 +23,7 @@ public class ProximityExplosionTest {
 
             for (int i = 0; i < 2; i++) {
                 Body b1 = temp.addBody(new Body(new Polygon(30.0, 30.0), -100, 100 + (i * 100)));
-                b1.setDensity(100);
+                b1.setDensity(1);
             }
         }
 

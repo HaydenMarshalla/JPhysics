@@ -17,7 +17,7 @@ public class BouncingBall {
         {
             Body b = new Body(new Circle(20), 0, 200);
             b.velocity = new Vectors2D(30,0);
-            testBedWindow.add(new Trail(10000, 100, b, 0));
+            testBedWindow.add(new Trail(1000, 1, b, 0));
             temp.addBody(b);
         }
 

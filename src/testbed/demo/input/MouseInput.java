@@ -30,11 +30,11 @@ public class MouseInput extends TestbedControls implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         if (ProximityExplosionTest.active) {
             setProximityEpicentre(e);
-            ProximityExplosionTest.p.applyBlastImpulse(400);
+            ProximityExplosionTest.p.applyBlastImpulse(5000000);
         } else if (ParticleExplosionTest.active) {
             generateParticleExplosion(e);
         } else if (RaycastExplosionTest.active) {
-            RaycastExplosionTest.r.applyBlastImpulse(10000000);
+            RaycastExplosionTest.r.applyBlastImpulse(5000000);
         }
     }
 

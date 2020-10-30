@@ -85,18 +85,15 @@ public class World {
 
         //Correct positional errors from the discrete collisions
         for (Arbiter contact : contacts) {
-            contact.penetrationResolution();
+            //contact.penetrationResolution();
         }
     }
 
-    private double dragValue = 0;
-
-    public void setDragValue(double i) {
-        dragValue = i;
-    }
-
-    private Vectors2D applyLinearDrag(Body b) {
-        return b.velocity.scalar(-dragValue * b.mass);
+    private void applyLinearDrag(Body b) {
+        double velocityMagnitude = b.velocity.length();
+        double dragForceMagnitude =velocityMagnitude * velocityMagnitude * b.linearDampening;
+        Vectors2D dragForceVector = b.velocity.getNormalized().scalar(-dragForceMagnitude);
+        b.applyForceToCentre(dragForceVector);
     }
 
     private void applyForces(double dt) {
@@ -109,7 +106,9 @@ public class World {
                 b.applyForceToCentre(gravity);
             }
 
-            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).addi(applyLinearDrag(b)).scalar(dt));
+            applyLinearDrag(b);
+
+            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
     }

@@ -50,7 +50,7 @@ public class Raycast {
 
     public static void action(Ray r) {
         Matrix2D u = new Matrix2D();
-        u.set(-0.0000001);
+        u.set(-0.0006);
         u.mul(r.getDirection());
     }
 }
