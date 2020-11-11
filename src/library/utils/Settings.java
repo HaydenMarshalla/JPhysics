@@ -10,7 +10,7 @@ public class Settings {
 
     public static final double HERTZ = 120.0;
     public static final double FPS = 60.0;
-    public static final int ITERATIONS = 100;
+    public static final int ITERATIONS = 10;
     public static final double EPSILON = 1E-12;
 
     public static double generateRandomNoInRange(double min, double max) {

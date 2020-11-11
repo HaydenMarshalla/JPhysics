@@ -2,7 +2,6 @@ package library.dynamics;
 
 import library.collision.AABB;
 import library.collision.Arbiter;
-import library.geometry.Polygon;
 import library.joints.Joint;
 import library.math.Vectors2D;
 import testbed.ColourSettings;
@@ -161,25 +160,27 @@ public class World {
         }
     }
 
-    public void drawContact(Graphics2D g2d, ColourSettings paint_settings, Camera camera) {
-        g2d.setColor(paint_settings.contactPoint);
+    public void drawContact(Graphics2D g2d, ColourSettings paintSettings, Camera camera) {
+        g2d.setColor(paintSettings.contactPoint);
         for (Arbiter contact : contacts) {
-            for (int i = 0; i < contact.contactCount; i++) {
-                Vectors2D point = camera.convertToScreen(contact.contacts[i]);
-                if (paint_settings.getDrawContactPoints()) {
-                    g2d.draw(new Line2D.Double(point.x, point.y, point.x, point.y));
-                }
-                if (paint_settings.getDrawContactImpulse()) {
+                Vectors2D point = contact.contacts[0];
+                Vectors2D line;
+                Vectors2D beginningOfLine;
+                Vectors2D endOfLine;
 
+                if (paintSettings.getDrawContactNormals()) {
+                    line = contact.normal.scalar(paintSettings.CONTACT_LINE_SCALAR);
+                    beginningOfLine = camera.convertToScreen(point.addi(line));
+                    endOfLine = camera.convertToScreen(point.subtract(line));
+                    g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
                 }
-                if (paint_settings.getDrawContactNormals()) {
-                    Vectors2D normal = camera.convertToScreen(contact.normal.scalar(paint_settings.NORMAL_SCALAR));
-                    g2d.draw(new Line2D.Double(point.x, point.y, point.x + normal.x, point.y + normal.y));
-                }
-                if (paint_settings.getDrawFrictionImpulse()) {
 
+                if (paintSettings.getDrawContactPoints()) {
+                    line = contact.normal.normal().scalar(paintSettings.NORMAL_LINE_SCALAR);
+                    beginningOfLine = camera.convertToScreen(point.addi(line));
+                    endOfLine = camera.convertToScreen(point.subtract(line));
+                    g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
                 }
-            }
         }
     }
 

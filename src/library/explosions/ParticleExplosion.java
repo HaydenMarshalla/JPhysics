@@ -37,6 +37,7 @@ public class ParticleExplosion {
             b.staticFriction = 0;
             b.dynamicFriction = 0;
             b.affectedByGravity = false;
+            b.linearDampening = 5;
             b.particle = true;
             world.addBody(b);
             particles[i] = b;

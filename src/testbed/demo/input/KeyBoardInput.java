@@ -7,7 +7,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyBoardInput extends TestbedControls implements KeyListener {
-    private boolean shift = false;
+    public static boolean shift = false;
+    public static Vectors2D pressedLocation = new Vectors2D();
 
     public KeyBoardInput(TestBedWindow testBedWindow) {
         super(testBedWindow);

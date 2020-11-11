@@ -20,10 +20,14 @@ public class MouseMovement extends TestbedControls implements MouseMotionListene
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        Vectors2D v = findWorldPosition(e);
-        if (ProximityExplosionTest.active) {
-            ProximityExplosion p = (ProximityExplosion) TESTBED.getProximityExp().get(0);
-            p.changeEpicentre(v);
+        if (KeyBoardInput.shift) {
+            
+        } else {
+            Vectors2D v = findWorldPosition(e);
+            if (ProximityExplosionTest.active) {
+                ProximityExplosion p = (ProximityExplosion) TESTBED.getProximityExp().get(0);
+                p.changeEpicentre(v);
+            }
         }
     }
 }

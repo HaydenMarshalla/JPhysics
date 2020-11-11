@@ -8,8 +8,16 @@ import library.utils.Settings;
 import library.math.Vectors2D;
 
 public class Arbiter {
-    Body A;
-    Body B;
+    private final Body A;
+    private final Body B;
+
+    public Body getA() {
+        return A;
+    }
+
+    public Body getB() {
+        return B;
+    }
 
     double staticFriction;
     double dynamicFriction;

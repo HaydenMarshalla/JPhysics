@@ -37,7 +37,7 @@ public class ParticleExplosionTest {
 
         {
             ParticleExplosion p = new ParticleExplosion(new Vectors2D(), temp, 100, 1);
-            p.createParticles(10, 100000, 20);
+            p.createParticles(2, 1000, 20);
             p.applyBlastImpulse(100);
             testBedWindow.add(p, 1);
         }

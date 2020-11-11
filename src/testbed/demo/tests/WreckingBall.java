@@ -16,24 +16,24 @@ public class WreckingBall {
         testBedWindow.setCamera(new Vectors2D(0, 100), 1.7);
 
         {
-            for (int x = 0; x < 15; x++) {
-                for (int y = 0; y < 15; y++) {
-                    Body b = new Body(new Polygon(10.0, 10.0), 110 + (x * 20), -100 + (y * 20));
+            for (int x = 0; x < 10; x++) {
+                for (int y = 0; y < 10; y++) {
+                    Body b = new Body(new Polygon(10.0, 10.0), 110 + (x * 20), (y * 20));
                     temp.addBody(b);
                 }
             }
 
-            Body b = new Body(new Polygon(150.0, 10.0), 250, -120);
+            Body b = new Body(new Polygon(100.0, 10.0), 200, -20);
             b.setDensity(0);
             temp.addBody(b);
         }
 
         {
-            Body b2 = new Body(new Circle(60.0), -350, 350);
+            Body b2 = new Body(new Circle(40.0), -250, 320);
             b2.setDensity(2);
             temp.addBody(b2);
 
-            Joint j = new JointToPoint(new Vectors2D(0, 350), b2, 350, 2000, 10, true, new Vectors2D());
+            Joint j = new JointToPoint(new Vectors2D(0, 320), b2, 250, 2000, 10, true, new Vectors2D());
             temp.addJoint(j);
         }
     }

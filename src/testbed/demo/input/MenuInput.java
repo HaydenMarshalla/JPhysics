@@ -1,7 +1,6 @@
 package testbed.demo.input;
 
-import library.explosions.ProximityExplosion;
-import testbed.Camera;
+import library.explosions.ParticleExplosion;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.*;
 
@@ -56,5 +55,7 @@ public class MenuInput extends TestbedControls implements ActionListener {
 
     private void resetUniquieEventHandlers() {
         ProximityExplosionTest.active = false;
+        ParticleExplosionTest.active = false;
+        RaycastExplosionTest.active = false;
     }
 }
