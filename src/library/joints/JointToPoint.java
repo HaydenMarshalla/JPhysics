@@ -57,6 +57,7 @@ public class JointToPoint extends Joint {
 
     @Override
     public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
+        g.setColor(paintSettings.joints);
         Vectors2D obj1Pos = camera.convertToScreen(object1AttachmentPoint);
         Vectors2D obj2Pos = camera.convertToScreen(pointAttachedTo);
         g.draw(new Line2D.Double(obj1Pos.x, obj1Pos.y, obj2Pos.x, obj2Pos.y));

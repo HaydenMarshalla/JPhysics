@@ -25,7 +25,6 @@ public abstract class Shapes {
 
     public void drawAABB(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         g.setColor(paintSettings.aabb);
-
         Path2D polyBB = new Path2D.Double();
         Vectors2D min = camera.convertToScreen(body.aabb.getMin().addi(body.position));
         Vectors2D max = camera.convertToScreen(body.aabb.getMax().addi(body.position));

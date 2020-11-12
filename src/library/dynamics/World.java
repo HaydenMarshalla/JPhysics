@@ -161,7 +161,6 @@ public class World {
     }
 
     public void drawContact(Graphics2D g2d, ColourSettings paintSettings, Camera camera) {
-        g2d.setColor(paintSettings.contactPoint);
         for (Arbiter contact : contacts) {
                 Vectors2D point = contact.contacts[0];
                 Vectors2D line;
@@ -169,6 +168,7 @@ public class World {
                 Vectors2D endOfLine;
 
                 if (paintSettings.getDrawContactNormals()) {
+                    g2d.setColor(paintSettings.contactNormals);
                     line = contact.normal.scalar(paintSettings.CONTACT_LINE_SCALAR);
                     beginningOfLine = camera.convertToScreen(point.addi(line));
                     endOfLine = camera.convertToScreen(point.subtract(line));
@@ -176,6 +176,7 @@ public class World {
                 }
 
                 if (paintSettings.getDrawContactPoints()) {
+                    g2d.setColor(paintSettings.contactPoint);
                     line = contact.normal.normal().scalar(paintSettings.NORMAL_LINE_SCALAR);
                     beginningOfLine = camera.convertToScreen(point.addi(line));
                     endOfLine = camera.convertToScreen(point.subtract(line));

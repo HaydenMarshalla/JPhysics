@@ -1,16 +1,12 @@
 package testbed.demo.input;
 
-import library.explosions.ParticleExplosion;
-import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.ParticleExplosionTest;
 import testbed.demo.tests.ProximityExplosionTest;
-import testbed.demo.tests.Raycast;
 import testbed.demo.tests.RaycastExplosionTest;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ConcurrentModificationException;
 
 public class MouseInput extends TestbedControls implements MouseListener {
     public MouseInput(TestBedWindow testBedWindow) {

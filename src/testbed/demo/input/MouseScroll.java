@@ -1,6 +1,5 @@
 package testbed.demo.input;
 
-import testbed.Camera;
 import testbed.demo.TestBedWindow;
 
 import java.awt.event.MouseWheelEvent;

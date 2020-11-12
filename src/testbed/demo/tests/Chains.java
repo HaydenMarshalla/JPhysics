@@ -21,7 +21,7 @@ public class Chains {
         Body b2 = new Body(new Polygon(5.0, 10.0), 0, -60);
         temp.addBody(b2);
 
-        Joint j1 = new JointToPoint(temp.bodies.get(0), new Vectors2D(), 40, 20, 10, true, new Vectors2D(0, 0));
+        Joint j1 = new JointToPoint(temp.bodies.get(0), new Vectors2D(), 40, 20, 10, true, new Vectors2D(5, 0));
         temp.addJoint(j1);
 
     /*    Body[] bodyList = new Body[20];

@@ -26,7 +26,7 @@ public class ProximityExplosion implements Explosion {
     public ArrayList<Body> bodiesEffected = new ArrayList<>();
 
     @Override
-    public synchronized void update(ArrayList<Body> bodiesToEvaluate) {
+    public void update(ArrayList<Body> bodiesToEvaluate) {
         bodiesEffected.clear();
         for (Body b : bodiesToEvaluate) {
             Vectors2D blastDist = b.position.subtract(epicentre);
@@ -46,7 +46,7 @@ public class ProximityExplosion implements Explosion {
     }
 
     @Override
-    public synchronized void draw(Graphics2D gi, ColourSettings paintSettings, Camera camera) {
+    public void draw(Graphics2D gi, ColourSettings paintSettings, Camera camera) {
         gi.setColor(paintSettings.proximity);
         Vectors2D circlePotion = camera.convertToScreen(epicentre);
         double proximityRadius = camera.scaleToScreenXValue(proximity);

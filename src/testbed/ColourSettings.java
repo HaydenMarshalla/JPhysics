@@ -4,72 +4,95 @@ import java.awt.*;
 
 public class ColourSettings {
     public ColourSettings() {
-        matterjsColourScheme();
+        defaultColourScheme();
     }
 
     public void defaultColourScheme() {
-        aabb = new Color(255, 255, 255, 255);
+        background = new Color(48, 31, 46, 255);
         shapeFill = new Color(133, 49, 64, 255);
         shapeOutLine = new Color(201, 151, 157, 255);
-        background = new Color(48, 31, 46, 255);
-        joints = new Color(255, 255, 255, 255);
-        contactNormals = new Color(255, 255, 255, 255);
-        contactImpulse = new Color(255, 255, 255, 255);
-        frictionImpulse = new Color(255, 255, 255, 255);
-        centreOfMass = new Color(201, 151, 157, 255);
         staticFill = new Color(37, 66, 31, 255);
         staticOutLine = new Color(98, 142, 83, 255);
+
+        aabb = new Color(255, 255, 255, 255);
+        joints = new Color(255, 255, 255, 255);
+
+        contactPoint = new Color(255, 255, 255, 255);
+        contactNormals = new Color(255, 255, 255, 255);
+        centreOfMass = new Color(201, 151, 157, 255);
+        trail = new Color(255, 255, 0, 200);
+
         proximity = new Color(255, 255, 0, 200);
         linesToObjects = new Color(255, 255, 0, 100);
-        trail = new Color(255, 255, 0, 200);
         rayToBody = new Color(255, 255, 255, 255);
         projectedRay = new Color(127, 127, 127, 150);
-        contactPoint = new Color(255, 255, 255, 255);
         scatterRays = new Color(255, 255, 0, 255);
     }
 
     public void box2dColourScheme() {
+        background = new Color(0, 0, 0, 255);
+        shapeFill = new Color(57, 44, 44, 255);
+        shapeOutLine = new Color(229, 178, 178, 255);
+        staticFill = new Color(33, 57, 29, 255);
+        staticOutLine = new Color(124, 230, 129, 255);
+
         aabb = new Color(255, 255, 255, 255);
-        shapeFill = new Color(57,44,44, 255);
-        shapeOutLine = new Color(229,178,178, 255);
-        background = new Color(0,0,0, 255);
-        joints = new Color(127,204,204, 255);
+        joints = new Color(127, 204, 204, 255);
+
+        contactPoint = new Color(255, 255, 255, 255);
         contactNormals = new Color(255, 255, 255, 255);
-        contactImpulse = new Color(255, 255, 255, 255);
-        frictionImpulse = new Color(255, 255, 255, 255);
-        centreOfMass = new Color(231,178,177, 255);
-        staticFill = new Color(33,57,29, 255);
-        staticOutLine = new Color(124,230,129, 255);
+        centreOfMass = new Color(231, 178, 177, 255);
+        trail = new Color(255, 255, 0, 200);
+
         proximity = new Color(255, 255, 0, 200);
         linesToObjects = new Color(255, 255, 0, 100);
-        trail = new Color(255, 255, 0, 200);
         rayToBody = new Color(255, 255, 255, 255);
         projectedRay = new Color(127, 127, 127, 150);
-        contactPoint = new Color(255, 255, 255, 255);
         scatterRays = new Color(255, 255, 0, 255);
     }
 
     public void matterjsColourScheme() {
-        aabb = new Color(39,31,17, 255);
-        shapeFill = new Color(15,15,19, 255);
-        shapeOutLine = new Color(101,101,103, 255);
-        background = new Color(15,15,19, 255);
-        joints = new Color(255,255,255, 255);
+        background = new Color(15, 15, 19, 255);
+        shapeFill = new Color(15, 15, 19, 255);
+        shapeOutLine = new Color(101, 101, 103, 255);
+        staticFill = new Color(15, 15, 19, 255);
+        staticOutLine = new Color(101, 101, 103, 255);
+
+        aabb = new Color(39, 31, 17, 255);
+        joints = new Color(255, 255, 255, 255);
 
         contactPoint = new Color(255, 255, 255, 255);
         contactNormals = new Color(255, 255, 255, 255);
-        contactImpulse = new Color(255, 255, 255, 255);
-        frictionImpulse = new Color(255, 255, 255, 255);
+        centreOfMass = new Color(206, 92, 92, 255);
+        trail = new Color(255, 255, 255, 200);
 
-        centreOfMass = new Color(206,92,92, 255);
-        staticFill = new Color(15,15,19, 255);
-        staticOutLine = new Color(101,101,103, 255);
         proximity = new Color(255, 255, 255, 255);
         linesToObjects = new Color(255, 255, 255, 255);
-        trail = new Color(255, 255, 255, 200);
         rayToBody = new Color(255, 255, 255, 255);
         projectedRay = new Color(127, 127, 127, 150);
         scatterRays = new Color(255, 255, 0, 255);
+    }
+
+    public void monochromaticColourScheme() {
+        background = new Color(0, 0, 0, 255);
+        shapeFill = new Color(0, 0, 0, 255);
+        shapeOutLine = new Color(255, 255, 255, 255);
+        staticFill = shapeFill;
+        staticOutLine = shapeOutLine;
+
+        aabb = new Color(255, 255, 255, 255);
+        joints = new Color(255, 255, 255, 255);
+
+        contactPoint = new Color(255, 255, 255, 255);
+        contactNormals = new Color(255, 255, 255, 255);
+        centreOfMass = new Color(255, 255, 255, 255);
+        trail = new Color(255, 255, 255, 255);
+
+        proximity = new Color(255, 255, 255, 255);
+        linesToObjects = new Color(255, 255, 255, 255);
+        rayToBody = new Color(255, 255, 255, 255);
+        projectedRay = new Color(255, 255, 255, 255);
+        scatterRays = new Color(255, 255, 255, 255);
     }
 
     //All objects
@@ -77,11 +100,10 @@ public class ColourSettings {
     public Color centreOfMass;
     public Color contactPoint;
     public Color contactNormals;
-    public final double NORMAL_LINE_SCALAR = 2.0;
-    public Color contactImpulse;
-    public Color frictionImpulse;
     public Color trail;
+    public final double NORMAL_LINE_SCALAR = 2.0;
     public final int COM_RADIUS = 5;
+    public final double CONTACT_LINE_SCALAR = 2.0;
 
     //Static objects
     public Color staticFill;
@@ -100,8 +122,8 @@ public class ColourSettings {
     //Rays
     public Color rayToBody;
     public Color projectedRay;
-    public final double RAY_DOT = 2;
     public Color scatterRays;
+    public final double RAY_DOT = 5;
 
     //Testbed related drawing
     public final Color gridLines = new Color(255, 255, 255, 20);
@@ -118,8 +140,6 @@ public class ColourSettings {
     private boolean drawContactNormals = true;
     private boolean drawCOMs = true;
     private boolean drawGrid = false;
-
-    public final double CONTACT_LINE_SCALAR = 2.0;
 
     public boolean getDrawShapes() {
         return drawShapes;
