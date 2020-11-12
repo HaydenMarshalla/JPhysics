@@ -33,8 +33,11 @@ public class JointToBody extends Joint {
         double tension = calculateTension();
         Vectors2D distance = this.object2AttachmentPoint.subtract(this.object1AttachmentPoint);
         distance.normalize();
-        impulse(tension, object1, distance);
-        impulse(tension, object2, distance.negativeVec());
+
+        Vectors2D impulse = distance.scalar(tension);
+        object1.applyLinearImpulse(impulse, object1AttachmentPoint.subtract(object1.position));
+        impulse = distance.negativeVec().scalar(tension);
+        object1.applyLinearImpulse(impulse, object2AttachmentPoint.subtract(object2.position));
     }
 
     @Override

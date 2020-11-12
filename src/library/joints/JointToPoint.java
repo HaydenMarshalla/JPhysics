@@ -23,14 +23,15 @@ public class JointToPoint extends Joint {
 
     @Override
     public void applyTension() {
-        Matrix2D mat1 = new Matrix2D();
-        mat1.set(object1.orientation);
+        Matrix2D mat1 = new Matrix2D(object1.orientation);
         this.object1AttachmentPoint = object1.position.addi(mat1.mul(offset1, new Vectors2D()));
 
         double tension = calculateTension();
         Vectors2D distance = pointAttachedTo.subtract(object1AttachmentPoint);
         distance.normalize();
-        impulse(tension, object1, distance);
+
+        Vectors2D impulse = distance.scalar(tension);
+        object1.applyLinearImpulse(impulse, object1AttachmentPoint.subtract(object1.position));
     }
 
     @Override
