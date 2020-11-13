@@ -30,6 +30,8 @@ public class KeyBoardInput extends TestbedControls implements KeyListener {
             } else {
                 TESTBED.pause();
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_B) {
+            TESTBED.getWorld().joints.remove(2);
         } else if (e.getKeyCode() == KeyEvent.VK_D && shift) {
             CAMERA.transformCentre(new Vectors2D(10, 0));
         } else if (e.getKeyCode() == KeyEvent.VK_A && shift) {

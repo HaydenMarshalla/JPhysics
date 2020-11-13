@@ -59,13 +59,21 @@ public class World {
         //Applies tentative velocities
         applyForces(dt);
 
+        /*
+        Resolve joints
+        Note: this is removed from the iterations at this stage as the application of forces is different.
+        The extra iterations on joints make the forces of the joints multiple times larger equal to the number of iterations.
+        Early out could be used like in the collision solver
+        This may change in the future and will be revised at a later date.
+        */
+        for (Joint j : joints) {
+            j.applyTension();
+        }
+
         //Resolve collisions
         for (int i = 0; i < Settings.ITERATIONS; i++) {
             for (Arbiter contact : contacts) {
                 contact.solve();
-            }
-            for (Joint j : joints) {
-                j.applyTension();
             }
         }
 
@@ -90,7 +98,7 @@ public class World {
 
     private void applyLinearDrag(Body b) {
         double velocityMagnitude = b.velocity.length();
-        double dragForceMagnitude =velocityMagnitude * velocityMagnitude * b.linearDampening;
+        double dragForceMagnitude = velocityMagnitude * velocityMagnitude * b.linearDampening;
         Vectors2D dragForceVector = b.velocity.getNormalized().scalar(-dragForceMagnitude);
         b.applyForceToCentre(dragForceVector);
     }
@@ -101,13 +109,13 @@ public class World {
                 continue;
             }
 
-            if (b.affectedByGravity) {
-                b.applyForceToCentre(gravity);
-            }
-
             applyLinearDrag(b);
 
-            b.velocity.add(gravity.addi(b.force.scalar(b.invMass)).scalar(dt));
+            if (b.affectedByGravity) {
+                b.velocity.add(gravity.scalar(dt));
+            }
+
+            b.velocity.add(b.force.scalar(b.invMass).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
     }
@@ -162,26 +170,26 @@ public class World {
 
     public void drawContact(Graphics2D g2d, ColourSettings paintSettings, Camera camera) {
         for (Arbiter contact : contacts) {
-                Vectors2D point = contact.contacts[0];
-                Vectors2D line;
-                Vectors2D beginningOfLine;
-                Vectors2D endOfLine;
+            Vectors2D point = contact.contacts[0];
+            Vectors2D line;
+            Vectors2D beginningOfLine;
+            Vectors2D endOfLine;
 
-                if (paintSettings.getDrawContactNormals()) {
-                    g2d.setColor(paintSettings.contactNormals);
-                    line = contact.normal.scalar(paintSettings.CONTACT_LINE_SCALAR);
-                    beginningOfLine = camera.convertToScreen(point.addi(line));
-                    endOfLine = camera.convertToScreen(point.subtract(line));
-                    g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
-                }
+            if (paintSettings.getDrawContactNormals()) {
+                g2d.setColor(paintSettings.contactNormals);
+                line = contact.normal.scalar(paintSettings.CONTACT_LINE_SCALAR);
+                beginningOfLine = camera.convertToScreen(point.addi(line));
+                endOfLine = camera.convertToScreen(point.subtract(line));
+                g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
+            }
 
-                if (paintSettings.getDrawContactPoints()) {
-                    g2d.setColor(paintSettings.contactPoint);
-                    line = contact.normal.normal().scalar(paintSettings.NORMAL_LINE_SCALAR);
-                    beginningOfLine = camera.convertToScreen(point.addi(line));
-                    endOfLine = camera.convertToScreen(point.subtract(line));
-                    g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
-                }
+            if (paintSettings.getDrawContactPoints()) {
+                g2d.setColor(paintSettings.contactPoint);
+                line = contact.normal.normal().scalar(paintSettings.NORMAL_LINE_SCALAR);
+                beginningOfLine = camera.convertToScreen(point.addi(line));
+                endOfLine = camera.convertToScreen(point.subtract(line));
+                g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
+            }
         }
     }
 

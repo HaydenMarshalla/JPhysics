@@ -1,5 +1,6 @@
 package testbed.demo.input;
 
+import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.*;
 
@@ -37,6 +38,7 @@ public class DemoMenuInput extends TestbedControls implements ActionListener {
     }
 
     private void resetUniquieEventHandlers() {
+        TESTBED.setCamera(new Vectors2D(0, 0), 1);
         ProximityExplosionTest.active = false;
         ParticleExplosionTest.active = false;
         RaycastExplosionTest.active = false;

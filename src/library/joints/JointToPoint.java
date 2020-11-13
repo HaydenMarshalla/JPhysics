@@ -49,8 +49,8 @@ public class JointToPoint extends Joint {
     @Override
     public double rateOfChangeOfExtension() {
         Vectors2D distance = pointAttachedTo.subtract(object1AttachmentPoint);
-        distance = distance.normalize();
-        Vectors2D relativeVelocity = object1.velocity.negativeVec();
+        distance.normalize();
+        Vectors2D relativeVelocity = object1.velocity.negativeVec().subtract(object1AttachmentPoint.subtract(object1.position).crossProduct(object1.angularVelocity));
 
         return relativeVelocity.dotProduct(distance);
     }

@@ -20,7 +20,6 @@ public class NewtonsCradle {
 
         double minX, maxX;
         minX = -spread + 40;
-        maxX = minX + spread + spread;
 
         {
             for (int i = 0; i < noOfCircles; i++) {
@@ -31,7 +30,7 @@ public class NewtonsCradle {
                 b.dynamicFriction = 0;
                 temp.addBody(b);
 
-                Joint j = new JointToPoint(new Vectors2D(x, 200), b, 300, 2000, 10, true, new Vectors2D());
+                Joint j = new JointToPoint(new Vectors2D(x, 200), b, 300, 200000, 1000, true, new Vectors2D());
                 temp.addJoint(j);
             }
         }
@@ -44,7 +43,7 @@ public class NewtonsCradle {
             b.dynamicFriction = 0;
             temp.addBody(b);
 
-            Joint j = new JointToPoint(new Vectors2D(minX, 200), b, 300, 2000, 10, true, new Vectors2D());
+            Joint j = new JointToPoint(new Vectors2D(minX, 200), b, 300, 200000, 1000, true, new Vectors2D());
             temp.addJoint(j);
         }
     }

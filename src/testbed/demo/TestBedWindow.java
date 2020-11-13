@@ -3,6 +3,7 @@ package testbed.demo;
 import library.collision.AABB;
 import library.dynamics.Body;
 import library.dynamics.Ray;
+import library.dynamics.ShadowCasting;
 import library.dynamics.World;
 import library.explosions.Explosion;
 import library.explosions.ParticleExplosion;
@@ -151,6 +152,9 @@ public class TestBedWindow extends JPanel implements Runnable {
             }
             r.updateProjection(world.bodies);
         }
+        for (ShadowCasting s : shadowCastings) {
+            s.updateProjections(world.bodies);
+        }
     }
 
     private void updateTrails() {
@@ -233,6 +237,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         trailsToBodies.clear();
         rays.clear();
         explosionObj.clear();
+        shadowCastings.clear();
         repaint();
     }
 
@@ -275,6 +280,9 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
         for (Ray r : rays) {
             r.draw(g2d, PAINT_SETTINGS, CAMERA);
+        }
+        for (ShadowCasting s : shadowCastings){
+            s.draw(g2d, PAINT_SETTINGS, CAMERA);
         }
     }
 
@@ -508,5 +516,11 @@ public class TestBedWindow extends JPanel implements Runnable {
         for (Body b : world.bodies) {
             b.setDensity(0);
         }
+    }
+
+    private final ArrayList<ShadowCasting> shadowCastings = new ArrayList<>();
+
+    public void add(ShadowCasting shadowCasting) {
+        shadowCastings.add(shadowCasting);
     }
 }

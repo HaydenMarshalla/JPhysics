@@ -22,12 +22,10 @@ public class JointToBody extends Joint {
 
     @Override
     public void applyTension() {
-        Matrix2D mat1 = new Matrix2D();
-        mat1.set(object1.orientation);
+        Matrix2D mat1 = new Matrix2D(object1.orientation);
         this.object1AttachmentPoint = object1.position.addi(mat1.mul(offset1, new Vectors2D()));
 
-        Matrix2D mat2 = new Matrix2D();
-        mat2.set(object2.orientation);
+        Matrix2D mat2 = new Matrix2D(object2.orientation);
         this.object2AttachmentPoint = object2.position.addi(mat2.mul(offset2, new Vectors2D()));
 
         double tension = calculateTension();
@@ -36,8 +34,7 @@ public class JointToBody extends Joint {
 
         Vectors2D impulse = distance.scalar(tension);
         object1.applyLinearImpulse(impulse, object1AttachmentPoint.subtract(object1.position));
-        impulse = distance.negativeVec().scalar(tension);
-        object1.applyLinearImpulse(impulse, object2AttachmentPoint.subtract(object2.position));
+        object2.applyLinearImpulse(impulse.negativeVec(), object2AttachmentPoint.subtract(object2.position));
     }
 
     @Override
@@ -58,6 +55,7 @@ public class JointToBody extends Joint {
         distance.normalize();
 
         Vectors2D relativeVelocity = object2.velocity.addi(object2AttachmentPoint.subtract(object2.position).crossProduct(object2.angularVelocity)).subtract(object1.velocity).subtract(object1AttachmentPoint.subtract(object1.position).crossProduct(object1.angularVelocity));
+
         return relativeVelocity.dotProduct(distance);
     }
 
