@@ -16,17 +16,19 @@ import library.math.Vectors2D;
 import testbed.Camera;
 import testbed.Trail;
 import testbed.demo.input.*;
+import testbed.demo.tests.BouncingBall;
+import testbed.demo.tests.Car;
+import testbed.demo.tests.Chains;
 import testbed.demo.tests.Raycast;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final Camera CAMERA;
@@ -281,7 +283,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         for (Ray r : rays) {
             r.draw(g2d, PAINT_SETTINGS, CAMERA);
         }
-        for (ShadowCasting s : shadowCastings){
+        for (ShadowCasting s : shadowCastings) {
             s.draw(g2d, PAINT_SETTINGS, CAMERA);
         }
     }
@@ -351,15 +353,33 @@ public class TestBedWindow extends JPanel implements Runnable {
             JMenuBar menuBar = new JMenuBar();
             menuBar.add(createTestMenu(gameScreen));
             menuBar.add(createColourSchemeMenu(gameScreen));
+            menuBar.add(createFrequencyMenu(gameScreen));
             window.setJMenuBar(menuBar);
 
             window.setVisible(true);
         }
     }
 
+    private static Component createFrequencyMenu(TestBedWindow gameScreen) {
+        JMenu hertzMenu = new JMenu("Hertz");
+        int number = 30;
+        for (int i = 1; i < 5; i++) {
+            JMenuItem hertzMenuItem = new JMenuItem("" + number * i);
+            hertzMenu.add(hertzMenuItem);
+            hertzMenuItem.addActionListener(e -> {
+                switch (e.getActionCommand()) {
+                    case "30" -> Settings.HERTZ = 30;
+                    case "60" -> Settings.HERTZ = 60;
+                    case "90" -> Settings.HERTZ = 90;
+                    case "120" -> Settings.HERTZ = 120;
+                }
+            });
+        }
+        return hertzMenu;
+    }
+
     private static JMenu createColourSchemeMenu(TestBedWindow gameScreen) {
         JMenu colourScheme = new JMenu("Colour schemes");
-        colourScheme.setMnemonic(KeyEvent.VK_M);
 
         JMenuItem defaultScheme = new JMenuItem("Default");
         colourScheme.add(defaultScheme);
@@ -385,89 +405,90 @@ public class TestBedWindow extends JPanel implements Runnable {
         testMenu.setMnemonic(KeyEvent.VK_M);
 
         JMenuItem bouncingBall = new JMenuItem("Bouncing ball");
-        bouncingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK));
+        bouncingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.ALT_DOWN_MASK));
         testMenu.add(bouncingBall);
         bouncingBall.addActionListener(new DemoMenuInput(gameScreen));
 
-        JMenuItem car = new JMenuItem("Car");
-        car.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(car);
-        car.addActionListener(new DemoMenuInput(gameScreen));
-
         JMenuItem chains = new JMenuItem("Chains");
-        chains.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.ALT_DOWN_MASK));
+        chains.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK));
         testMenu.add(chains);
         chains.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem compoundBodies = new JMenuItem("Compound bodies");
-        compoundBodies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.ALT_DOWN_MASK));
+        compoundBodies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK));
         testMenu.add(compoundBodies);
         compoundBodies.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem drag = new JMenuItem("Drag");
-        drag.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.ALT_DOWN_MASK));
+        drag.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.ALT_DOWN_MASK));
         testMenu.add(drag);
         drag.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem friction = new JMenuItem("Friction");
-        friction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.ALT_DOWN_MASK));
+        friction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.ALT_DOWN_MASK));
         testMenu.add(friction);
         friction.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem lineOfSight = new JMenuItem("Line of sight");
-        lineOfSight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.ALT_DOWN_MASK));
+        lineOfSight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.ALT_DOWN_MASK));
         testMenu.add(lineOfSight);
         lineOfSight.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem mixedShapes = new JMenuItem("Mixed shapes");
-        mixedShapes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.ALT_DOWN_MASK));
+        mixedShapes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.ALT_DOWN_MASK));
         testMenu.add(mixedShapes);
         mixedShapes.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem newtonsCradle = new JMenuItem("Newtons cradle");
-        newtonsCradle.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_DOWN_MASK));
+        newtonsCradle.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.ALT_DOWN_MASK));
         testMenu.add(newtonsCradle);
         newtonsCradle.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem particleExplosion = new JMenuItem("Particle explosion");
-        particleExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.ALT_DOWN_MASK));
+        particleExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.ALT_DOWN_MASK));
         testMenu.add(particleExplosion);
         particleExplosion.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem proximityExplosion = new JMenuItem("Proximity explosion");
-        proximityExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_DOWN_MASK));
+        proximityExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_DOWN_MASK));
         testMenu.add(proximityExplosion);
         proximityExplosion.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem raycastExplosion = new JMenuItem("Raycast explosion");
-        raycastExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
+        raycastExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.ALT_DOWN_MASK));
         testMenu.add(raycastExplosion);
         raycastExplosion.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem raycast = new JMenuItem("Raycast");
-        raycast.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK));
+        raycast.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_DOWN_MASK));
         testMenu.add(raycast);
         raycast.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem restitution = new JMenuItem("Restitution");
-        restitution.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.ALT_DOWN_MASK));
+        restitution.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
         testMenu.add(restitution);
         restitution.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem stackedObjects = new JMenuItem("Stacked objects");
-        stackedObjects.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_DOWN_MASK));
+        stackedObjects.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK));
         testMenu.add(stackedObjects);
         stackedObjects.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem trebuchet = new JMenuItem("Trebuchet");
-        trebuchet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_DOWN_MASK));
+        trebuchet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.ALT_DOWN_MASK));
         testMenu.add(trebuchet);
         trebuchet.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem wreckingBall = new JMenuItem("Wrecking ball");
-        wreckingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.ALT_DOWN_MASK));
+        wreckingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_DOWN_MASK));
         testMenu.add(wreckingBall);
         wreckingBall.addActionListener(new DemoMenuInput(gameScreen));
+
+        //TO DO: Create car demo and add to JMenu
+        /* JMenuItem car = new JMenuItem("Car");
+        car.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(car);
+        car.addActionListener(new DemoMenuInput(gameScreen));*/
 
         return testMenu;
     }
