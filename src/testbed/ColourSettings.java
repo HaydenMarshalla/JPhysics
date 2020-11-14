@@ -135,11 +135,11 @@ public class ColourSettings {
     //Flags for testbed
     private boolean drawShapes = true;
     private boolean drawJoints = true;
-    private boolean drawAABBs = true;
-    private boolean drawContactPoints = true;
-    private boolean drawContactNormals = true;
-    private boolean drawCOMs = true;
-    private boolean drawGrid = false;
+    private boolean drawAABBs = false;
+    private boolean drawContactPoints = false;
+    private boolean drawContactNormals = false;
+    private boolean drawCOMs = false;
+    private boolean drawGrid = true;
 
     public boolean getDrawShapes() {
         return drawShapes;

@@ -14,17 +14,17 @@ public class Friction {
 
         {
             for (int i = 0; i < 3; i++) {
-                Body ramp1 = world.addBody(new Body(new Polygon(200.0, 10.0), -150, 200 - (150 * i)));
-                ramp1.setOrientation(-0.2);
-                ramp1.setDensity(0);
+                Body ramp = world.addBody(new Body(new Polygon(200.0, 10.0), -200 + (200 * i), 200 - (180 * i)));
+                ramp.setOrientation(-0.2);
+                ramp.setDensity(0);
             }
 
             for (int i = 0; i < 3; i++) {
-                Body ramp1 = world.addBody(new Body(new Polygon(20.0, 20.0), -240, 250 - (150 * i)));
-                ramp1.setOrientation(-0.2);
-                ramp1.staticFriction = 0.5 - (i * 0.1);
-                ramp1.dynamicFriction = 0.3 - (i * 0.1);
-                ramp1.setDensity(1);
+                Body box = world.addBody(new Body(new Polygon(20.0, 20.0), -290+ (200 * i), 250 - (180 * i)));
+                box.setOrientation(-0.2);
+                box.staticFriction = 0.5 - (i * 0.1);
+                box.dynamicFriction = 0.3 - (i * 0.1);
+                box.setDensity(1);
             }
         }
     }

@@ -76,7 +76,10 @@ public class World {
                 contact.solve();
             }
         }
-
+        //Correct positional errors from the discrete collisions
+        for (Arbiter contact : contacts) {
+            contact.penetrationResolution();
+        }
         //Integrate positions
         for (Body b : bodies) {
             if (b.invMass == 0) {
@@ -92,7 +95,7 @@ public class World {
 
         //Correct positional errors from the discrete collisions
         for (Arbiter contact : contacts) {
-            //contact.penetrationResolution();
+            contact.penetrationResolution();
         }
     }
 

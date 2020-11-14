@@ -7,6 +7,8 @@ import library.geometry.Polygon;
 import library.utils.Settings;
 import library.math.Vectors2D;
 
+import java.util.Set;
+
 public class Arbiter {
     private final Body A;
     private final Body B;
@@ -115,13 +117,7 @@ public class Arbiter {
         Vectors2D circleBodyTov1 = polyToCircleVec.subtract(vector1);
         double firstPolyCorner = circleBodyTov1.dotProduct(v1ToV2);
 
-        Vectors2D v2ToV1 = vector1.subtract(vector2);
-        Vectors2D circleBodyTov2 = polyToCircleVec.subtract(vector2);
-        double secondPolyCorner = circleBodyTov2.dotProduct(v2ToV1);
-
         //If first vertex is positive, v1 face region collision check
-        //If second vertex is positive, v2 face region collision check
-        //Else circle has made contact with the polygon face.
         if (firstPolyCorner <= 0.0) {
             penetration = polyToCircleVec.distance(vector1);
 
@@ -130,11 +126,20 @@ public class Arbiter {
                 return;
             }
 
-            this.penetration = penetration;
+            this.penetration = A.radius - penetration;
             contactCount = 1;
             B.orient.mul(this.normal.set(vector1.subtract(polyToCircleVec).normalize()));
             contacts[0] = B.orient.mul(vector1, new Vectors2D()).addi(b.position);
-        } else if (secondPolyCorner <= 0.0) {
+            return;
+        }
+
+        Vectors2D v2ToV1 = vector1.subtract(vector2);
+        Vectors2D circleBodyTov2 = polyToCircleVec.subtract(vector2);
+        double secondPolyCorner = circleBodyTov2.dotProduct(v2ToV1);
+
+        //If second vertex is positive, v2 face region collision check
+        //Else circle has made contact with the polygon face.
+        if (secondPolyCorner < 0.0) {
             penetration = polyToCircleVec.distance(vector2);
 
             //Check to see if vertex is within the circle
@@ -142,16 +147,23 @@ public class Arbiter {
                 return;
             }
 
-            this.penetration = penetration;
+            this.penetration = A.radius - penetration;
             contactCount = 1;
             B.orient.mul(this.normal.set(vector2.subtract(polyToCircleVec).normalize()));
             contacts[0] = B.orient.mul(vector2, new Vectors2D()).addi(b.position);
 
         } else {
-            this.penetration = A.radius - penetration;
-            Vectors2D faceNormal = B.normals[faceNormalIndex];
+            Vectors2D v = B.normals[faceNormalIndex];
+
+            double distFromEdgeToCircle = polyToCircleVec.subtract(vector1).dotProduct(v);
+
+            if (distFromEdgeToCircle >= A.radius) {
+                return;
+            }
+
+            this.penetration = A.radius - distFromEdgeToCircle;
             this.contactCount = 1;
-            B.orient.mul(faceNormal, this.normal);
+            B.orient.mul(B.normals[faceNormalIndex], this.normal);
             Vectors2D circleContactPoint = a.position.addi(this.normal.negative().scalar(A.radius));
             this.contacts[0].set(circleContactPoint);
         }
@@ -340,15 +352,16 @@ public class Arbiter {
     }
 
     public void penetrationResolution() {
-        if (penetration < 0) {
+        double penetrationTolerance = penetration - Settings.PENETRATION_ALLOWANCE;
+
+        if (penetrationTolerance <= 0.0) {
             return;
         }
 
         double totalMass = A.mass + B.mass;
-        double correction = (penetration * Settings.PENETRATION_CORRECTION) / totalMass;
-
-        A.position = A.position.add(normal.scalar(-A.mass * correction));
-        B.position = B.position.add(normal.scalar(B.mass * correction));
+        double correction = (penetrationTolerance * Settings.PENETRATION_CORRECTION) / totalMass;
+        A.position = A.position.addi(normal.scalar(-A.mass * correction));
+        B.position = B.position.addi(normal.scalar(B.mass * correction));
     }
 
     public void solve() {

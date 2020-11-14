@@ -20,7 +20,7 @@ public class StackedObjects {
             }
             for (int x = 0; x < 15; x++) {
                 for (int y = 0; y < 1; y++) {
-                    Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), 400);
+                    Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), 700);
                     b.setDensity(100);
                     temp.addBody(b);
                 }
