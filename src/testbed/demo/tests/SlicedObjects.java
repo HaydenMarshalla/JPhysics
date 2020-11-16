@@ -8,7 +8,5 @@ public class SlicedObjects {
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World world = testBedWindow.getWorld();
-
-
     }
 }

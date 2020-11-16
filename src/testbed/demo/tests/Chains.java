@@ -13,23 +13,23 @@ public class Chains {
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
-        testBedWindow.setCamera(new Vectors2D(0, -50), 1.2);
+        testBedWindow.setCamera(new Vectors2D(0, -50), 1.4);
 
         Body b = new Body(new Circle(60.0), 0, 0);
         b.setDensity(0);
         temp.addBody(b);
 
-        Body[] bodyList = new Body[20];
         int maxChainLength = 20;
-        for (int i = 0; i < 20; i++) {
-            Body b2 = new Body(new Polygon(20.0, 5.0), -20+40.0 * maxChainLength / 2 - (40 * i), 200);
+        Body[] bodyList = new Body[maxChainLength];
+        for (int i = 0; i < maxChainLength; i++) {
+            Body b2 = new Body(new Polygon(20.0, 5.0), -20 + 40.0 * maxChainLength / 2 - (40 * i), 200);
             temp.addBody(b2);
             bodyList[i] = b2;
-        }
 
-        for (int i = 1; i < 20; i++) {
-            Joint j1 = new JointToBody(bodyList[i - 1], bodyList[i], 1, 200, 10, true, new Vectors2D(-20, 0), new Vectors2D(20, 0));
-            temp.addJoint(j1);
+            if (i != 0) {
+                Joint j1 = new JointToBody(bodyList[i - 1], bodyList[i], 1, 200, 10, true, new Vectors2D(-20, 0), new Vectors2D(20, 0));
+                temp.addJoint(j1);
+            }
         }
     }
 }

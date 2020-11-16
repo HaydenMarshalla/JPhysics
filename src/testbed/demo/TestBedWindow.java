@@ -16,10 +16,7 @@ import library.math.Vectors2D;
 import testbed.Camera;
 import testbed.Trail;
 import testbed.demo.input.*;
-import testbed.demo.tests.BouncingBall;
-import testbed.demo.tests.Car;
-import testbed.demo.tests.Chains;
-import testbed.demo.tests.Raycast;
+import testbed.demo.tests.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,6 +67,8 @@ public class TestBedWindow extends JPanel implements Runnable {
 
         MOUSE_MOTION_INPUT = new MouseMovement(this);
         addMouseMotionListener(MOUSE_MOTION_INPUT);
+
+        Chains.load(this);
     }
 
     public void startThread() {
@@ -257,6 +256,9 @@ public class TestBedWindow extends JPanel implements Runnable {
         if (PAINT_SETTINGS.getDrawGrid()) {
             drawGridMethod(g2d);
         }
+        for (ShadowCasting s : shadowCastings) {
+            s.draw(g2d, PAINT_SETTINGS, CAMERA);
+        }
         drawTrails(g2d);
         for (Body b : world.bodies) {
             if (PAINT_SETTINGS.getDrawShapes()) {
@@ -282,9 +284,6 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
         for (Ray r : rays) {
             r.draw(g2d, PAINT_SETTINGS, CAMERA);
-        }
-        for (ShadowCasting s : shadowCastings) {
-            s.draw(g2d, PAINT_SETTINGS, CAMERA);
         }
     }
 
@@ -414,10 +413,10 @@ public class TestBedWindow extends JPanel implements Runnable {
         testMenu.add(chains);
         chains.addActionListener(new DemoMenuInput(gameScreen));
 
-        JMenuItem compoundBodies = new JMenuItem("Compound bodies");
+       /* JMenuItem compoundBodies = new JMenuItem("Compound bodies");
         compoundBodies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK));
         testMenu.add(compoundBodies);
-        compoundBodies.addActionListener(new DemoMenuInput(gameScreen));
+        compoundBodies.addActionListener(new DemoMenuInput(gameScreen));*/
 
         JMenuItem drag = new JMenuItem("Drag");
         drag.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.ALT_DOWN_MASK));

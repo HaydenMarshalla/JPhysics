@@ -12,6 +12,7 @@ public class LineOfSight {
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
+        testBedWindow.setCamera(new Vectors2D(0, -40), 3.0);
 
         {
             Body top = new Body(new Polygon(900.0, 20.0), -20, 500);
@@ -34,15 +35,16 @@ public class LineOfSight {
         }
 
         {
-            Body b = new Body(new Circle(60.0), 200, 0);
+            Body b = new Body(new Circle(60.0), -200, -60);
             b.setDensity(0);
             temp.addBody(b);
 
-            Body left = new Body(new Polygon(50.0, 20.0), -200, 200);
+            Body left = new Body(new Polygon(20.0, 20.0), 0, 200);
             left.setDensity(0);
             temp.addBody(left);
         }
 
-        testBedWindow.add(new ShadowCasting(new Vectors2D(), 1000000));
+        ShadowCasting b = new ShadowCasting(new Vectors2D(), 1100);
+        testBedWindow.add(b);
     }
 }

@@ -12,10 +12,10 @@ public class Raycast {
     public static boolean active = false;
 
     public static void load(TestBedWindow testBedWindow) {
-        active = true;
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
         testBedWindow.setCamera(new Vectors2D(0, -40), 2.75);
+        active = true;
 
         {
             Body top = new Body(new Polygon(900.0, 20.0), -20, 500);

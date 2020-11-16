@@ -33,7 +33,7 @@ public class WreckingBall {
             b2.setDensity(2);
             temp.addBody(b2);
 
-            Joint j = new JointToPoint(new Vectors2D(0, 320), b2, 250, 2000, 10, true, new Vectors2D());
+            Joint j = new JointToPoint(new Vectors2D(0, 320), b2, 250, 200, 100, true, new Vectors2D());
             temp.addJoint(j);
         }
     }

@@ -119,14 +119,14 @@ public class Arbiter {
 
         //If first vertex is positive, v1 face region collision check
         if (firstPolyCorner <= 0.0) {
-            penetration = polyToCircleVec.distance(vector1);
+            double distBetweenObj = polyToCircleVec.distance(vector1);
 
             //Check to see if vertex is within the circle
-            if (penetration >= A.radius) {
+            if (distBetweenObj >= A.radius) {
                 return;
             }
 
-            this.penetration = A.radius - penetration;
+            this.penetration = A.radius - distBetweenObj;
             contactCount = 1;
             B.orient.mul(this.normal.set(vector1.subtract(polyToCircleVec).normalize()));
             contacts[0] = B.orient.mul(vector1, new Vectors2D()).addi(b.position);
@@ -140,22 +140,20 @@ public class Arbiter {
         //If second vertex is positive, v2 face region collision check
         //Else circle has made contact with the polygon face.
         if (secondPolyCorner < 0.0) {
-            penetration = polyToCircleVec.distance(vector2);
+            double distBetweenObj = polyToCircleVec.distance(vector2);
 
             //Check to see if vertex is within the circle
-            if (penetration >= A.radius) {
+            if (distBetweenObj >= A.radius) {
                 return;
             }
 
-            this.penetration = A.radius - penetration;
+            this.penetration = A.radius - distBetweenObj;
             contactCount = 1;
             B.orient.mul(this.normal.set(vector2.subtract(polyToCircleVec).normalize()));
             contacts[0] = B.orient.mul(vector2, new Vectors2D()).addi(b.position);
 
         } else {
-            Vectors2D v = B.normals[faceNormalIndex];
-
-            double distFromEdgeToCircle = polyToCircleVec.subtract(vector1).dotProduct(v);
+            double distFromEdgeToCircle = polyToCircleVec.subtract(vector1).dotProduct(B.normals[faceNormalIndex]);
 
             if (distFromEdgeToCircle >= A.radius) {
                 return;

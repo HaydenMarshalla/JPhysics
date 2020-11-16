@@ -124,6 +124,8 @@ public class ColourSettings {
     public Color projectedRay;
     public Color scatterRays;
     public final double RAY_DOT = 5;
+    public final Color shadow = new Color(128,128,128, 126);
+
 
     //Testbed related drawing
     public final Color gridLines = new Color(255, 255, 255, 20);

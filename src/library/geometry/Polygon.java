@@ -7,7 +7,7 @@ import testbed.ColourSettings;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Polygon extends Shapes {
     public Vectors2D[] vertices;
