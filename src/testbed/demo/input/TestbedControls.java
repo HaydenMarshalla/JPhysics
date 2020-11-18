@@ -23,7 +23,7 @@ public abstract class TestbedControls {
 
     protected void setProximityEpicentre(MouseEvent e) {
         Vectors2D v = findWorldPosition(e);
-        ProximityExplosion p = (ProximityExplosion) TESTBED.getProximityExp().get(0);
+        ProximityExplosion p = (ProximityExplosion) TESTBED.getRayExplosions().get(0);
         p.changeEpicentre(v);
     }
 

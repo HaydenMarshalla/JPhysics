@@ -15,7 +15,7 @@ public class DemoMenuInput extends TestbedControls implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         TESTBED.clearTestbedObjects();
-        resetUniquieEventHandlers();
+        resetUniqueEventHandlers();
         switch (event.getActionCommand()) {
             case "Bouncing ball" -> BouncingBall.load(TESTBED);
             case "Car" -> Car.load(TESTBED);
@@ -37,10 +37,12 @@ public class DemoMenuInput extends TestbedControls implements ActionListener {
         }
     }
 
-    private void resetUniquieEventHandlers() {
+    private void resetUniqueEventHandlers() {
         TESTBED.setCamera(new Vectors2D(0, 0), 1);
         ProximityExplosionTest.active = false;
         ParticleExplosionTest.active = false;
         RaycastExplosionTest.active = false;
+        LineOfSight.active = false;
+        Trebuchet.active = false;
     }
 }

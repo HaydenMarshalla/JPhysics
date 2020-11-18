@@ -19,6 +19,7 @@ public class ProximityExplosion implements Explosion {
         proximity = radius;
     }
 
+    @Override
     public void changeEpicentre(Vectors2D v) {
         epicentre = v;
     }

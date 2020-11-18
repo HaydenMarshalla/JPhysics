@@ -17,35 +17,10 @@ public class Raycast {
         testBedWindow.setCamera(new Vectors2D(0, -40), 2.75);
         active = true;
 
-        {
-            Body top = new Body(new Polygon(900.0, 20.0), -20, 500);
-            top.setDensity(0);
-            temp.addBody(top);
+        testBedWindow.generateBoxOfObjects();
 
-            Body right = new Body(new Polygon(500.0, 20.0), 900, 20);
-            right.setOrientation(1.5708);
-            right.setDensity(0);
-            temp.addBody(right);
-
-            Body bottom = new Body(new Polygon(900.0, 20.0), 20, -500);
-            bottom.setDensity(0);
-            temp.addBody(bottom);
-
-            Body left = new Body(new Polygon(500.0, 20.0), -900, -20);
-            left.setOrientation(1.5708);
-            left.setDensity(0);
-            temp.addBody(left);
-        }
-
-        {
-            testBedWindow.generateRandomObjects(new Vectors2D(-880, -480), new Vectors2D(880, 480), 30, 100);
-            testBedWindow.setStaticWorldBodies();
-        }
-
-        {
-            Ray r = new Ray(new Vectors2D(), new Vectors2D(0, 1), 1000);
-            testBedWindow.add(r);
-        }
+        Ray r = new Ray(new Vectors2D(), new Vectors2D(0, 1), 1000);
+        testBedWindow.add(r);
     }
 
     public static void action(Ray r) {

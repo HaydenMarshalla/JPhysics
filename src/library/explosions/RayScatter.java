@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class RayScatter {
     private final Ray[] rays;
     private final int noOfRays;
-    private final Vectors2D epicentre;
+    private Vectors2D epicentre;
 
     public Vectors2D getEpicentre() {
         return epicentre;
@@ -26,13 +26,12 @@ public class RayScatter {
     }
 
     //Casts rays in 360 degrees with equal spacing
-    public void castRays(int distance, ArrayList<Body> worldBodies) {
+    public void castRays(int distance) {
         double angle = 6.28319 / noOfRays;
         Vectors2D direction = new Vectors2D(0, 1);
         Matrix2D u = new Matrix2D(angle);
         for (int i = 0; i < rays.length; i++) {
             rays[i] = new Ray(epicentre, direction, distance);
-            rays[i].updateProjection(worldBodies);
             u.mul(direction);
         }
     }
@@ -51,5 +50,12 @@ public class RayScatter {
 
     public Ray[] getRays() {
         return rays;
+    }
+
+    public void changeEpicentre(Vectors2D v) {
+        this.epicentre = v;
+        for (Ray ray : rays) {
+            ray.setStartPoint(epicentre);
+        }
     }
 }

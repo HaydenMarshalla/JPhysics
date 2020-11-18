@@ -83,7 +83,7 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     public ArrayList<Explosion> explosionObj = new ArrayList<>();
 
-    public ArrayList<Explosion> getProximityExp() {
+    public ArrayList<Explosion> getRayExplosions() {
         return explosionObj;
     }
 
@@ -140,18 +140,15 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
     }
 
-    private void updateProximityCast() {
-        for (Explosion p : explosionObj) {
-            p.update(world.bodies);
-        }
-    }
-
     private void updateRays() {
         for (Ray r : rays) {
             if (Raycast.active) {
                 Raycast.action(r);
             }
             r.updateProjection(world.bodies);
+        }
+        for (Explosion p : explosionObj) {
+            p.update(world.bodies);
         }
         for (ShadowCasting s : shadowCastings) {
             s.updateProjections(world.bodies);
@@ -192,7 +189,6 @@ public class TestBedWindow extends JPanel implements Runnable {
         double dt = Settings.HERTZ > 0.0 ? 1.0 / Settings.HERTZ : 0.0;
         world.step(dt);
         updateTrails();
-        updateProximityCast();
         updateRays();
         checkParticleLifetime(dt);
     }
@@ -499,6 +495,33 @@ public class TestBedWindow extends JPanel implements Runnable {
                 world.addBody(b);
                 totalObjects--;
             }
+        }
+    }
+
+    public void generateBoxOfObjects() {
+        {
+            Body top = new Body(new Polygon(900.0, 20.0), -20, 500);
+            top.setDensity(0);
+            world.addBody(top);
+
+            Body right = new Body(new Polygon(500.0, 20.0), 900, 20);
+            right.setOrientation(1.5708);
+            right.setDensity(0);
+            world.addBody(right);
+
+            Body bottom = new Body(new Polygon(900.0, 20.0), 20, -500);
+            bottom.setDensity(0);
+            world.addBody(bottom);
+
+            Body left = new Body(new Polygon(500.0, 20.0), -900, -20);
+            left.setOrientation(1.5708);
+            left.setDensity(0);
+            world.addBody(left);
+        }
+
+        {
+            generateRandomObjects(new Vectors2D(-880, -480), new Vectors2D(880, 480), 30, 100);
+            setStaticWorldBodies();
         }
     }
 

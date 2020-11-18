@@ -16,6 +16,10 @@ public class Ray {
     private int distance;
     private Vectors2D direction;
 
+    public void setStartPoint(Vectors2D v) {
+        this.startPoint = v;
+    }
+
     public Vectors2D getDirection() {
         return direction;
     }
@@ -75,7 +79,7 @@ public class Ray {
                         double t2 = (xOfRay * (startOfPolyEdge.y - startPoint.y) + (yOfRay * (startPoint.x - startOfPolyEdge.x))) / (dx * yOfRay - dy * xOfRay);
                         double t1 = (startOfPolyEdge.x + dx * t2 - startPoint.x) / xOfRay;
 
-                        if (t1 >= 0 && t2 >= 0 && t2 <= 1.0) {
+                        if (t1 > 0 && t2 >= 0 && t2 <= 1.0) {
                             if (t1 < min_t1) {
                                 min_t1 = t1;
                                 min_px = startPoint.x + xOfRay * t1;

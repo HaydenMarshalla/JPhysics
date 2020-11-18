@@ -6,6 +6,7 @@ The engine is written in Java and has been created with the intention of being u
 ## Tech demos
 
 The testbed includes numerous tech demos to show what the engine is capable of. Some examples are given below:
+![a relative link](Images/Chains%20demo.png?raw=true)
 
 ## Feature List
 ### Physics
@@ -25,6 +26,12 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 - Discrete collision detection
 - Convex polygon and circle collisions
 - Ray casting
+- Position resolution handling
+
+### Explosion types
+- Proximity
+- Ray casting
+- Particle
 
 ### Testbed
 - Java swing for demo graphics
@@ -35,7 +42,6 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 - Multi body shapes
     - collisions optimizations for said shapes
 - Demos illustrating limitations within the engine
-- Position resolution handling
 - Dynamic tree broadphase
 - Continuous collision detection
 - Island solution and sleep management
@@ -46,11 +52,13 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 Follow these simple steps!
 
 ### Prerequisites
-An appropriate IDE for example Intellij (with java 1.8+ JDK installed)
-Junit4 library (for junit tests)
+- An appropriate IDE for example Intellij (with java 1.8+ JDK installed)
+- Junit4 library (for junit tests)
 
 ### Steps
-All you need to do for the engine to work is clone the repository and place the JPhysics/src files in the source directory of your IDE.
+
+#### Main files
+All you need to do is clone the repository and place the JPhysics/src files in the source directory of your chosen IDE.
 
 #### Adding JUnit library
 
@@ -60,16 +68,14 @@ Go to file -> project structure (Ctrl-Alt-Shift-S)
 
 Click the plus button at the top and select "From Maven as shown below"
 
+![a relative link](Images/Maven.png?raw=true)
+
 In the search box, type in "junit:junit:4.12" and press ok. This is the JUnit dependency I use and have tested on.
 
 After this, Keep hitting OK until you're back to the original project code.
- 
-Now you can go to [a relative link](src/testbed/junittests/) and run the tests!
 
-You are done!
-
-### Testing
-JUnit tests can be found in [a relative link](src/testbed/junittests/).
+#### Testing
+Now you can go to "src/testbed/junittests/" and run the tests!
 
 ## Authors
 Hayden Marshall

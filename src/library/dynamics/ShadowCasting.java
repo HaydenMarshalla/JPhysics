@@ -8,14 +8,16 @@ import testbed.Camera;
 import testbed.ColourSettings;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 public class ShadowCasting {
-    private Vectors2D startPoint;
     private int distance;
+    private Vectors2D startPoint;
+
+    public void setStartPoint(Vectors2D startPoint) {
+        this.startPoint = startPoint;
+    }
 
     public ShadowCasting(Vectors2D startPoint, int distance) {
         this.startPoint = startPoint;
@@ -26,17 +28,22 @@ public class ShadowCasting {
 
     public void updateProjections(ArrayList<Body> bodiesToEvaluate) {
         rayData.clear();
-
         for (Body B : bodiesToEvaluate) {
             if (B.shape instanceof Polygon) {
                 Polygon poly1 = (Polygon) B.shape;
                 for (Vectors2D v : poly1.vertices) {
-                    Vectors2D direction = poly1.orient.mul(v, new Vectors2D()).addi(B.position);
+                    Vectors2D direction = poly1.orient.mul(v, new Vectors2D()).addi(B.position).subtract(startPoint);
                     projectRays(direction, bodiesToEvaluate);
                 }
             } else {
                 Circle circle = (Circle) B.shape;
                 Vectors2D d = B.position.subtract(startPoint);
+
+                if (d.length() <= circle.radius) {
+                    rayData.clear();
+                    break;
+                }
+
                 double angle = Math.asin(circle.radius / d.length());
                 Matrix2D u = new Matrix2D(angle);
                 projectRays(u.mul(d.normalize(), new Vectors2D()), bodiesToEvaluate);
@@ -67,10 +74,14 @@ public class ShadowCasting {
             Path2D.Double s = new Path2D.Double();
             Vectors2D worldStartPoint = camera.convertToScreen(startPoint);
             s.moveTo(worldStartPoint.x, worldStartPoint.y);
-            Vectors2D point1 = camera.convertToScreen(ray1.getRayInformation().getCoord());
-            s.lineTo(point1.x, point1.y);
-            Vectors2D point2 = camera.convertToScreen(ray2.getRayInformation().getCoord());
-            s.lineTo(point2.x, point2.y);
+            if (ray1.getRayInformation() != null) {
+                Vectors2D point1 = camera.convertToScreen(ray1.getRayInformation().getCoord());
+                s.lineTo(point1.x, point1.y);
+            }
+            if (ray2.getRayInformation() != null) {
+                Vectors2D point2 = camera.convertToScreen(ray2.getRayInformation().getCoord());
+                s.lineTo(point2.x, point2.y);
+            }
             s.closePath();
             g2d.fill(s);
         }

@@ -15,8 +15,13 @@ public class RaycastExplosion implements Explosion {
 
     public RaycastExplosion(Vectors2D epicentre, int noOfRays, int distance, ArrayList<Body> worldBodies) {
         rayScatter = new RayScatter(epicentre, noOfRays);
-        rayScatter.castRays(distance, worldBodies);
+        rayScatter.castRays(distance);
         update(worldBodies);
+    }
+
+    @Override
+    public void changeEpicentre(Vectors2D v) {
+        rayScatter.changeEpicentre(v);
     }
 
     public ArrayList<RayInformation> raysInContact = new ArrayList<>();
