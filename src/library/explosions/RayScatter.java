@@ -28,7 +28,7 @@ public class RayScatter {
     //Casts rays in 360 degrees with equal spacing
     public void castRays(int distance) {
         double angle = 6.28319 / noOfRays;
-        Vectors2D direction = new Vectors2D(0, 1);
+        Vectors2D direction = new Vectors2D(1, 1);
         Matrix2D u = new Matrix2D(angle);
         for (int i = 0; i < rays.length; i++) {
             rays[i] = new Ray(epicentre, direction, distance);

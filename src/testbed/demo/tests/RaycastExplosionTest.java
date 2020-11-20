@@ -15,11 +15,10 @@ public class RaycastExplosionTest {
         World temp = testBedWindow.getWorld();
         active = true;
 
-        ParticleExplosionTest.buildExplosionDemo(temp);
+        testBedWindow.buildExplosionDemo();
 
-        {
-            r = new RaycastExplosion(new Vectors2D(0,100), 1, 1000, temp.bodies);
-            testBedWindow.add(r);
-        }
+        r = new RaycastExplosion(new Vectors2D(0, 1), 100, 1000, temp.bodies);
+        testBedWindow.add(r);
+
     }
 }

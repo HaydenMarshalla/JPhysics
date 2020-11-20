@@ -566,4 +566,60 @@ public class TestBedWindow extends JPanel implements Runnable {
     public void add(ShadowCasting shadowCasting) {
         shadowCastings.add(shadowCasting);
     }
+
+    public void buildExplosionDemo() {
+        {
+            buildShelf(50.0, 300.0);
+            buildShelf(450.0, 400.0);
+        }
+
+        Body floor = new Body(new Polygon(20000.0, 2000.0), 0, -2000);
+        floor.setDensity(0);
+        world.addBody(floor);
+
+        Body reflect = new Body(new Polygon(40.0, 5.0), -100, 330);
+        reflect.setOrientation(0.785398);
+        reflect.setDensity(0);
+        world.addBody(reflect);
+
+        {
+            Body top = new Body(new Polygon(120.0, 10.0), 450, 210);
+            top.setDensity(0);
+            world.addBody(top);
+
+            Body side1 = new Body(new Polygon(100.0, 10.0), 340, 100);
+            side1.setOrientation(1.5708);
+            side1.setDensity(0);
+            world.addBody(side1);
+
+            Body side2 = new Body(new Polygon(100.0, 10.0), 560, 100);
+            side2.setOrientation(1.5708);
+            side2.setDensity(0);
+            world.addBody(side2);
+
+            for (int i = 0; i < 4; i++) {
+                Body box = new Body(new Polygon(20.0, 20.0), 450, 20 + (i * 40));
+                world.addBody(box);
+            }
+        }
+
+        for (int k = 0; k < 2; k++) {
+            for (int i = 0; i < 5; i++) {
+                Body box = new Body(new Polygon(20.0, 20.0), -600 + (k * 200), 20 + (i * 40));
+                world.addBody(box);
+            }
+        }
+    }
+
+    public void buildShelf(double x, double y) {
+        Body shelf = new Body(new Polygon(100.0, 10.0), x, y);
+        shelf.setDensity(0);
+        world.addBody(shelf);
+
+        int boxes = 4;
+        for (int i = 0; i < boxes; i++) {
+            Body box = new Body(new Polygon(10.0, 20.0), x, y + 30 + (i * 40));
+            world.addBody(box);
+        }
+    }
 }

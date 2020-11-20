@@ -1,8 +1,6 @@
 package testbed.demo.tests;
 
-import library.dynamics.Body;
 import library.dynamics.Ray;
-import library.geometry.Polygon;
 import library.dynamics.World;
 import library.math.Matrix2D;
 import library.math.Vectors2D;
@@ -13,7 +11,6 @@ public class Raycast {
 
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
-        World temp = testBedWindow.getWorld();
         testBedWindow.setCamera(new Vectors2D(0, -40), 2.75);
         active = true;
 

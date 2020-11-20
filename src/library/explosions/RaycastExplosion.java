@@ -49,7 +49,7 @@ public class RaycastExplosion implements Explosion {
             double invDistance = 1 / distance;
             Vectors2D impulseMag = blastDir.normalize().scalar(blastPower * invDistance);
             Body b = ray.getB();
-            b.applyLinearImpulse(impulseMag, ray.getCoord());
+            b.applyLinearImpulse(impulseMag, ray.getCoord().subtract(b.position));
         }
     }
 

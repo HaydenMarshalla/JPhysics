@@ -55,8 +55,8 @@ public class Ray {
     public void updateProjection(ArrayList<Body> bodiesToEvaluate) {
         intersectingBodiesInfo = null;
         Vectors2D endPoint = direction.scalar(distance);
-        double xOfRay = endPoint.x;
-        double yOfRay = endPoint.y;
+        double end_x = endPoint.x;
+        double end_y = endPoint.y;
 
         double min_t1 = Double.POSITIVE_INFINITY;
         double min_px = 0, min_py = 0;
@@ -75,15 +75,17 @@ public class Ray {
                     double dy = endOfPolyEdge.y - startOfPolyEdge.y;
 
                     //Check to see if the lines are not parallel
-                    if ((dx - xOfRay) != 0.0 && (dy - yOfRay) != 0.0) {
-                        double t2 = (xOfRay * (startOfPolyEdge.y - startPoint.y) + (yOfRay * (startPoint.x - startOfPolyEdge.x))) / (dx * yOfRay - dy * xOfRay);
-                        double t1 = (startOfPolyEdge.x + dx * t2 - startPoint.x) / xOfRay;
+                    if ((dx - end_x) != 0.0 && (dy - end_y) != 0.0) {
+                        double t2 = (end_x * (startOfPolyEdge.y - startPoint.y) + (end_y * (startPoint.x - startOfPolyEdge.x))) / (dx * end_y - dy * end_x);
+                        double t1 = (startOfPolyEdge.x + dx * t2 - startPoint.x) / end_x;
 
                         if (t1 > 0 && t2 >= 0 && t2 <= 1.0) {
-                            if (t1 < min_t1) {
+                            Vectors2D point = new Vectors2D(startPoint.x + end_x * t1, startPoint.y + end_y * t1);
+                            double dist = point.subtract(startPoint).length();
+                            if (t1 < min_t1 && dist < distance) {
                                 min_t1 = t1;
-                                min_px = startPoint.x + xOfRay * t1;
-                                min_py = startPoint.y + yOfRay * t1;
+                                min_px = point.x;
+                                min_py = point.y;
                                 intersectionFound = true;
                                 closestBody = B;
                             }
@@ -109,8 +111,8 @@ public class Ray {
                     if (t1 >= 0 && t1 <= 1) {
                         if (t1 < min_t1) {
                             min_t1 = t1;
-                            min_px = startPoint.x + xOfRay * t1;
-                            min_py = startPoint.y + yOfRay * t1;
+                            min_px = startPoint.x + end_x * t1;
+                            min_py = startPoint.y + end_y * t1;
                             intersectionFound = true;
                             closestBody = B;
                         }

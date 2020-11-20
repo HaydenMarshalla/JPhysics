@@ -13,13 +13,11 @@ public class ProximityExplosionTest {
         active = true;
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         testBedWindow.setCamera(new Vectors2D(0, 300), 2.0);
-        World temp = testBedWindow.getWorld();
 
-        ParticleExplosionTest.buildExplosionDemo(temp);
+        testBedWindow.buildExplosionDemo();
 
-        {
-            p = new ProximityExplosion(new Vectors2D(), 200);
-            testBedWindow.add(p);
-        }
+        p = new ProximityExplosion(new Vectors2D(), 200);
+        testBedWindow.add(p);
+
     }
 }

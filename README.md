@@ -48,14 +48,22 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 - Extra types of joints (eg Revolute, pulley)
 - Fluid and soft body simulation
 
+## Controls for testbed demos
+
+When a tech demo is active, certain buttons can be pressed to interact with the world as follows;
+
+Trebuchet: Press b to release projectile
+Explosion demos: Click to cast an explosion at the location clicked
+
+The camera can be repositioned by pressing shift and releasing and then using the wasd keys to move around. Once done, press shift again to return to normal interactions.
+All demos can be paused by pressing the space bar once to pause and unpause the world.
+
 ## Getting Started
 Follow these simple steps!
 
 ### Prerequisites
 - An appropriate IDE for example Intellij (with java 1.8+ JDK installed)
 - Junit4 library (for junit tests)
-
-### Steps
 
 #### Main files
 All you need to do is clone the repository and place the JPhysics/src files in the source directory of your chosen IDE.

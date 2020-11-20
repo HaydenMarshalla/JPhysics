@@ -30,7 +30,7 @@ public class MouseInput extends TestbedControls implements MouseListener {
         } else if (ParticleExplosionTest.active) {
             generateParticleExplosion(e);
         } else if (RaycastExplosionTest.active) {
-            RaycastExplosionTest.r.applyBlastImpulse(5000000);
+            RaycastExplosionTest.r.applyBlastImpulse(500000);
         }
     }
 
