@@ -25,7 +25,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 
 public class TestBedWindow extends JPanel implements Runnable {
     private final Camera CAMERA;

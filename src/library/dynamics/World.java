@@ -76,10 +76,7 @@ public class World {
                 contact.solve();
             }
         }
-        //Correct positional errors from the discrete collisions
-        for (Arbiter contact : contacts) {
-            contact.penetrationResolution();
-        }
+
         //Integrate positions
         for (Body b : bodies) {
             if (b.invMass == 0) {
@@ -94,8 +91,6 @@ public class World {
         }
 
         //Correct positional errors from the discrete collisions
-
-
         for (int i = 0; i < Settings.POSITION_ITERATIONS; i++) {
             if (i != 0){
                 broadPhaseCheck();

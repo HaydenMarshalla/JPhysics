@@ -1,7 +1,7 @@
 # JPhysics
 JPhysics is a 2D physics engine with no third-party-library dependencies.
 
-The engine is written in Java and has been created with the intention of being used in games. 
+The engine is written in Java and has been created with the intention of being used in games.
 
 ## Tech demos
 
@@ -53,9 +53,11 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 When a tech demo is active, certain buttons can be pressed to interact with the world as follows;
 
 Trebuchet: Press b to release projectile
+
 Explosion demos: Click to cast an explosion at the location clicked
 
-The camera can be repositioned by pressing shift and releasing and then using the wasd keys to move around. Once done, press shift again to return to normal interactions.
+The camera can be repositioned by pressing shift and using the wasd keys to move around. Once done, press shift again to return to normal interactions.
+
 All demos can be paused by pressing the space bar once to pause and unpause the world.
 
 ## Getting Started
@@ -82,7 +84,7 @@ In the search box, type in "junit:junit:4.12" and press ok. This is the JUnit de
 
 After this, Keep hitting OK until you're back to the original project code.
 
-#### Testing
+### Testing
 Now you can go to "src/testbed/junittests/" and run the tests!
 
 ## Authors
