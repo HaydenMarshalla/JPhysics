@@ -1,8 +1,8 @@
 package library.math;
 
 public class Matrix2D {
-    public Vectors2D col1 = new Vectors2D();
-    public Vectors2D col2 = new Vectors2D();
+    public Vectors2D row1 = new Vectors2D();
+    public Vectors2D row2 = new Vectors2D();
 
     public Matrix2D() {
     }
@@ -15,53 +15,52 @@ public class Matrix2D {
         double c = StrictMath.cos(radians);
         double s = StrictMath.sin(radians);
 
-        col1.x = c;
-        col1.y = -s;
-        col2.x = s;
-        col2.y = c;
+        row1.x = c;
+        row1.y = -s;
+        row2.x = s;
+        row2.y = c;
     }
 
     public void set(Matrix2D m) {
-        col1.x = m.col1.x;
-        col1.y = m.col1.y;
-        col2.x = m.col2.x;
-        col2.y = m.col2.y;
+        row1.x = m.row1.x;
+        row1.y = m.row1.y;
+        row2.x = m.row2.x;
+        row2.y = m.row2.y;
     }
 
     public Matrix2D transpose() {
         Matrix2D mat = new Matrix2D();
-        mat.col1.x = col1.x;
-        mat.col1.y = col2.x;
-        mat.col2.x = col1.y;
-        mat.col2.y = col2.y;
+        mat.row1.x = row1.x;
+        mat.row1.y = row2.x;
+        mat.row2.x = row1.y;
+        mat.row2.y = row2.y;
         return mat;
     }
 
     public Vectors2D mul(Vectors2D v) {
         double x = v.x;
         double y = v.y;
-        v.x = col1.x * x + col1.y * y;
-        v.y = col2.x * x + col2.y * y;
+        v.x = row1.x * x + row1.y * y;
+        v.y = row2.x * x + row2.y * y;
         return v;
     }
 
     public Vectors2D mul(Vectors2D v, Vectors2D out) {
-        out.x = col1.x * v.x + col1.y * v.y;
-        out.y = col2.x * v.x + col2.y * v.y;
+        out.x = row1.x * v.x + row1.y * v.y;
+        out.y = row2.x * v.x + row2.y * v.y;
         return out;
     }
 
     public static void main(String[] args) {
         Vectors2D test = new Vectors2D(5, 0);
         Matrix2D m = new Matrix2D();
-        m.set(0);
-        System.out.println(m);
+        m.set(0.5);
         m.mul(test);
         System.out.println(test);
     }
 
     @Override
     public String toString() {
-        return col1.x + " : " + col1.y + "\n" + col2.x + " : " + col2.y;
+        return row1.x + " : " + row1.y + "\n" + row2.x + " : " + row2.y;
     }
 }

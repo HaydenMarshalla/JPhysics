@@ -10,19 +10,19 @@ public class StackedObjects {
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
-        testBedWindow.setCamera(new Vectors2D(0, 250), 2.8);
+        testBedWindow.setCamera(new Vectors2D(0, 150), 1.8);
 
         {
             for (int x = 0; x < 15; x++) {
-                for (int y = 0; y < 25; y++) {
+                for (int y = 0; y < 20; y++) {
                     Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), -100 + (y * 20));
                     temp.addBody(b);
                 }
             }
             for (int x = 0; x < 15; x++) {
                 for (int y = 0; y < 1; y++) {
-                    Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), 700);
-                    b.setDensity(50);
+                    Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), 400);
+                    b.setDensity(10);
                     temp.addBody(b);
                 }
             }

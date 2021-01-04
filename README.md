@@ -56,9 +56,9 @@ Trebuchet: Press b to release projectile
 
 Explosion demos: Click to cast an explosion at the location clicked
 
-The camera can be repositioned by pressing shift and using the wasd keys to move around. Once done, press shift again to return to normal interactions.
+The camera can be repositioned by holding down right mouse button and dragging across the screen.
 
-All demos can be paused by pressing the space bar once to pause and unpause the world.
+All demos can be paused by pressing the space bar.
 
 ## Getting Started
 Follow these simple steps!

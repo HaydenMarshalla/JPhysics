@@ -11,6 +11,16 @@ public class Camera {
     public Vectors2D centre;
     private TestBedWindow panel;
 
+    protected Vectors2D pointClicked;
+
+    public Vectors2D getPointClicked(){
+        return pointClicked;
+    }
+
+    public void setPointClicked(Vectors2D v){
+        pointClicked = v;
+    }
+
     public Camera(int windowWidth, int windowHeight, TestBedWindow testWindow) {
         centre = new Vectors2D(0, 0);
         zoom = 1.0;

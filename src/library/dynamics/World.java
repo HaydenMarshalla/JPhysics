@@ -51,6 +51,7 @@ public class World {
 
     public ArrayList<Arbiter> contacts = new ArrayList<>();
 
+    // The main time step method for the world to conduct an iteration of the current world call this method with a desired time step value.
     public void step(double dt) {
         contacts.clear();
 
@@ -92,6 +93,7 @@ public class World {
 
         //Correct positional errors from the discrete collisions
         for (int i = 0; i < Settings.POSITION_ITERATIONS; i++) {
+            //Broadphase check to update penetrations of arbiters
             if (i != 0){
                 broadPhaseCheck();
             }
@@ -108,6 +110,7 @@ public class World {
         b.applyForceToCentre(dragForceVector);
     }
 
+    // Applies semi-implicit euler and drag forces
     private void applyForces(double dt) {
         for (Body b : bodies) {
             if (b.invMass == 0) {
@@ -125,6 +128,7 @@ public class World {
         }
     }
 
+    //A discrete Broad phase check of collision detection.
     private void broadPhaseCheck() {
         for (int i = 0; i < bodies.size(); i++) {
             Body a = bodies.get(i);
@@ -132,6 +136,7 @@ public class World {
             for (int x = i + 1; x < bodies.size(); x++) {
                 Body b = bodies.get(x);
 
+                //Ignores static or particle objects
                 if (a.invMass == 0 && b.invMass == 0 || a.particle && b.particle) {
                     continue;
                 }
@@ -143,6 +148,8 @@ public class World {
         }
     }
 
+    // If broad phase detection check passes, a narrow phase check is conducted to determine for certain if two objects are intersecting.
+    // If two objects are, arbiters of contacts found are generated
     private void narrowPhaseCheck(Body a, Body b) {
         Arbiter contactQuery = new Arbiter(a, b);
         contactQuery.narrowPhase();
@@ -151,12 +158,14 @@ public class World {
         }
     }
 
+    //Clears all objects in the current world
     public void clearWorld() {
         bodies.clear();
         contacts.clear();
         joints.clear();
     }
 
+    //Applies gravitational forces between to objects (force applied to centre of body)
     public void gravityBetweenObj() {
         for (int a = 0; a < bodies.size(); a++) {
             Body A = bodies.get(a);
@@ -173,6 +182,7 @@ public class World {
         }
     }
 
+    //Draw method to draw contacts between objects
     public void drawContact(Graphics2D g2d, ColourSettings paintSettings, Camera camera) {
         for (Arbiter contact : contacts) {
             Vectors2D point = contact.contacts[0];

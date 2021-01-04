@@ -67,7 +67,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         MOUSE_MOTION_INPUT = new MouseMovement(this);
         addMouseMotionListener(MOUSE_MOTION_INPUT);
 
-        Chains.load(this);
+        BouncingBall.load(this);
     }
 
     public void startThread() {
@@ -348,10 +348,68 @@ public class TestBedWindow extends JPanel implements Runnable {
             menuBar.add(createTestMenu(gameScreen));
             menuBar.add(createColourSchemeMenu(gameScreen));
             menuBar.add(createFrequencyMenu(gameScreen));
+            menuBar.add(createDisplayMenu(gameScreen));
+            menuBar.add(createPositionIterMenu(gameScreen));
             window.setJMenuBar(menuBar);
 
             window.setVisible(true);
         }
+    }
+
+    private static Component createPositionIterMenu(TestBedWindow gameScreen) {
+        JMenu hertzMenu = new JMenu("Position resolution");
+        int number = 5;
+        for (int i = 1; i < 10; i++) {
+            JMenuItem hertzMenuItem = new JMenuItem("" + number * i);
+            hertzMenu.add(hertzMenuItem);
+            hertzMenuItem.addActionListener(e -> {
+                switch (e.getActionCommand()) {
+                    case "5" -> Settings.POSITION_ITERATIONS = 5;
+                    case "10" -> Settings.POSITION_ITERATIONS = 10;
+                    case "15" -> Settings.POSITION_ITERATIONS = 15;
+                    case "20" -> Settings.POSITION_ITERATIONS = 20;
+                    case "25" -> Settings.POSITION_ITERATIONS = 25;
+                    case "30" -> Settings.POSITION_ITERATIONS = 30;
+                    case "35" -> Settings.POSITION_ITERATIONS = 35;
+                    case "40" -> Settings.POSITION_ITERATIONS = 40;
+                }
+            });
+        }
+        return hertzMenu;
+    }
+
+    private static Component createDisplayMenu(TestBedWindow gameScreen) {
+        JMenu drawOptions = new JMenu("Graphics Options");
+
+        JMenuItem showGrid = new JMenuItem("Display Grid");
+        drawOptions.add(showGrid);
+        showGrid.addActionListener(new ColourMenuInput(gameScreen));
+
+        JMenuItem displayShapes = new JMenuItem("Display Shapes");
+        drawOptions.add(displayShapes);
+        displayShapes.addActionListener(new ColourMenuInput(gameScreen));
+
+        JMenuItem displayJoints = new JMenuItem("Display Joints");
+        drawOptions.add(displayJoints);
+        displayJoints.addActionListener(new ColourMenuInput(gameScreen));
+
+        JMenuItem displayAABBs = new JMenuItem("Display AABBs");
+        drawOptions.add(displayAABBs);
+        displayAABBs.addActionListener(new ColourMenuInput(gameScreen));
+
+        JMenuItem displayContactPoints = new JMenuItem("Display Contact Points");
+        drawOptions.add(displayContactPoints);
+        displayContactPoints.addActionListener(new ColourMenuInput(gameScreen));
+
+        JMenuItem displayContactNormals = new JMenuItem("Display Contact Normals");
+        drawOptions.add(displayContactNormals);
+        displayContactNormals.addActionListener(new ColourMenuInput(gameScreen));
+
+        JMenuItem displayCOMs = new JMenuItem("Display COMs");
+        drawOptions.add(displayCOMs);
+        displayCOMs.addActionListener(new ColourMenuInput(gameScreen));
+
+        return drawOptions;
     }
 
     private static Component createFrequencyMenu(TestBedWindow gameScreen) {
@@ -477,12 +535,6 @@ public class TestBedWindow extends JPanel implements Runnable {
         wreckingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_DOWN_MASK));
         testMenu.add(wreckingBall);
         wreckingBall.addActionListener(new DemoMenuInput(gameScreen));
-
-        //TO DO: Create car demo and add to JMenu
-        /* JMenuItem car = new JMenuItem("Car");
-        car.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(car);
-        car.addActionListener(new DemoMenuInput(gameScreen));*/
 
         return testMenu;
     }

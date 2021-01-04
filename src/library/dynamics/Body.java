@@ -24,7 +24,6 @@ public class Body {
 
     public double linearDampening;
     public double angularDampening;
-    public double gravityScale;
     public boolean affectedByGravity;
     public boolean particle;
 
@@ -46,7 +45,6 @@ public class Body {
 
         linearDampening = 0;
         angularDampening = 0;
-        gravityScale = 1;
 
         orientation = 0;
         shape.orient.set(orientation);

@@ -17,18 +17,14 @@ public abstract class TestbedControls {
         this.CAMERA = testBedWindow.getCamera();
     }
 
-    protected Vectors2D findWorldPosition(MouseEvent e) {
-        return CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY()));
-    }
-
     protected void setProximityEpicentre(MouseEvent e) {
-        Vectors2D v = findWorldPosition(e);
+        Vectors2D v = CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY()));
         ProximityExplosion p = (ProximityExplosion) TESTBED.getRayExplosions().get(0);
         p.changeEpicentre(v);
     }
 
     protected void generateParticleExplosion(MouseEvent e) {
-        ParticleExplosion p = new ParticleExplosion(findWorldPosition(e), TESTBED.getWorld(), 100, 10);
+        ParticleExplosion p = new ParticleExplosion(CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY())), TESTBED.getWorld(), 100, 10);
         p.createParticles(0.1, 100000, 10);
         p.applyBlastImpulse(100);
         TESTBED.add(p, 2);

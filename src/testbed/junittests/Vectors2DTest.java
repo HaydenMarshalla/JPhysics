@@ -233,4 +233,12 @@ public class Vectors2DTest {
         }
         assertEquals(vectorList.length, 10);
     }
+
+    @Test
+    public void directionConstructor() {
+        Vectors2D v = new Vectors2D(2.0f,3.0f);
+        v.add(new Vectors2D(-1.2, -5.4));
+        assertEquals(0.8, v.x, 0);
+        assertEquals(-2.4, v.y, 1e-15);
+    }
 }

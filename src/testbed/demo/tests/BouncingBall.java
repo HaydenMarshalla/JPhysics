@@ -12,19 +12,40 @@ public class BouncingBall {
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
-        testBedWindow.setCamera(new Vectors2D(300, 100), 1.0);
+        testBedWindow.setCamera(new Vectors2D(0, 200), 1.3);
 
         {
-            Body b = new Body(new Circle(20), 0, 200);
-            b.velocity = new Vectors2D(30,0);
-            testBedWindow.add(new Trail(1000, 1, b, 0));
-            temp.addBody(b);
+            for (int i = 0; i < 10; i++) {
+                Body b1 = new Body(new Circle(5.0), -81.0 + (i * 17), 410.0);
+                temp.addBody(b1);
+            }
         }
 
         {
-            Body b = new Body(new Polygon(20000.0, 2000.0), 0, -2000);
-            b.setDensity(0);
-            temp.addBody(b);
+            for (int y = 0; y < 20; y++) {
+                for (int x = 0; x < 10; x++) {
+                    Body b;
+                    if (y % 2 == 1) {
+                        b = new Body(new Circle(2.0), -10 + (5 * 20) - (x * 20), 10 + y * 20);
+                    } else {
+                        b = new Body(new Circle(2.0), (5 * 20) - (x * 20), 10 + y * 20);
+                    }
+                    b.setDensity(0);
+                    temp.addBody(b);
+                }
+            }
         }
+
+        Body b1 = new Body(new Polygon(5.0, 190.0), -100, 190);
+        b1.setDensity(0);
+        temp.addBody(b1);
+
+        Body b2 = new Body(new Polygon(5.0, 190.0), 100, 190);
+        b2.setDensity(0);
+        temp.addBody(b2);
+
+        Body b3 = new Body(new Polygon(105.0, 5.0), 0, -5);
+        b3.setDensity(0);
+        temp.addBody(b3);
     }
 }

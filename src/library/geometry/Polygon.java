@@ -18,7 +18,6 @@ public class Polygon extends Shapes {
         calcNormals();
     }
 
-
     public Polygon(double width, double height) {
         vertices = new Vectors2D[4];
         vertices[0] = new Vectors2D(-width, -height);

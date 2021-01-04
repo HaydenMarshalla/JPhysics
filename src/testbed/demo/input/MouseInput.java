@@ -1,5 +1,6 @@
 package testbed.demo.input;
 
+import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.ParticleExplosionTest;
 import testbed.demo.tests.ProximityExplosionTest;
@@ -19,7 +20,7 @@ public class MouseInput extends TestbedControls implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        CAMERA.setPointClicked(CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY())));
     }
 
     @Override

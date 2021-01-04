@@ -151,7 +151,6 @@ public class Arbiter {
             contactCount = 1;
             B.orient.mul(this.normal.set(vector2.subtract(polyToCircleVec).normalize()));
             contacts[0] = B.orient.mul(vector2, new Vectors2D()).addi(b.position);
-
         } else {
             double distFromEdgeToCircle = polyToCircleVec.subtract(vector1).dotProduct(B.normals[faceNormalIndex]);
 

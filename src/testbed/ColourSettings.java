@@ -141,7 +141,7 @@ public class ColourSettings {
     private boolean drawContactPoints = false;
     private boolean drawContactNormals = false;
     private boolean drawCOMs = false;
-    private boolean drawGrid = true;
+    private boolean drawGrid = false;
 
     public boolean getDrawShapes() {
         return drawShapes;
