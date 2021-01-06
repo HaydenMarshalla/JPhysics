@@ -123,8 +123,8 @@ public class ColourSettings {
     public Color rayToBody;
     public Color projectedRay;
     public Color scatterRays;
-    public final double RAY_DOT = 5;
-    public final Color shadow = new Color(128,128,128, 126);
+    public final double RAY_DOT = 2;
+    public final Color shadow = new Color(128, 128, 128, 126);
 
 
     //Testbed related drawing
@@ -142,6 +142,15 @@ public class ColourSettings {
     private boolean drawContactNormals = false;
     private boolean drawCOMs = false;
     private boolean drawGrid = false;
+    private boolean DrawText = true;
+
+    public boolean getDrawText() {
+        return DrawText;
+    }
+
+    public void setDrawText(boolean i) {
+        DrawText = i;
+    }
 
     public boolean getDrawShapes() {
         return drawShapes;

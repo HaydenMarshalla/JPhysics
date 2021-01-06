@@ -25,7 +25,7 @@ public abstract class TestbedControls {
 
     protected void generateParticleExplosion(MouseEvent e) {
         ParticleExplosion p = new ParticleExplosion(CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY())), TESTBED.getWorld(), 100, 10);
-        p.createParticles(0.1, 100000, 10);
+        p.createParticles(0.5, 100, 5);
         p.applyBlastImpulse(100);
         TESTBED.add(p, 2);
     }

@@ -9,6 +9,8 @@ import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 
 public class NewtonsCradle {
+    public static final String[] text = {"Newtons Cradle:"};
+
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
@@ -16,7 +18,7 @@ public class NewtonsCradle {
 
         double radius = 40.0;
         int noOfCircles = 8;
-        double spread = ((noOfCircles - 1) * 80/2.0);
+        double spread = ((noOfCircles - 1) * 80 / 2.0);
 
         double minX, maxX;
         minX = -spread + 40;

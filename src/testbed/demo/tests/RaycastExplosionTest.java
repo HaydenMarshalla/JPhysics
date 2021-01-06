@@ -6,6 +6,7 @@ import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 
 public class RaycastExplosionTest {
+    public static final String[] text = {"Raycast Explosions:", "Left click: casts an explosion"};
     public static boolean active = false;
     public static RaycastExplosion r;
 

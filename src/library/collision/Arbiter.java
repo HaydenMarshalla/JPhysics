@@ -32,6 +32,25 @@ public class Arbiter {
         dynamicFriction = (a.dynamicFriction + b.dynamicFriction) / 2;
     }
 
+    public static boolean isPointInside(Body b, Vectors2D startPoint) {
+        if (b.shape instanceof Polygon) {
+            Polygon poly = (Polygon) b.shape;
+            for (int i = 0; i < poly.vertices.length; i++) {
+                Vectors2D localPoint = startPoint.subtract(poly.body.position.addi(poly.body.shape.orient.mul(poly.vertices[i], new Vectors2D())));
+                if (localPoint.dotProduct(poly.body.shape.orient.mul(poly.normals[i], new Vectors2D())) > 0) {
+                    return false;
+                }
+            }
+        } else if (b.shape instanceof Circle) {
+            Circle circle = (Circle) b.shape;
+            Vectors2D d = b.position.subtract(startPoint);
+
+            return !(d.length() > circle.radius);
+        }
+
+        return true;
+    }
+
     public final Vectors2D[] contacts = {new Vectors2D(), new Vectors2D()};
     public Vectors2D normal = new Vectors2D();
     public int contactCount = 0;

@@ -9,6 +9,8 @@ import testbed.Trail;
 import testbed.demo.TestBedWindow;
 
 public class BouncingBall {
+    public static final String[] text = {"Bouncing Balls:"};
+
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();

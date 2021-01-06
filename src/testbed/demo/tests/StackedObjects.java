@@ -7,6 +7,8 @@ import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 
 public class StackedObjects {
+    public static final String[] text = {"Stacked Objects:"};
+
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();

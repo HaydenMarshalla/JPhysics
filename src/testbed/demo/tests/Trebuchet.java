@@ -11,6 +11,7 @@ import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 
 public class Trebuchet {
+    public static final String[] text = {"Trebuchet", "B: break tether to payload"};
     public static boolean active = false;
 
     public static void load(TestBedWindow testBedWindow) {

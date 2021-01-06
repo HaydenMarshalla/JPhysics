@@ -92,14 +92,8 @@ public class World {
         }
 
         //Correct positional errors from the discrete collisions
-        for (int i = 0; i < Settings.POSITION_ITERATIONS; i++) {
-            //Broadphase check to update penetrations of arbiters
-            if (i != 0){
-                broadPhaseCheck();
-            }
-            for (Arbiter contact : contacts) {
-                contact.penetrationResolution();
-            }
+        for (Arbiter contact : contacts) {
+            contact.penetrationResolution();
         }
     }
 
@@ -207,5 +201,4 @@ public class World {
             }
         }
     }
-
 }

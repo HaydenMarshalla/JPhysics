@@ -1,5 +1,6 @@
 package library.dynamics;
 
+import library.collision.Arbiter;
 import library.geometry.Circle;
 import library.geometry.Polygon;
 import library.math.Matrix2D;
@@ -12,7 +13,7 @@ import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 public class ShadowCasting {
-    private int distance;
+    private final int distance;
     private Vectors2D startPoint;
 
     public void setStartPoint(Vectors2D startPoint) {
@@ -24,11 +25,15 @@ public class ShadowCasting {
         this.distance = distance;
     }
 
-    private ArrayList<RayAngleInformation> rayData = new ArrayList<>();
+    private final ArrayList<RayAngleInformation> rayData = new ArrayList<>();
 
     public void updateProjections(ArrayList<Body> bodiesToEvaluate) {
         rayData.clear();
         for (Body B : bodiesToEvaluate) {
+            if (Arbiter.isPointInside(B, startPoint)) {
+                rayData.clear();
+                break;
+            }
             if (B.shape instanceof Polygon) {
                 Polygon poly1 = (Polygon) B.shape;
                 for (Vectors2D v : poly1.vertices) {
@@ -38,12 +43,6 @@ public class ShadowCasting {
             } else {
                 Circle circle = (Circle) B.shape;
                 Vectors2D d = B.position.subtract(startPoint);
-
-                if (d.length() <= circle.radius) {
-                    rayData.clear();
-                    break;
-                }
-
                 double angle = Math.asin(circle.radius / d.length());
                 Matrix2D u = new Matrix2D(angle);
                 projectRays(u.mul(d.normalize(), new Vectors2D()), bodiesToEvaluate);
@@ -55,7 +54,7 @@ public class ShadowCasting {
     }
 
     private void projectRays(Vectors2D direction, ArrayList<Body> bodiesToEvaluate) {
-        Matrix2D m = new Matrix2D(0.00001);
+        Matrix2D m = new Matrix2D(0.001);
         m.transpose().mul(direction);
         for (int i = 0; i < 3; i++) {
             Ray ray = new Ray(startPoint, direction, distance);
@@ -85,6 +84,10 @@ public class ShadowCasting {
             s.closePath();
             g2d.fill(s);
         }
+    }
+
+    public int getNoOfRays() {
+        return rayData.size();
     }
 }
 

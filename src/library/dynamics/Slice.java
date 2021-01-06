@@ -3,65 +3,35 @@ package library.dynamics;
 import library.geometry.Circle;
 import library.geometry.Polygon;
 import library.math.Vectors2D;
-import testbed.ColourSettings;
 import testbed.Camera;
+import testbed.ColourSettings;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
-public class Ray {
-    private Vectors2D startPoint;
-    private int distance;
+public class Slice {
+    private final Vectors2D startPoint;
+    private double distance;
     private Vectors2D direction;
 
-    public void setStartPoint(Vectors2D v) {
-        this.startPoint = v;
-    }
-
-    public Vectors2D getDirection() {
-        return direction;
-    }
-
-    public Ray(Vectors2D startPoint, Vectors2D direction, int distance) {
+    public Slice(Vectors2D startPoint, Vectors2D direction, double distance) {
         this.startPoint = startPoint;
         this.direction = direction.getNormalized();
         this.distance = distance;
     }
 
-    public Ray(double direction, int distance) {
-        this(new Vectors2D(), new Vectors2D(direction), distance);
-    }
-
-    public Ray(Vectors2D direction, int distance) {
-        this(new Vectors2D(), direction, distance);
-    }
-
-    public Ray(Vectors2D startPoint, double direction, int distance) {
-        this(startPoint, new Vectors2D(direction), distance);
-    }
-
-    public void changeDirection(Vectors2D newDirection) {
-        direction = newDirection;
-    }
-
-    private RayInformation intersectingBodiesInfo = null;
-
-    public RayInformation getRayInformation() {
-        return intersectingBodiesInfo;
-    }
+    private final ArrayList<RayInformation> intersectingBodiesInfo = new ArrayList<>();
 
     public void updateProjection(ArrayList<Body> bodiesToEvaluate) {
-        intersectingBodiesInfo = null;
+        intersectingBodiesInfo.clear();
         Vectors2D endPoint = direction.scalar(distance);
         double end_x = endPoint.x;
         double end_y = endPoint.y;
 
         double min_t1 = Double.POSITIVE_INFINITY;
         double min_px = 0, min_py = 0;
-        boolean intersectionFound = false;
-        Body closestBody = null;
+        int noOfIntersections = 0;
 
         for (Body B : bodiesToEvaluate) {
             if (B.shape instanceof Polygon) {
@@ -82,12 +52,12 @@ public class Ray {
                         if (t1 > 0 && t2 >= 0 && t2 <= 1.0) {
                             Vectors2D point = new Vectors2D(startPoint.x + end_x * t1, startPoint.y + end_y * t1);
                             double dist = point.subtract(startPoint).length();
-                            if (t1 < min_t1 && dist < distance) {
+                            if (dist < distance) {
                                 min_t1 = t1;
                                 min_px = point.x;
                                 min_py = point.y;
-                                intersectionFound = true;
-                                closestBody = B;
+                                intersectingBodiesInfo.add(new RayInformation(B, min_px, min_py, i));
+                                noOfIntersections++;
                             }
                         }
                     }
@@ -104,24 +74,62 @@ public class Ray {
                 double c = difInCenters.dotProduct(difInCenters) - r * r;
 
                 double discriminant = b * b - 4 * a * c;
-                if (discriminant >= 0) {
+                if (discriminant > 0) {
                     discriminant = Math.sqrt(discriminant);
 
                     double t1 = (-b - discriminant) / (2 * a);
                     if (t1 >= 0 && t1 <= 1) {
-                        if (t1 < min_t1) {
-                            min_t1 = t1;
-                            min_px = startPoint.x + end_x * t1;
-                            min_py = startPoint.y + end_y * t1;
-                            intersectionFound = true;
-                            closestBody = B;
-                        }
+                        min_px = startPoint.x + end_x * t1;
+                        min_py = startPoint.y + end_y * t1;
+                        double dist = startPoint.subtract(new Vectors2D(min_px, min_py)).length();
+                        intersectingBodiesInfo.add(new RayInformation(B, min_px, min_py, -1));
+                    }
+
+                    double t2 = (-b + discriminant) / (2 * a);
+                    if (t2 >= 0 && t2 <= 1) {
+                        min_px = startPoint.x + end_x * t2;
+                        min_py = startPoint.y + end_y * t2;
+                        double dist = startPoint.subtract(new Vectors2D(min_px, min_py)).length();
+                        intersectingBodiesInfo.add(new RayInformation(B, min_px, min_py, -1));
                     }
                 }
             }
+            if (noOfIntersections == 1) {
+                intersectingBodiesInfo.remove(intersectingBodiesInfo.size() - 1);
+                noOfIntersections = 0;
+            }
         }
-        if (intersectionFound) {
-            intersectingBodiesInfo = new RayInformation(closestBody, min_px, min_py, -1);
+    }
+
+    public void sliceObjects(World world) {
+        assert (intersectingBodiesInfo.size() % 2 == 0);
+        for (int i = 0; i < intersectingBodiesInfo.size(); i += 2) {
+            Body b = intersectingBodiesInfo.get(i).getB();
+            if (b.shape instanceof Polygon) {
+                Polygon p = (Polygon) b.shape;
+
+                int obj1firstIndex = intersectingBodiesInfo.get(i).getIndex();
+                int obj1secondIndex = intersectingBodiesInfo.get(i + 1).getIndex();
+                int totalVerticesObj1 = (obj1firstIndex + 2) + (p.vertices.length - obj1secondIndex);
+                Vectors2D[] array = new Vectors2D[totalVerticesObj1];
+
+                for (int x = 0; x <= obj1firstIndex; x++) {
+                    array[x] = p.vertices[x];
+                }
+
+                array[++obj1firstIndex] = intersectingBodiesInfo.get(i).getCoord();
+                array[++obj1firstIndex] = intersectingBodiesInfo.get(i + 1).getCoord();
+
+                for (int x = obj1secondIndex + 1; x < p.vertices.length; x++) {
+                    array[++obj1firstIndex] = p.vertices[x];
+                }
+
+                System.out.println("e");
+                world.addBody(new Body(new Polygon(array), 0, 0));
+            } else if (b.shape instanceof Circle) {
+
+            }
+            world.removeBody(b);
         }
     }
 
@@ -132,13 +140,18 @@ public class Ray {
         g.draw(new Line2D.Double(epicenter.x, epicenter.y, endPoint.x, endPoint.y));
 
         g.setColor(paintSettings.rayToBody);
-        if (intersectingBodiesInfo != null) {
-            Vectors2D intersection = camera.convertToScreen(intersectingBodiesInfo.getCoord());
-            g.draw(new Line2D.Double(epicenter.x, epicenter.y, intersection.x, intersection.y));
-
-            double circleRadius = camera.scaleToScreenXValue(paintSettings.RAY_DOT);
-            g.fill(new Ellipse2D.Double(intersection.x - circleRadius, intersection.y - circleRadius, 2.0 * circleRadius, 2.0 * circleRadius));
+        for (int i = 0; i < intersectingBodiesInfo.size(); i++) {
+            if ((i + 1) % 2 == 0) {
+                Vectors2D intersection1 = camera.convertToScreen(intersectingBodiesInfo.get(i - 1).getCoord());
+                Vectors2D intersection2 = camera.convertToScreen(intersectingBodiesInfo.get(i).getCoord());
+                g.draw(new Line2D.Double(intersection2.x, intersection2.y, intersection1.x, intersection1.y));
+            }
         }
     }
-}
 
+    public void setDirection(Vectors2D sliceVector) {
+        direction = sliceVector.subtract(startPoint);
+        distance = direction.length();
+        direction.normalize();
+    }
+}

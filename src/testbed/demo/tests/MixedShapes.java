@@ -11,6 +11,8 @@ import testbed.demo.TestBedWindow;
 import java.util.Random;
 
 public class MixedShapes {
+    public static final String[] text = {"Mixed Shapes:"};
+
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();

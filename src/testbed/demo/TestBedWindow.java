@@ -1,10 +1,7 @@
 package testbed.demo;
 
 import library.collision.AABB;
-import library.dynamics.Body;
-import library.dynamics.Ray;
-import library.dynamics.ShadowCasting;
-import library.dynamics.World;
+import library.dynamics.*;
 import library.explosions.Explosion;
 import library.explosions.ParticleExplosion;
 import library.geometry.Circle;
@@ -14,6 +11,7 @@ import library.utils.Settings;
 import testbed.ColourSettings;
 import library.math.Vectors2D;
 import testbed.Camera;
+import testbed.DemoText;
 import testbed.Trail;
 import testbed.demo.input.*;
 import testbed.demo.tests.*;
@@ -67,20 +65,34 @@ public class TestBedWindow extends JPanel implements Runnable {
         MOUSE_MOTION_INPUT = new MouseMovement(this);
         addMouseMotionListener(MOUSE_MOTION_INPUT);
 
-        BouncingBall.load(this);
+        Chains.load(this);
     }
 
     public void startThread() {
         PHYSICS_THREAD.start();
     }
 
-    public ArrayList<Ray> rays = new ArrayList<>();
+    private final ArrayList<Ray> rays = new ArrayList<>();
 
     public void add(Ray ray) {
         rays.add(ray);
     }
 
-    public ArrayList<Explosion> explosionObj = new ArrayList<>();
+    private final ArrayList<Slice> slices = new ArrayList<>();
+
+    public void add(Slice s) {
+        slices.add(s);
+    }
+
+    public int getSlicesSize() {
+        return slices.size();
+    }
+
+    public ArrayList<Slice> getSlices() {
+        return slices;
+    }
+
+    private final ArrayList<Explosion> explosionObj = new ArrayList<>();
 
     public ArrayList<Explosion> getRayExplosions() {
         return explosionObj;
@@ -90,13 +102,19 @@ public class TestBedWindow extends JPanel implements Runnable {
         explosionObj.add(ex);
     }
 
-    public ArrayList<ParticleExplosion> particles = new ArrayList<>();
+    private final ArrayList<ParticleExplosion> particles = new ArrayList<>();
 
     public void add(ParticleExplosion p, double lifespan) {
         particles.add(p);
         for (Body b : p.getParticles()) {
             trailsToBodies.add(new Trail(1000, 1, b, lifespan));
         }
+    }
+
+    private final ArrayList<ShadowCasting> shadowCastings = new ArrayList<>();
+
+    public void add(ShadowCasting shadowCasting) {
+        shadowCastings.add(shadowCasting);
     }
 
     private World world = new World();
@@ -109,7 +127,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         return world;
     }
 
-    public ArrayList<Trail> trailsToBodies = new ArrayList<>();
+    private final ArrayList<Trail> trailsToBodies = new ArrayList<>();
 
     public void add(Trail trail) {
         trailsToBodies.add(trail);
@@ -151,6 +169,9 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
         for (ShadowCasting s : shadowCastings) {
             s.updateProjections(world.bodies);
+        }
+        for (Slice s : slices) {
+            s.updateProjection(world.bodies);
         }
     }
 
@@ -234,10 +255,22 @@ public class TestBedWindow extends JPanel implements Runnable {
         rays.clear();
         explosionObj.clear();
         shadowCastings.clear();
+        slices.clear();
         repaint();
     }
 
+
     public final ColourSettings PAINT_SETTINGS = new ColourSettings();
+
+    public ColourSettings getPAINT_SETTINGS() {
+        return PAINT_SETTINGS;
+    }
+
+    private int currentDemo = 0;
+
+    public void setCurrentDemo(int i){
+        currentDemo = i;
+    }
 
     @Override
     public void paintComponent(Graphics g) {
@@ -280,6 +313,10 @@ public class TestBedWindow extends JPanel implements Runnable {
         for (Ray r : rays) {
             r.draw(g2d, PAINT_SETTINGS, CAMERA);
         }
+        for (Slice s : slices) {
+            s.draw(g2d, PAINT_SETTINGS, CAMERA);
+        }
+        DemoText.draw(g2d, PAINT_SETTINGS, currentDemo);
     }
 
     private void drawGridMethod(Graphics2D g2d) {
@@ -349,33 +386,10 @@ public class TestBedWindow extends JPanel implements Runnable {
             menuBar.add(createColourSchemeMenu(gameScreen));
             menuBar.add(createFrequencyMenu(gameScreen));
             menuBar.add(createDisplayMenu(gameScreen));
-            menuBar.add(createPositionIterMenu(gameScreen));
             window.setJMenuBar(menuBar);
 
             window.setVisible(true);
         }
-    }
-
-    private static Component createPositionIterMenu(TestBedWindow gameScreen) {
-        JMenu hertzMenu = new JMenu("Position resolution");
-        int number = 5;
-        for (int i = 1; i < 10; i++) {
-            JMenuItem hertzMenuItem = new JMenuItem("" + number * i);
-            hertzMenu.add(hertzMenuItem);
-            hertzMenuItem.addActionListener(e -> {
-                switch (e.getActionCommand()) {
-                    case "5" -> Settings.POSITION_ITERATIONS = 5;
-                    case "10" -> Settings.POSITION_ITERATIONS = 10;
-                    case "15" -> Settings.POSITION_ITERATIONS = 15;
-                    case "20" -> Settings.POSITION_ITERATIONS = 20;
-                    case "25" -> Settings.POSITION_ITERATIONS = 25;
-                    case "30" -> Settings.POSITION_ITERATIONS = 30;
-                    case "35" -> Settings.POSITION_ITERATIONS = 35;
-                    case "40" -> Settings.POSITION_ITERATIONS = 40;
-                }
-            });
-        }
-        return hertzMenu;
     }
 
     private static Component createDisplayMenu(TestBedWindow gameScreen) {
@@ -456,85 +470,85 @@ public class TestBedWindow extends JPanel implements Runnable {
         JMenu testMenu = new JMenu("Demos");
         testMenu.setMnemonic(KeyEvent.VK_M);
 
-        JMenuItem bouncingBall = new JMenuItem("Bouncing ball");
-        bouncingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(bouncingBall);
-        bouncingBall.addActionListener(new DemoMenuInput(gameScreen));
-
         JMenuItem chains = new JMenuItem("Chains");
-        chains.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK));
+        chains.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.ALT_DOWN_MASK));
         testMenu.add(chains);
         chains.addActionListener(new DemoMenuInput(gameScreen));
 
-       /* JMenuItem compoundBodies = new JMenuItem("Compound bodies");
-        compoundBodies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(compoundBodies);
-        compoundBodies.addActionListener(new DemoMenuInput(gameScreen));*/
-
-        JMenuItem drag = new JMenuItem("Drag");
-        drag.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(drag);
-        drag.addActionListener(new DemoMenuInput(gameScreen));
-
-        JMenuItem friction = new JMenuItem("Friction");
-        friction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(friction);
-        friction.addActionListener(new DemoMenuInput(gameScreen));
-
         JMenuItem lineOfSight = new JMenuItem("Line of sight");
-        lineOfSight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.ALT_DOWN_MASK));
+        lineOfSight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK));
         testMenu.add(lineOfSight);
         lineOfSight.addActionListener(new DemoMenuInput(gameScreen));
 
-        JMenuItem mixedShapes = new JMenuItem("Mixed shapes");
-        mixedShapes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(mixedShapes);
-        mixedShapes.addActionListener(new DemoMenuInput(gameScreen));
-
-        JMenuItem newtonsCradle = new JMenuItem("Newtons cradle");
-        newtonsCradle.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(newtonsCradle);
-        newtonsCradle.addActionListener(new DemoMenuInput(gameScreen));
-
         JMenuItem particleExplosion = new JMenuItem("Particle explosion");
-        particleExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.ALT_DOWN_MASK));
+        particleExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK));
         testMenu.add(particleExplosion);
         particleExplosion.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem proximityExplosion = new JMenuItem("Proximity explosion");
-        proximityExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_DOWN_MASK));
+        proximityExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.ALT_DOWN_MASK));
         testMenu.add(proximityExplosion);
         proximityExplosion.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem raycastExplosion = new JMenuItem("Raycast explosion");
-        raycastExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.ALT_DOWN_MASK));
+        raycastExplosion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.ALT_DOWN_MASK));
         testMenu.add(raycastExplosion);
         raycastExplosion.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem raycast = new JMenuItem("Raycast");
-        raycast.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_DOWN_MASK));
+        raycast.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.ALT_DOWN_MASK));
         testMenu.add(raycast);
         raycast.addActionListener(new DemoMenuInput(gameScreen));
 
+        JMenuItem trebuchet = new JMenuItem("Trebuchet");
+        trebuchet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(trebuchet);
+        trebuchet.addActionListener(new DemoMenuInput(gameScreen));
+
+        JMenuItem sliceObjects = new JMenuItem("Slice objects");
+        sliceObjects.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(sliceObjects);
+        sliceObjects.addActionListener(new DemoMenuInput(gameScreen));
+
+        JMenuItem bouncingBall = new JMenuItem("Bouncing ball");
+        bouncingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(bouncingBall);
+        bouncingBall.addActionListener(new DemoMenuInput(gameScreen));
+
+        JMenuItem mixedShapes = new JMenuItem("Mixed shapes");
+        mixedShapes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(mixedShapes);
+        mixedShapes.addActionListener(new DemoMenuInput(gameScreen));
+
+        JMenuItem newtonsCradle = new JMenuItem("Newtons cradle");
+        newtonsCradle.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(newtonsCradle);
+        newtonsCradle.addActionListener(new DemoMenuInput(gameScreen));
+
+        JMenuItem wreckingBall = new JMenuItem("Wrecking ball");
+        wreckingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(wreckingBall);
+        wreckingBall.addActionListener(new DemoMenuInput(gameScreen));
+
+        JMenuItem friction = new JMenuItem("Friction");
+        friction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(friction);
+        friction.addActionListener(new DemoMenuInput(gameScreen));
+
+        JMenuItem drag = new JMenuItem("Drag");
+        drag.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK));
+        testMenu.add(drag);
+        drag.addActionListener(new DemoMenuInput(gameScreen));
+
         JMenuItem restitution = new JMenuItem("Restitution");
-        restitution.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
+        restitution.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.ALT_DOWN_MASK));
         testMenu.add(restitution);
         restitution.addActionListener(new DemoMenuInput(gameScreen));
 
         JMenuItem stackedObjects = new JMenuItem("Stacked objects");
-        stackedObjects.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK));
+        stackedObjects.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_DOWN_MASK));
         testMenu.add(stackedObjects);
         stackedObjects.addActionListener(new DemoMenuInput(gameScreen));
-
-        JMenuItem trebuchet = new JMenuItem("Trebuchet");
-        trebuchet.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(trebuchet);
-        trebuchet.addActionListener(new DemoMenuInput(gameScreen));
-
-        JMenuItem wreckingBall = new JMenuItem("Wrecking ball");
-        wreckingBall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_DOWN_MASK));
-        testMenu.add(wreckingBall);
-        wreckingBall.addActionListener(new DemoMenuInput(gameScreen));
 
         return testMenu;
     }
@@ -610,12 +624,6 @@ public class TestBedWindow extends JPanel implements Runnable {
         for (Body b : world.bodies) {
             b.setDensity(0);
         }
-    }
-
-    private final ArrayList<ShadowCasting> shadowCastings = new ArrayList<>();
-
-    public void add(ShadowCasting shadowCasting) {
-        shadowCastings.add(shadowCasting);
     }
 
     public void buildExplosionDemo() {
