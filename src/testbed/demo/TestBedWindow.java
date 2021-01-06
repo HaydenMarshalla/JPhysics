@@ -268,7 +268,7 @@ public class TestBedWindow extends JPanel implements Runnable {
 
     private int currentDemo = 0;
 
-    public void setCurrentDemo(int i){
+    public void setCurrentDemo(int i) {
         currentDemo = i;
     }
 
@@ -679,6 +679,32 @@ public class TestBedWindow extends JPanel implements Runnable {
         for (int i = 0; i < boxes; i++) {
             Body box = new Body(new Polygon(10.0, 20.0), x, y + 30 + (i * 40));
             world.addBody(box);
+        }
+    }
+
+    public void createTower(int noOfPillars, int x, int y) {
+        double height = 30.0;
+        double width = 5.0;
+        x += width;
+
+        double widthOfTopPillar = height + height;
+        for (int k = 0; k < noOfPillars; k++) {
+            x += height;
+
+            Body initialPillar = new Body(new Polygon(width, height), x, y + height);
+            initialPillar.restitution = 0.2;
+            world.addBody(initialPillar);
+
+            for (int i = 0; i < noOfPillars - k; i++) {
+                Body rightPillar = new Body(new Polygon(width, height), x + widthOfTopPillar + (widthOfTopPillar * i), y + height);
+                rightPillar.restitution = 0.2;
+                world.addBody(rightPillar);
+
+                Body topPillar = new Body(new Polygon(height, width), x + height + (i * widthOfTopPillar), y + widthOfTopPillar + width);
+                topPillar.restitution = 0.2;
+                world.addBody(topPillar);
+            }
+            y += widthOfTopPillar + width + width;
         }
     }
 }

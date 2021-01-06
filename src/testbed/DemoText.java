@@ -1,7 +1,9 @@
 package testbed;
 
+import library.utils.Settings;
 import testbed.demo.tests.*;
 
+import javax.sound.sampled.Line;
 import java.awt.*;
 
 public class DemoText {
@@ -13,10 +15,7 @@ public class DemoText {
         g.setFont(new Font("Calibri", Font.PLAIN, 20));
         switch (demo) {
             case 0 -> drawArray(Chains.text, g);
-            case 1 -> {
-                drawArray(LineOfSight.text, g);
-                LineOfSight.setRayCount();
-            }
+            case 1 -> drawArray(LineOfSight.text, g);
             case 2 -> drawArray(ParticleExplosionTest.text, g);
             case 3 -> drawArray(ProximityExplosionTest.text, g);
             case 4 -> drawArray(RaycastExplosionTest.text, g);
@@ -40,7 +39,11 @@ public class DemoText {
             g.drawString(line, 5, y);
             y += 20;
         }
-        g.drawString("Right click: moves the camera position", 5, y += 0);
+        g.drawString("Right click: moves the camera position", 5, y);
         g.drawString("Space: pauses demo", 5, y += 20);
+        g.drawString("Hertz: " + Settings.HERTZ, 5, y += 20);
+        if (LineOfSight.active) {
+            LineOfSight.drawInfo(g, 5, y+=20);
+        }
     }
 }

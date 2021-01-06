@@ -5,8 +5,10 @@ import library.dynamics.World;
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 
+import java.awt.*;
+
 public class LineOfSight {
-    public static final String[] text = {"Line of sight:", "Mouse: Move mouse to change position of raycast", ""};
+    public static final String[] text = {"Line of sight:", "Mouse: Move mouse to change position of raycast"};
     public static boolean active = false;
     public static ShadowCasting b;
 
@@ -21,7 +23,7 @@ public class LineOfSight {
         testBedWindow.add(b);
     }
 
-    public static void setRayCount() {
-        text[2] = "No of rays: " + b.getNoOfRays();
+    public static void drawInfo(Graphics2D g, int x, int y) {
+        g.drawString("No of rays: " + b.getNoOfRays(), x, y);
     }
 }

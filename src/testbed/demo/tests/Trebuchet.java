@@ -8,6 +8,7 @@ import library.joints.Joint;
 import library.joints.JointToBody;
 import library.joints.JointToPoint;
 import library.math.Vectors2D;
+import library.utils.Settings;
 import testbed.demo.TestBedWindow;
 
 public class Trebuchet {
@@ -47,5 +48,9 @@ public class Trebuchet {
 
         Joint j3 = new JointToBody(arm, payload, 79, 100, 1, true, new Vectors2D(-50, 0), new Vectors2D());
         temp.addJoint(j3);
+
+        testBedWindow.createTower(10,1500,-40);
+
+        Settings.HERTZ = 400;
     }
 }
