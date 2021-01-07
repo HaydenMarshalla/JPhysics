@@ -108,24 +108,40 @@ public class Slice {
             if (b.shape instanceof Polygon) {
                 Polygon p = (Polygon) b.shape;
 
-                int obj1firstIndex = intersectingBodiesInfo.get(i).getIndex();
-                int obj1secondIndex = intersectingBodiesInfo.get(i + 1).getIndex();
-                int totalVerticesObj1 = (obj1firstIndex + 2) + (p.vertices.length - obj1secondIndex);
-                Vectors2D[] array = new Vectors2D[totalVerticesObj1];
+                RayInformation intersection1 = intersectingBodiesInfo.get(i);
+                RayInformation intersection2 = intersectingBodiesInfo.get(i + 1);
 
-                for (int x = 0; x <= obj1firstIndex; x++) {
-                    array[x] = p.vertices[x];
+                int obj1firstIndex = intersection1.getIndex();
+                int secondIndex = intersection2.getIndex();
+                int obj2firstIndex = obj1firstIndex;
+
+                int totalVerticesObj1 = (obj1firstIndex + 2) + (p.vertices.length - secondIndex);
+                Vectors2D[] obj1Vertz = new Vectors2D[totalVerticesObj1];
+
+                if (obj1firstIndex + 1 >= 0) System.arraycopy(p.vertices, 0, obj1Vertz, 0, obj1firstIndex + 1);
+
+                obj1Vertz[++obj1firstIndex] = intersectingBodiesInfo.get(i).getCoord();
+                obj1Vertz[++obj1firstIndex] = intersectingBodiesInfo.get(i + 1).getCoord();
+
+                for (int x = secondIndex + 1; x < p.vertices.length; x++) {
+                    obj1Vertz[++obj1firstIndex] = p.vertices[x];
                 }
 
-                array[++obj1firstIndex] = intersectingBodiesInfo.get(i).getCoord();
-                array[++obj1firstIndex] = intersectingBodiesInfo.get(i + 1).getCoord();
+                world.addBody(new Body(new Polygon(obj1Vertz), 0, 0));
 
-                for (int x = obj1secondIndex + 1; x < p.vertices.length; x++) {
-                    array[++obj1firstIndex] = p.vertices[x];
+                totalVerticesObj1 = secondIndex - obj2firstIndex + 2;
+                Vectors2D[] obj2Vertz = new Vectors2D[totalVerticesObj1];
+
+                int indexToAddTo = 0;
+                obj2Vertz[indexToAddTo++] = intersection1.getCoord();
+
+                for (int x = obj2firstIndex + 1; x <= secondIndex; x++) {
+                    obj2Vertz[indexToAddTo++] = p.vertices[x];
                 }
 
-                System.out.println("e");
-                world.addBody(new Body(new Polygon(array), 0, 0));
+                obj2Vertz[totalVerticesObj1 - 1] = intersection2.getCoord();
+
+                world.addBody(new Body(new Polygon(obj2Vertz), 0, 0));
             } else if (b.shape instanceof Circle) {
 
             }

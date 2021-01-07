@@ -57,26 +57,24 @@ public class World {
 
         broadPhaseCheck();
 
+        semiImplicit(dt);
+        //improvedEuler(dt);
+
+        //Correct positional errors from the discrete collisions
+        for (Arbiter contact : contacts) {
+            contact.penetrationResolution();
+        }
+    }
+
+    private void improvedEuler(double dt) {
+
+    }
+
+    private void semiImplicit(double dt) {
         //Applies tentative velocities
         applyForces(dt);
 
-        /*
-        Resolve joints
-        Note: this is removed from the iterations at this stage as the application of forces is different.
-        The extra iterations on joints make the forces of the joints multiple times larger equal to the number of iterations.
-        Early out could be used like in the collision solver
-        This may change in the future and will be revised at a later date.
-        */
-        for (Joint j : joints) {
-            j.applyTension();
-        }
-
-        //Resolve collisions
-        for (int i = 0; i < Settings.ITERATIONS; i++) {
-            for (Arbiter contact : contacts) {
-                contact.solve();
-            }
-        }
+        solve(dt);
 
         //Integrate positions
         for (Body b : bodies) {
@@ -90,18 +88,6 @@ public class World {
             b.force.set(0, 0);
             b.torque = 0;
         }
-
-        //Correct positional errors from the discrete collisions
-        for (Arbiter contact : contacts) {
-            contact.penetrationResolution();
-        }
-    }
-
-    private void applyLinearDrag(Body b) {
-        double velocityMagnitude = b.velocity.length();
-        double dragForceMagnitude = velocityMagnitude * velocityMagnitude * b.linearDampening;
-        Vectors2D dragForceVector = b.velocity.getNormalized().scalar(-dragForceMagnitude);
-        b.applyForceToCentre(dragForceVector);
     }
 
     // Applies semi-implicit euler and drag forces
@@ -120,6 +106,36 @@ public class World {
             b.velocity.add(b.force.scalar(b.invMass).scalar(dt));
             b.angularVelocity += dt * b.invI * b.torque;
         }
+    }
+
+    private void solve(double dt) {
+        /*
+        Resolve joints
+        Note: this is removed from the iterations at this stage as the application of forces is different.
+        The extra iterations on joints make the forces of the joints multiple times larger equal to the number of iterations.
+        Early out could be used like in the collision solver
+        This may change in the future and will be revised at a later date.
+        */
+        for (
+                Joint j : joints) {
+            j.applyTension();
+        }
+
+        //Resolve collisions
+        for (
+                int i = 0;
+                i < Settings.ITERATIONS; i++) {
+            for (Arbiter contact : contacts) {
+                contact.solve();
+            }
+        }
+    }
+
+    private void applyLinearDrag(Body b) {
+        double velocityMagnitude = b.velocity.length();
+        double dragForceMagnitude = velocityMagnitude * velocityMagnitude * b.linearDampening;
+        Vectors2D dragForceVector = b.velocity.getNormalized().scalar(-dragForceMagnitude);
+        b.applyForceToCentre(dragForceVector);
     }
 
     //A discrete Broad phase check of collision detection.

@@ -6,10 +6,12 @@ import testbed.ColourSettings;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.Trebuchet;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyBoardInput extends TestbedControls implements KeyListener {
+public class KeyBoardInput extends TestbedControls implements KeyListener, ActionListener {
     public KeyBoardInput(TestBedWindow testBedWindow) {
         super(testBedWindow);
     }
@@ -34,7 +36,7 @@ public class KeyBoardInput extends TestbedControls implements KeyListener {
                 TESTBED.setCamera(new Vectors2D(975.1907630916461, 238.90545889946543), 3.4378877334780036);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
-
+            loadDemo(currentDemo);
         }
     }
 
@@ -44,6 +46,11 @@ public class KeyBoardInput extends TestbedControls implements KeyListener {
             ColourSettings p = TESTBED.getPAINT_SETTINGS();
             p.setDrawText(!p.getDrawText());
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        loadDemo(event.getActionCommand());
     }
 }
 

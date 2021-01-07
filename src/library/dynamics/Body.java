@@ -40,7 +40,7 @@ public class Body {
 
         restitution = 0.8;
 
-        staticFriction = 0.3;
+        staticFriction = 0.5;
         dynamicFriction = 0.2;
 
         linearDampening = 0;

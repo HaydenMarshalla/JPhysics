@@ -3,7 +3,7 @@ package library.utils;
 import java.util.Random;
 
 public class Settings {
-    public static final double PENETRATION_ALLOWANCE = 0.2;
+    public static final double PENETRATION_ALLOWANCE = 0.01;
     public static final double PENETRATION_CORRECTION = 0.5;
     public static final double BIAS_RELATIVE = 0.95;
     public static final double BIAS_ABSOLUTE = 0.01;

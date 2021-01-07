@@ -16,10 +16,10 @@ public class SliceObjects {
         World temp = testBedWindow.getWorld();
         testBedWindow.setCamera(new Vectors2D(0, 0), 1);
 
-        {
-            Body b = new Body(new Polygon(2000.0, 50.0), 1.0f, 0.0f);
-            b.setDensity(0);
-            temp.addBody(b);
-        }
+        Body ground = new Body(new Polygon(10000.0, 2000.0), 0, -2040);
+        ground.setDensity(0);
+        temp.addBody(ground);
+
+        testBedWindow.createTower(5, 0, -40);
     }
 }
