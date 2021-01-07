@@ -1,6 +1,7 @@
 package testbed;
 
 import library.utils.Settings;
+import testbed.demo.TestBedWindow;
 import testbed.demo.tests.*;
 
 import javax.sound.sampled.Line;

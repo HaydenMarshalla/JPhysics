@@ -14,12 +14,14 @@ public class SliceObjects {
         active = true;
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
-        testBedWindow.setCamera(new Vectors2D(0, 0), 1);
+        testBedWindow.setCamera(new Vectors2D(0, 100), 1.5);
 
         Body ground = new Body(new Polygon(10000.0, 2000.0), 0, -2040);
         ground.setDensity(0);
         temp.addBody(ground);
 
         testBedWindow.createTower(5, 0, -40);
+
+        testBedWindow.scaleWorldFriction(0.4);
     }
 }

@@ -49,7 +49,7 @@ public class Trebuchet {
         Joint j3 = new JointToBody(arm, payload, 79, 100, 1, true, new Vectors2D(-50, 0), new Vectors2D());
         temp.addJoint(j3);
 
-        testBedWindow.createTower(10,1500,-40);
+        testBedWindow.createPyramid(10,1500,-40);
 
         Settings.HERTZ = 400;
     }

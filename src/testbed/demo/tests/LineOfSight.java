@@ -14,7 +14,7 @@ public class LineOfSight {
 
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
-        testBedWindow.setCamera(new Vectors2D(-100, 20), 3.3);
+        testBedWindow.setCamera(new Vectors2D(-120, 20), 3.3);
         active = true;
 
         testBedWindow.generateBoxOfObjects();

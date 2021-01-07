@@ -44,7 +44,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     private final MouseInput MOUSE_INPUT;
     private final MouseScroll MOUSE_SCROLL_INPUT;
     private final MouseMotionListener MOUSE_MOTION_INPUT;
-    
+
     public TestBedWindow(boolean antiAliasing) {
         this.ANTIALIASING = antiAliasing;
 
@@ -682,7 +682,7 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
     }
 
-    public void createTower(int noOfPillars, int x, int y) {
+    public void createPyramid(int noOfPillars, int x, int y) {
         double height = 30.0;
         double width = 5.0;
         x += width;
@@ -691,20 +691,60 @@ public class TestBedWindow extends JPanel implements Runnable {
         for (int k = 0; k < noOfPillars; k++) {
             x += height;
 
-            Body initialPillar = new Body(new Polygon(width+ 2, height), x, y + height);
-            initialPillar.restitution = 0.2;
-            world.addBody(initialPillar);
+            Body initialPillar = new Body(new Polygon(width + 2, height), x, y + height);
+            addPillar(initialPillar);
 
             for (int i = 0; i < noOfPillars - k; i++) {
                 Body rightPillar = new Body(new Polygon(width + 2, height), x + widthOfTopPillar + (widthOfTopPillar * i), y + height);
-                rightPillar.restitution = 0.2;
-                world.addBody(rightPillar);
+                addPillar(rightPillar);
 
                 Body topPillar = new Body(new Polygon(height, width), x + height + (i * widthOfTopPillar), y + widthOfTopPillar + width);
-                topPillar.restitution = 0.2;
-                world.addBody(topPillar);
+                addPillar(topPillar);
             }
             y += widthOfTopPillar + width + width;
+        }
+    }
+
+    public void createTower(int floors, int x, int y) {
+        double height = 30.0;
+        double width = 5.0;
+        x += width;
+
+        double heightOfPillar = height + height;
+        double widthOfPillar = width + width;
+        for (int k = 0; k < floors; k++) {
+            Body leftPillar = new Body(new Polygon(width, height), x, y + height);
+            addPillar(leftPillar);
+
+            Body rightPillar = new Body(new Polygon(width, height), x + heightOfPillar - widthOfPillar, y + height);
+            addPillar(rightPillar);
+
+            Body topPillar = new Body(new Polygon(height, width), x + height - width, y + heightOfPillar + width);
+            addPillar(topPillar);
+            y += heightOfPillar + width + width;
+        }
+    }
+
+    //Removing some boiler plate for create tower and Pyramid
+    private void addPillar(Body b) {
+        b.restitution = 0.2;
+        b.setDensity(0.2);
+        world.addBody(b);
+    }
+
+    //Removes friction from the world
+    public void setWorldIce() {
+        for (Body b : world.bodies) {
+            b.staticFriction = 0.0;
+            b.dynamicFriction = 0.0;
+        }
+    }
+
+    // Scaled friction by a passed ratio
+    public void scaleWorldFriction(double ratio) {
+        for (Body b : world.bodies) {
+            b.staticFriction *= ratio;
+            b.dynamicFriction *= ratio;
         }
     }
 }

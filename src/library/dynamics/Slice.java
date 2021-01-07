@@ -53,7 +53,6 @@ public class Slice {
                             Vectors2D point = new Vectors2D(startPoint.x + end_x * t1, startPoint.y + end_y * t1);
                             double dist = point.subtract(startPoint).length();
                             if (dist < distance) {
-                                min_t1 = t1;
                                 min_px = point.x;
                                 min_py = point.y;
                                 intersectingBodiesInfo.add(new RayInformation(B, min_px, min_py, i));
@@ -81,7 +80,6 @@ public class Slice {
                     if (t1 >= 0 && t1 <= 1) {
                         min_px = startPoint.x + end_x * t1;
                         min_py = startPoint.y + end_y * t1;
-                        double dist = startPoint.subtract(new Vectors2D(min_px, min_py)).length();
                         intersectingBodiesInfo.add(new RayInformation(B, min_px, min_py, -1));
                     }
 
@@ -89,7 +87,6 @@ public class Slice {
                     if (t2 >= 0 && t2 <= 1) {
                         min_px = startPoint.x + end_x * t2;
                         min_py = startPoint.y + end_y * t2;
-                        double dist = startPoint.subtract(new Vectors2D(min_px, min_py)).length();
                         intersectingBodiesInfo.add(new RayInformation(B, min_px, min_py, -1));
                     }
                 }
@@ -105,6 +102,7 @@ public class Slice {
         assert (intersectingBodiesInfo.size() % 2 == 0);
         for (int i = 0; i < intersectingBodiesInfo.size(); i += 2) {
             Body b = intersectingBodiesInfo.get(i).getB();
+            boolean isStatic = b.mass == 0.0;
             if (b.shape instanceof Polygon) {
                 Polygon p = (Polygon) b.shape;
 
@@ -118,16 +116,22 @@ public class Slice {
                 int totalVerticesObj1 = (obj1firstIndex + 2) + (p.vertices.length - secondIndex);
                 Vectors2D[] obj1Vertz = new Vectors2D[totalVerticesObj1];
 
-                if (obj1firstIndex + 1 >= 0) System.arraycopy(p.vertices, 0, obj1Vertz, 0, obj1firstIndex + 1);
+                for (int x = 0; x < obj1firstIndex + 1; x++) {
+                    obj1Vertz[x] = b.shape.orient.mul(p.vertices[x], new Vectors2D()).addi(b.position);
+                }
 
                 obj1Vertz[++obj1firstIndex] = intersectingBodiesInfo.get(i).getCoord();
                 obj1Vertz[++obj1firstIndex] = intersectingBodiesInfo.get(i + 1).getCoord();
 
                 for (int x = secondIndex + 1; x < p.vertices.length; x++) {
-                    obj1Vertz[++obj1firstIndex] = p.vertices[x];
+                    obj1Vertz[++obj1firstIndex] = b.shape.orient.mul(p.vertices[x], new Vectors2D()).addi(b.position);
                 }
 
-                world.addBody(new Body(new Polygon(obj1Vertz), 0, 0));
+                Vectors2D polyCentre = findPolyCentre(obj1Vertz);
+                Body b1 = new Body(new Polygon(obj1Vertz), polyCentre.x, polyCentre.y);
+                if (isStatic)
+                    b1.setDensity(0.0);
+                world.addBody(b1);
 
                 totalVerticesObj1 = secondIndex - obj2firstIndex + 2;
                 Vectors2D[] obj2Vertz = new Vectors2D[totalVerticesObj1];
@@ -136,18 +140,69 @@ public class Slice {
                 obj2Vertz[indexToAddTo++] = intersection1.getCoord();
 
                 for (int x = obj2firstIndex + 1; x <= secondIndex; x++) {
-                    obj2Vertz[indexToAddTo++] = p.vertices[x];
+                    obj2Vertz[indexToAddTo++] = b.shape.orient.mul(p.vertices[x], new Vectors2D()).addi(b.position);
                 }
 
                 obj2Vertz[totalVerticesObj1 - 1] = intersection2.getCoord();
 
-                world.addBody(new Body(new Polygon(obj2Vertz), 0, 0));
+                polyCentre = findPolyCentre(obj2Vertz);
+                Body b2 = new Body(new Polygon(obj2Vertz), polyCentre.x, polyCentre.y);
+                if (isStatic)
+                    b2.setDensity(0.0);
+                world.addBody(b2);
             } else if (b.shape instanceof Circle) {
 
             }
             world.removeBody(b);
         }
     }
+
+    private Vectors2D findPolyCentre(Vectors2D[] obj2Vertz) {
+        double accumulatedArea = 0.0;
+        double centerX = 0.0;
+        double centerY = 0.0;
+
+        for (int i = 0, j = obj2Vertz.length - 1; i < obj2Vertz.length; j = i++) {
+            double temp = obj2Vertz[i].x * obj2Vertz[j].y - obj2Vertz[j].x * obj2Vertz[i].y;
+            accumulatedArea += temp;
+            centerX += (obj2Vertz[i].x + obj2Vertz[j].x) * temp;
+            centerY += (obj2Vertz[i].y + obj2Vertz[j].y) * temp;
+        }
+
+        if (accumulatedArea == 0.0)
+            return new Vectors2D();
+
+        accumulatedArea *= 3.0;
+        return new Vectors2D(centerX / accumulatedArea, centerY / accumulatedArea);
+    }
+
+    /*private Vectors2D findCentre(Vectors2D[] obj2Vertz, Vectors2D offset) {
+        double centroidX = 0, centroidY = 0;
+        double det = 0, tempDet = 0;
+        int j = 0;
+        int nVertices = obj2Vertz.length;
+
+        for (int i = 0; i < nVertices; i++) {
+            // closed polygon
+            if (i + 1 == nVertices)
+                j = 0;
+            else
+                j = i + 1;
+
+            // compute the determinant
+            tempDet = obj2Vertz[i].x * obj2Vertz[j].y - obj2Vertz[j].x * obj2Vertz[i].y;
+            det += tempDet;
+
+            centroidX += (obj2Vertz[i].x + obj2Vertz[j].x) * tempDet;
+            centroidY += (obj2Vertz[i].y + obj2Vertz[j].y) * tempDet;
+        }
+
+        // divide by the total mass of the polygon
+        centroidX /= 3 * det;
+        centroidY /= 3 * det;
+
+        return new Vectors2D(0,0);
+    }*/
 
     public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         g.setColor(paintSettings.projectedRay);

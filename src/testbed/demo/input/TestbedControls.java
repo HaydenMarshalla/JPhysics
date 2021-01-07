@@ -56,6 +56,7 @@ public abstract class TestbedControls {
             }
             case "Slice objects" -> {
                 SliceObjects.load(TESTBED);
+                Settings.HERTZ = 120;
                 TESTBED.setCurrentDemo(7);
             }
             case "Bouncing ball" -> {

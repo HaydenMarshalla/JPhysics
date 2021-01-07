@@ -80,8 +80,8 @@ public class Body {
         shape.createAABB();
     }
 
-    public void setDensity(int density) {
-        if (density > 0) {
+    public void setDensity(double density) {
+        if (density > 0.0) {
             shape.calcMass(density);
         } else {
             setStatic();
@@ -89,9 +89,9 @@ public class Body {
     }
 
     private void setStatic() {
-        mass = 0;
-        invMass = 0;
-        I = 0;
-        invI = 0;
+        mass = 0.0;
+        invMass = 0.0;
+        I = 0.0;
+        invI = 0.0;
     }
 }
