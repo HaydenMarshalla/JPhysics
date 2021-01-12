@@ -271,6 +271,7 @@ public class TestBedWindow extends JPanel implements Runnable {
     public void setCurrentDemo(int i) {
         currentDemo = i;
     }
+    public boolean followPayload = false;
 
     @Override
     public void paintComponent(Graphics g) {
@@ -281,6 +282,9 @@ public class TestBedWindow extends JPanel implements Runnable {
         }
         setBackground(PAINT_SETTINGS.background);
         update();
+        if (followPayload){
+            setCamera(new Vectors2D(world.bodies.get(3).position.x,getCamera().centre.y) , 2.0);
+        }
         if (PAINT_SETTINGS.getDrawGrid()) {
             drawGridMethod(g2d);
         }
@@ -295,12 +299,12 @@ public class TestBedWindow extends JPanel implements Runnable {
             if (PAINT_SETTINGS.getDrawAABBs()) {
                 b.shape.drawAABB(g2d, PAINT_SETTINGS, CAMERA);
             }
-            if (PAINT_SETTINGS.getDrawContactPoints()) {
-                world.drawContact(g2d, PAINT_SETTINGS, CAMERA);
-            }
             if (PAINT_SETTINGS.getDrawCOMs()) {
                 b.shape.drawCOMS(g2d, PAINT_SETTINGS, CAMERA);
             }
+        }
+        if (PAINT_SETTINGS.getDrawContacts()) {
+            world.drawContact(g2d, PAINT_SETTINGS, CAMERA);
         }
         if (PAINT_SETTINGS.getDrawJoints()) {
             for (Joint j : world.joints) {
@@ -411,13 +415,9 @@ public class TestBedWindow extends JPanel implements Runnable {
         drawOptions.add(displayAABBs);
         displayAABBs.addActionListener(new ColourMenuInput(gameScreen));
 
-        JMenuItem displayContactPoints = new JMenuItem("Display Contact Points");
+        JMenuItem displayContactPoints = new JMenuItem("Display Contacts");
         drawOptions.add(displayContactPoints);
         displayContactPoints.addActionListener(new ColourMenuInput(gameScreen));
-
-        JMenuItem displayContactNormals = new JMenuItem("Display Contact Normals");
-        drawOptions.add(displayContactNormals);
-        displayContactNormals.addActionListener(new ColourMenuInput(gameScreen));
 
         JMenuItem displayCOMs = new JMenuItem("Display COMs");
         drawOptions.add(displayCOMs);
@@ -454,10 +454,6 @@ public class TestBedWindow extends JPanel implements Runnable {
         JMenuItem box2dScheme = new JMenuItem("Box2d");
         colourScheme.add(box2dScheme);
         box2dScheme.addActionListener(new ColourMenuInput(gameScreen));
-
-        JMenuItem matterjsScheme = new JMenuItem("MatterJs");
-        colourScheme.add(matterjsScheme);
-        matterjsScheme.addActionListener(new ColourMenuInput(gameScreen));
 
         JMenuItem monochromaticScheme = new JMenuItem("Monochromatic");
         colourScheme.add(monochromaticScheme);

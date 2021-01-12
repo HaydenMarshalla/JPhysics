@@ -12,9 +12,11 @@ import java.awt.geom.Path2D;
 
 public abstract class Shapes {
     public Body body;
-    public Matrix2D orient = new Matrix2D();
+    public Matrix2D orient;
 
     Shapes() {
+        orient = new Matrix2D();
+        body = null;
     }
 
     public abstract void calcMass(double density);

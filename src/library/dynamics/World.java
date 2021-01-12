@@ -200,21 +200,16 @@ public class World {
             Vectors2D beginningOfLine;
             Vectors2D endOfLine;
 
-            if (paintSettings.getDrawContactNormals()) {
-                g2d.setColor(paintSettings.contactNormals);
-                line = contact.normal.scalar(paintSettings.CONTACT_LINE_SCALAR);
-                beginningOfLine = camera.convertToScreen(point.addi(line));
-                endOfLine = camera.convertToScreen(point.subtract(line));
-                g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
-            }
+            g2d.setColor(paintSettings.contactPoint);
+            line = contact.normal.normal().scalar(paintSettings.TANGENT_LINE_SCALAR);
+            beginningOfLine = camera.convertToScreen(point.addi(line));
+            endOfLine = camera.convertToScreen(point.subtract(line));
+            g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
 
-            if (paintSettings.getDrawContactPoints()) {
-                g2d.setColor(paintSettings.contactPoint);
-                line = contact.normal.normal().scalar(paintSettings.NORMAL_LINE_SCALAR);
-                beginningOfLine = camera.convertToScreen(point.addi(line));
-                endOfLine = camera.convertToScreen(point.subtract(line));
-                g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
-            }
+            line = contact.normal.scalar(paintSettings.NORMAL_LINE_SCALAR);
+            beginningOfLine = camera.convertToScreen(point.addi(line));
+            endOfLine = camera.convertToScreen(point.subtract(line));
+            g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
         }
     }
 }

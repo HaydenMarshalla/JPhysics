@@ -8,7 +8,6 @@ import library.math.Vectors2D;
 
 public class ParticleExplosion {
     private final int noOfParticles;
-    private final World world;
     private Vectors2D epicentre;
     private final Body[] particles;
     private double timePassed;
@@ -17,15 +16,14 @@ public class ParticleExplosion {
         return particles;
     }
 
-    public ParticleExplosion(Vectors2D epicentre, World world, int noOfParticles, double life) {
+    public ParticleExplosion(Vectors2D epicentre, int noOfParticles, double life) {
         this.epicentre = epicentre;
         this.noOfParticles = noOfParticles;
-        this.world = world;
         particles = new Body[noOfParticles];
         timePassed = 0;
     }
 
-    public void createParticles(double size, int density, int radius) {
+    public void createParticles(double size, int density, int radius, World world) {
         double seperationAngle = 6.28319 / noOfParticles;
         Vectors2D distanceFromCentre = new Vectors2D(0, radius);
         Matrix2D rotate = new Matrix2D(seperationAngle);

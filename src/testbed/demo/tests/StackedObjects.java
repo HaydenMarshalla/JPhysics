@@ -22,11 +22,9 @@ public class StackedObjects {
                 }
             }
             for (int x = 0; x < 15; x++) {
-                for (int y = 0; y < 1; y++) {
-                    Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), 400);
-                    b.setDensity(10);
-                    temp.addBody(b);
-                }
+                Body b = new Body(new Polygon(10.0, 10.0), -140 + (x * 20), 400);
+                b.setDensity(10);
+                temp.addBody(b);
             }
 
             Body b = new Body(new Polygon(150.0, 10.0), 0, -120);

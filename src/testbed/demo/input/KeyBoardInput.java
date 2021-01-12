@@ -2,6 +2,7 @@ package testbed.demo.input;
 
 import library.math.Vectors2D;
 import library.utils.Settings;
+import testbed.Camera;
 import testbed.ColourSettings;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.Trebuchet;
@@ -33,7 +34,6 @@ public class KeyBoardInput extends TestbedControls implements KeyListener, Actio
             if (TESTBED.getWorld().joints.size() == 3 && Trebuchet.active) {
                 TESTBED.getWorld().joints.remove(2);
                 Settings.HERTZ = 60;
-                TESTBED.setCamera(new Vectors2D(975.1907630916461, 238.90545889946543), 3.4378877334780036);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
             loadDemo(currentDemo);

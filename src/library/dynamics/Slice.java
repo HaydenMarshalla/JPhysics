@@ -91,7 +91,7 @@ public class Slice {
                     }
                 }
             }
-            if (noOfIntersections == 1) {
+            if (noOfIntersections % 2 == 1) {
                 intersectingBodiesInfo.remove(intersectingBodiesInfo.size() - 1);
                 noOfIntersections = 0;
             }
@@ -99,8 +99,8 @@ public class Slice {
     }
 
     public void sliceObjects(World world) {
-        assert (intersectingBodiesInfo.size() % 2 == 0);
-        for (int i = 0; i < intersectingBodiesInfo.size(); i += 2) {
+        int k = intersectingBodiesInfo.size() % 2;
+        for (int i = 0; i < intersectingBodiesInfo.size() - k; i += 2) {
             Body b = intersectingBodiesInfo.get(i).getB();
             boolean isStatic = b.mass == 0.0;
             if (b.shape instanceof Polygon) {
@@ -175,34 +175,6 @@ public class Slice {
         accumulatedArea *= 3.0;
         return new Vectors2D(centerX / accumulatedArea, centerY / accumulatedArea);
     }
-
-    /*private Vectors2D findCentre(Vectors2D[] obj2Vertz, Vectors2D offset) {
-        double centroidX = 0, centroidY = 0;
-        double det = 0, tempDet = 0;
-        int j = 0;
-        int nVertices = obj2Vertz.length;
-
-        for (int i = 0; i < nVertices; i++) {
-            // closed polygon
-            if (i + 1 == nVertices)
-                j = 0;
-            else
-                j = i + 1;
-
-            // compute the determinant
-            tempDet = obj2Vertz[i].x * obj2Vertz[j].y - obj2Vertz[j].x * obj2Vertz[i].y;
-            det += tempDet;
-
-            centroidX += (obj2Vertz[i].x + obj2Vertz[j].x) * tempDet;
-            centroidY += (obj2Vertz[i].y + obj2Vertz[j].y) * tempDet;
-        }
-
-        // divide by the total mass of the polygon
-        centroidX /= 3 * det;
-        centroidY /= 3 * det;
-
-        return new Vectors2D(0,0);
-    }*/
 
     public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         g.setColor(paintSettings.projectedRay);

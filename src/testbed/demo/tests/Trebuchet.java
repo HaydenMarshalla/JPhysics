@@ -18,7 +18,7 @@ public class Trebuchet {
     public static void load(TestBedWindow testBedWindow) {
         testBedWindow.setWorld(new World(new Vectors2D(0, -9.81)));
         World temp = testBedWindow.getWorld();
-        testBedWindow.setCamera(new Vectors2D(100, 0), 2);
+        testBedWindow.setCamera(new Vectors2D(100, 200), 2.0);
         active = true;
 
         Body ground = new Body(new Polygon(10000.0, 2000.0), 0, -2040);

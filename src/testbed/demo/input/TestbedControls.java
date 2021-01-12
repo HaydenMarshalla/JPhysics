@@ -52,6 +52,7 @@ public abstract class TestbedControls {
             }
             case "Trebuchet" -> {
                 Trebuchet.load(TESTBED);
+                TESTBED.followPayload = true;
                 TESTBED.setCurrentDemo(6);
             }
             case "Slice objects" -> {
@@ -96,6 +97,7 @@ public abstract class TestbedControls {
 
     private void resetUniqueEventHandlers() {
         TESTBED.setCamera(new Vectors2D(0, 0), 1);
+        TESTBED.followPayload = false;
         ProximityExplosionTest.active = false;
         ParticleExplosionTest.active = false;
         RaycastExplosionTest.active = false;
@@ -112,8 +114,8 @@ public abstract class TestbedControls {
     }
 
     protected void generateParticleExplosion(MouseEvent e) {
-        ParticleExplosion p = new ParticleExplosion(CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY())), TESTBED.getWorld(), 100, 10);
-        p.createParticles(0.5, 100, 5);
+        ParticleExplosion p = new ParticleExplosion(CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY())), 100, 10);
+        p.createParticles(0.5, 100, 5, TESTBED.getWorld());
         p.applyBlastImpulse(100);
         TESTBED.add(p, 2);
     }
