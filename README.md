@@ -6,7 +6,9 @@ The engine is written in Java and has been created with the intention of being u
 ## Tech demos
 
 The testbed includes numerous tech demos to show what the engine is capable of. Some examples are given below:
-![a relative link](Images/Chains%20demo.png?raw=true)
+![a relative link](Images/Particle%20explosion%20demo.PNG)
+![a relative link](Images/Shadow%20casting.PNG)
+![a relative link](Images/Chains.PNG)
 
 ## Feature List
 ### Physics
@@ -19,6 +21,7 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 - Stable object stacking
 - Orbits
 - Explosions
+- Object slicing
 
 ### Collision
 - AABB queries (Broadphase)
@@ -38,7 +41,6 @@ The testbed includes numerous tech demos to show what the engine is capable of. 
 - Junit4 for junit tests
 
 ### Future features to implement
-- Object slicing
 - Multi body shapes
     - collisions optimizations for said shapes
 - Demos illustrating limitations within the engine
