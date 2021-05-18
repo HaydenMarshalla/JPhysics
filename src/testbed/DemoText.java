@@ -1,10 +1,8 @@
 package testbed;
 
-import library.utils.Settings;
-import testbed.demo.TestBedWindow;
+import library.dynamics.Settings;
 import testbed.demo.tests.*;
 
-import javax.sound.sampled.Line;
 import java.awt.*;
 
 public class DemoText {

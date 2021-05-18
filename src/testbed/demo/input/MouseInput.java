@@ -1,6 +1,6 @@
 package testbed.demo.input;
 
-import library.dynamics.Slice;
+import library.rays.Slice;
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.ParticleExplosionTest;

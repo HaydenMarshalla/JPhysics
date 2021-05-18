@@ -5,60 +5,100 @@ import library.collision.Arbiter;
 import library.joints.Joint;
 import library.math.Vectors2D;
 import testbed.ColourSettings;
-import library.utils.Settings;
 import testbed.Camera;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
+/**
+ * Class for creating a world with iterative solver structure.
+ */
 public class World {
     private Vectors2D gravity;
 
+    /**
+     * Constructor
+     *
+     * @param gravity The strength of gravity in the world.
+     */
     public World(Vectors2D gravity) {
         this.gravity = gravity;
     }
 
+    /**
+     * Default constructor
+     */
     public World() {
         gravity = new Vectors2D(0, 0);
     }
 
+    /**
+     * Sets gravity.
+     *
+     * @param gravity The strength of gravity in the world.
+     */
     public void setGravity(Vectors2D gravity) {
         this.gravity = gravity;
     }
 
     public ArrayList<Body> bodies = new ArrayList<>();
 
+    /**
+     * Adds a body to the world
+     *
+     * @param b Body to add.
+     * @return Returns the newly added body.
+     */
     public Body addBody(Body b) {
         bodies.add(b);
         return b;
     }
 
+    /**
+     * Removes a body from the world.
+     *
+     * @param b The body to remove from the world.
+     */
     public void removeBody(Body b) {
         bodies.remove(b);
     }
 
     public ArrayList<Joint> joints = new ArrayList<>();
 
+    /**
+     * Adds a joint to the world.
+     *
+     * @param j The joint to add.
+     * @return Returns the joint added to the world.
+     */
     public Joint addJoint(Joint j) {
         joints.add(j);
         return j;
     }
 
+    /**
+     * Removes a joint from the world.
+     *
+     * @param j The joint to remove from the world.
+     */
     public void removeJoint(Joint j) {
         joints.remove(j);
     }
 
     public ArrayList<Arbiter> contacts = new ArrayList<>();
 
-    // The main time step method for the world to conduct an iteration of the current world call this method with a desired time step value.
+    /**
+     * The main time step method for the world to conduct an iteration of the current world call this method with a desired time step value.
+     *
+     * @param dt Timestep
+     */
     public void step(double dt) {
         contacts.clear();
 
         broadPhaseCheck();
 
         semiImplicit(dt);
-        //improvedEuler(dt);
 
         //Correct positional errors from the discrete collisions
         for (Arbiter contact : contacts) {
@@ -66,10 +106,11 @@ public class World {
         }
     }
 
-    private void improvedEuler(double dt) {
-
-    }
-
+    /**
+     * Semi implicit euler integration method for the world bodies and forces.
+     *
+     * @param dt Timestep
+     */
     private void semiImplicit(double dt) {
         //Applies tentative velocities
         applyForces(dt);
@@ -90,7 +131,11 @@ public class World {
         }
     }
 
-    // Applies semi-implicit euler and drag forces
+    /**
+     * Applies semi-implicit euler and drag forces.
+     *
+     * @param dt Timestep
+     */
     private void applyForces(double dt) {
         for (Body b : bodies) {
             if (b.invMass == 0) {
@@ -108,6 +153,11 @@ public class World {
         }
     }
 
+    /**
+     * Method to apply all forces in the world.
+     *
+     * @param dt Timestep
+     */
     private void solve(double dt) {
         /*
         Resolve joints
@@ -131,6 +181,11 @@ public class World {
         }
     }
 
+    /**
+     * Applies linear drag to a body.
+     *
+     * @param b Body to apply drag to.
+     */
     private void applyLinearDrag(Body b) {
         double velocityMagnitude = b.velocity.length();
         double dragForceMagnitude = velocityMagnitude * velocityMagnitude * b.linearDampening;
@@ -138,7 +193,9 @@ public class World {
         b.applyForceToCentre(dragForceVector);
     }
 
-    //A discrete Broad phase check of collision detection.
+    /**
+     * A discrete Broad phase check of collision detection.
+     */
     private void broadPhaseCheck() {
         for (int i = 0; i < bodies.size(); i++) {
             Body a = bodies.get(i);
@@ -158,8 +215,13 @@ public class World {
         }
     }
 
-    // If broad phase detection check passes, a narrow phase check is conducted to determine for certain if two objects are intersecting.
-    // If two objects are, arbiters of contacts found are generated
+    /**
+     * If broad phase detection check passes, a narrow phase check is conducted to determine for certain if two objects are intersecting.
+     * If two objects are, arbiters of contacts found are generated
+     *
+     * @param a
+     * @param b
+     */
     private void narrowPhaseCheck(Body a, Body b) {
         Arbiter contactQuery = new Arbiter(a, b);
         contactQuery.narrowPhase();
@@ -168,14 +230,19 @@ public class World {
         }
     }
 
-    //Clears all objects in the current world
+
+    /**
+     * Clears all objects in the current world
+     */
     public void clearWorld() {
         bodies.clear();
         contacts.clear();
         joints.clear();
     }
 
-    //Applies gravitational forces between to objects (force applied to centre of body)
+    /**
+     * Applies gravitational forces between to objects (force applied to centre of body)
+     */
     public void gravityBetweenObj() {
         for (int a = 0; a < bodies.size(); a++) {
             Body A = bodies.get(a);
@@ -192,24 +259,30 @@ public class World {
         }
     }
 
-    //Draw method to draw contacts between objects
-    public void drawContact(Graphics2D g2d, ColourSettings paintSettings, Camera camera) {
+    /**
+     * Debug draw method for world objects.
+     *
+     * @param g             Graphics2D object to draw to
+     * @param paintSettings Colour settings to draw the objects to screen with
+     * @param camera        Camera class used to convert points from world space to view space
+     */
+    public void drawContact(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         for (Arbiter contact : contacts) {
             Vectors2D point = contact.contacts[0];
             Vectors2D line;
             Vectors2D beginningOfLine;
             Vectors2D endOfLine;
 
-            g2d.setColor(paintSettings.contactPoint);
-            line = contact.normal.normal().scalar(paintSettings.TANGENT_LINE_SCALAR);
+            g.setColor(paintSettings.contactPoint);
+            line = contact.contactNormal.normal().scalar(paintSettings.TANGENT_LINE_SCALAR);
             beginningOfLine = camera.convertToScreen(point.addi(line));
             endOfLine = camera.convertToScreen(point.subtract(line));
-            g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
+            g.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
 
-            line = contact.normal.scalar(paintSettings.NORMAL_LINE_SCALAR);
+            line = contact.contactNormal.scalar(paintSettings.NORMAL_LINE_SCALAR);
             beginningOfLine = camera.convertToScreen(point.addi(line));
             endOfLine = camera.convertToScreen(point.subtract(line));
-            g2d.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
+            g.draw(new Line2D.Double(beginningOfLine.x, beginningOfLine.y, endOfLine.x, endOfLine.y));
         }
     }
 }

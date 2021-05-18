@@ -1,6 +1,6 @@
 package testbed.demo.tests;
 
-import library.dynamics.ShadowCasting;
+import library.rays.ShadowCasting;
 import library.dynamics.World;
 import library.math.Vectors2D;
 import testbed.demo.TestBedWindow;

@@ -8,7 +8,7 @@ import library.joints.Joint;
 import library.joints.JointToBody;
 import library.joints.JointToPoint;
 import library.math.Vectors2D;
-import library.utils.Settings;
+import library.dynamics.Settings;
 import testbed.demo.TestBedWindow;
 
 public class Trebuchet {

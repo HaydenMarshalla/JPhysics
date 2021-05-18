@@ -4,26 +4,49 @@ package library.collision;
 import library.dynamics.Body;
 import library.geometry.Circle;
 import library.geometry.Polygon;
-import library.utils.Settings;
+import library.dynamics.Settings;
 import library.math.Vectors2D;
 
-import java.util.Set;
-
+/**
+ * Creates manifolds to detect collisions and apply forces to them. Discrete in nature and only evaluates pairs of bodies in a single manifold.
+ */
 public class Arbiter {
     private final Body A;
     private final Body B;
 
+    /**
+     * Getter for Body A.
+     *
+     * @return Body A
+     */
     public Body getA() {
         return A;
     }
 
+    /**
+     * Getter for Body B.
+     *
+     * @return Body B
+     */
     public Body getB() {
         return B;
     }
 
+    /**
+     * Static fiction constant to be set during the construction of the arbiter.
+     */
     double staticFriction;
+    /**
+     * Dynamic fiction constant to be set during the construction of the arbiter.
+     */
     double dynamicFriction;
 
+    /**
+     * Main constructor for arbiter that takes two bodies to be evaluated. Sets static and dynamic friction constants here.
+     *
+     * @param a First body of arbiter.
+     * @param b Second body of arbiter.
+     */
     public Arbiter(Body a, Body b) {
         this.A = a;
         this.B = b;
@@ -32,12 +55,19 @@ public class Arbiter {
         dynamicFriction = (a.dynamicFriction + b.dynamicFriction) / 2;
     }
 
+    /**
+     * Method to check if point is inside a body in world space.
+     *
+     * @param b          Body to check against.
+     * @param startPoint Vector point to check if its inside the first body.
+     * @return boolean value whether the point is inside the first body.
+     */
     public static boolean isPointInside(Body b, Vectors2D startPoint) {
         if (b.shape instanceof Polygon) {
             Polygon poly = (Polygon) b.shape;
             for (int i = 0; i < poly.vertices.length; i++) {
-                Vectors2D localPoint = startPoint.subtract(poly.body.position.addi(poly.body.shape.orient.mul(poly.vertices[i], new Vectors2D())));
-                if (localPoint.dotProduct(poly.body.shape.orient.mul(poly.normals[i], new Vectors2D())) > 0) {
+                Vectors2D objectPoint = startPoint.subtract(poly.body.position.addi(poly.body.shape.orient.mul(poly.vertices[i], new Vectors2D())));
+                if (objectPoint.dotProduct(poly.body.shape.orient.mul(poly.normals[i], new Vectors2D())) > 0) {
                     return false;
                 }
             }
@@ -51,11 +81,17 @@ public class Arbiter {
         return true;
     }
 
+    /**
+     * Array to save the contact points of the objects body's in world space.
+     */
     public final Vectors2D[] contacts = {new Vectors2D(), new Vectors2D()};
-    public Vectors2D normal = new Vectors2D();
+    public Vectors2D contactNormal = new Vectors2D();
     public int contactCount = 0;
     public double restitution = 0;
 
+    /**
+     * Conducts a narrow phase detection and creates a contact manifold.
+     */
     public void narrowPhase() {
         restitution = Math.min(A.restitution, B.restitution);
         if (A.shape instanceof Circle && B.shape instanceof Circle) {
@@ -65,7 +101,7 @@ public class Arbiter {
         } else if (A.shape instanceof Polygon && B.shape instanceof Circle) {
             circleVsPolygon(B, A);
             if (this.contactCount > 0) {
-                this.normal.negative();
+                this.contactNormal.negative();
             }
         } else if (A.shape instanceof Polygon && B.shape instanceof Polygon) {
             polygonVsPolygon();
@@ -74,6 +110,9 @@ public class Arbiter {
 
     private double penetration = 0;
 
+    /**
+     * Circle vs circle collision detection method
+     */
     private void circleVsCircle() {
         Circle ca = (Circle) A.shape;
         Circle cb = (Circle) B.shape;
@@ -92,15 +131,21 @@ public class Arbiter {
 
         if (distance == 0) {
             this.penetration = radius;
-            this.normal = new Vectors2D(0, 1);
+            this.contactNormal = new Vectors2D(0, 1);
             this.contacts[0].set(A.position);
         } else {
             this.penetration = radius - distance;
-            this.normal = normal.normalize();
-            this.contacts[0].set(this.normal.scalar(ca.radius).addi(A.position));
+            this.contactNormal = normal.normalize();
+            this.contacts[0].set(this.contactNormal.scalar(ca.radius).addi(A.position));
         }
     }
 
+    /**
+     * Circle vs Polygon collision detection method
+     *
+     * @param a Circle object
+     * @param b Polygon Object
+     */
     private void circleVsPolygon(Body a, Body b) {
         Circle A = (Circle) a.shape;
         Polygon B = (Polygon) b.shape;
@@ -147,7 +192,7 @@ public class Arbiter {
 
             this.penetration = A.radius - distBetweenObj;
             contactCount = 1;
-            B.orient.mul(this.normal.set(vector1.subtract(polyToCircleVec).normalize()));
+            B.orient.mul(this.contactNormal.set(vector1.subtract(polyToCircleVec).normalize()));
             contacts[0] = B.orient.mul(vector1, new Vectors2D()).addi(b.position);
             return;
         }
@@ -168,7 +213,7 @@ public class Arbiter {
 
             this.penetration = A.radius - distBetweenObj;
             contactCount = 1;
-            B.orient.mul(this.normal.set(vector2.subtract(polyToCircleVec).normalize()));
+            B.orient.mul(this.contactNormal.set(vector2.subtract(polyToCircleVec).normalize()));
             contacts[0] = B.orient.mul(vector2, new Vectors2D()).addi(b.position);
         } else {
             double distFromEdgeToCircle = polyToCircleVec.subtract(vector1).dotProduct(B.normals[faceNormalIndex]);
@@ -179,12 +224,15 @@ public class Arbiter {
 
             this.penetration = A.radius - distFromEdgeToCircle;
             this.contactCount = 1;
-            B.orient.mul(B.normals[faceNormalIndex], this.normal);
-            Vectors2D circleContactPoint = a.position.addi(this.normal.negative().scalar(A.radius));
+            B.orient.mul(B.normals[faceNormalIndex], this.contactNormal);
+            Vectors2D circleContactPoint = a.position.addi(this.contactNormal.negative().scalar(A.radius));
             this.contacts[0].set(circleContactPoint);
         }
     }
 
+    /**
+     * Polygon collision check
+     */
     private void polygonVsPolygon() {
         Polygon pa = (Polygon) A.shape;
         Polygon pb = (Polygon) B.shape;
@@ -221,7 +269,7 @@ public class Arbiter {
         Vectors2D[] incidentFaceVertexes = new Vectors2D[2];
         Vectors2D referenceNormal = referencePoly.normals[referenceFaceIndex];
 
-        //Reference face of reference polygon in local space of incident polygon
+        //Reference face of reference polygon in object space of incident polygon
         referenceNormal = referencePoly.orient.mul(referenceNormal, new Vectors2D());
         referenceNormal = incidentPoly.orient.transpose().mul(referenceNormal, new Vectors2D());
 
@@ -255,6 +303,7 @@ public class Arbiter {
 
         double negSide = -refTangent.dotProduct(v1);
         double posSide = refTangent.dotProduct(v2);
+        // Clips the incident face against the reference
         int np = clip(refTangent.negativeVec(), negSide, incidentFaceVertexes);
 
         if (np < 2) {
@@ -273,6 +322,7 @@ public class Arbiter {
         double totalPen = 0;
         int contactsFound = 0;
 
+        //Discards points that are positive/above the reference face
         for (int i = 0; i < 2; i++) {
             double separation = refFaceNormal.dotProduct(incidentFaceVertexes[i]) - refFaceNormal.dotProduct(v1);
             if (separation <= 0.0 + Settings.EPSILON) {
@@ -293,35 +343,49 @@ public class Arbiter {
         }
         this.contactCount = 1;
         this.contacts[0].set(contactPoint);
-        normal.set(flip ? refFaceNormal.negative() : refFaceNormal);
+        contactNormal.set(flip ? refFaceNormal.negative() : refFaceNormal);
     }
 
-    private int clip(Vectors2D n, double offset, Vectors2D[] face) {
+    /**
+     * Clipping for polygon collisions. Clips incident face against side planes of the reference face.
+     *
+     * @param planeTangent Plane to clip against
+     * @param offset       Offset for clipping in world space to incident face.
+     * @param incidentFace Clipped face vertex's
+     * @return Number of clipped vertex's
+     */
+    private int clip(Vectors2D planeTangent, double offset, Vectors2D[] incidentFace) {
         int num = 0;
         Vectors2D[] out = {
-                new Vectors2D(face[0]),
-                new Vectors2D(face[1])
+                new Vectors2D(incidentFace[0]),
+                new Vectors2D(incidentFace[1])
         };
-        double dist = n.dotProduct(face[0]) - offset;
-        double dist1 = n.dotProduct(face[1]) - offset;
+        double dist = planeTangent.dotProduct(incidentFace[0]) - offset;
+        double dist1 = planeTangent.dotProduct(incidentFace[1]) - offset;
 
-        if (dist <= 0.0) out[num++].set(face[0]);
-        if (dist1 <= 0.0) out[num++].set(face[1]);
+        if (dist <= 0.0) out[num++].set(incidentFace[0]);
+        if (dist1 <= 0.0) out[num++].set(incidentFace[1]);
 
         if (dist * dist1 < 0.0) {
             double interp = dist / (dist - dist1);
 
-            out[num].set(face[1].subtract(face[0]).scalar(interp).addi(face[0]));
+            out[num].set(incidentFace[1].subtract(incidentFace[0]).scalar(interp).addi(incidentFace[0]));
             num++;
         }
 
-        face[0] = out[0];
-        face[1] = out[1];
+        incidentFace[0] = out[0];
+        incidentFace[1] = out[1];
 
         return num;
     }
 
-    //Finds the incident face of polygon A in local space relative to polygons B position
+    /**
+     * Finds the incident face of polygon A in object space relative to polygons B position.
+     *
+     * @param data Data obtained from earlier penetration test.
+     * @param A    Polygon A to test.
+     * @param B    Polygon B to test.
+     */
     public void findAxisOfMinPenetration(AxisData data, Polygon A, Polygon B) {
         double distance = -Double.MAX_VALUE;
         int bestIndex = 0;
@@ -330,9 +394,9 @@ public class Arbiter {
             //Applies polygon A's orientation to its normals for calculation.
             Vectors2D polyANormal = A.orient.mul(A.normals[i], new Vectors2D());
 
-            //Rotates the normal by the clock wise rotation matrix of B to put the normal relative to the local space of polygon B
-            //Polygon b is axis aligned and the normal is located according to this in the correct position in local space
-            Vectors2D localPolyANormal = B.orient.transpose().mul(polyANormal, new Vectors2D());
+            //Rotates the normal by the clock wise rotation matrix of B to put the normal relative to the object space of polygon B
+            //Polygon b is axis aligned and the normal is located according to this in the correct position in object space
+            Vectors2D objectPolyANormal = B.orient.transpose().mul(polyANormal, new Vectors2D());
 
             double bestProjection = Double.MAX_VALUE;
             Vectors2D bestVertex = B.vertices[0];
@@ -340,7 +404,7 @@ public class Arbiter {
             //Finds the index of the most negative vertex relative to the normal of polygon A
             for (int x = 0; x < B.vertices.length; x++) {
                 Vectors2D vertex = B.vertices[x];
-                double projection = vertex.dotProduct(localPolyANormal);
+                double projection = vertex.dotProduct(objectPolyANormal);
 
                 if (projection < bestProjection) {
                     bestVertex = vertex;
@@ -351,11 +415,11 @@ public class Arbiter {
             //Distance of B to A in world space space
             Vectors2D distanceOfBA = A.body.position.subtract(B.body.position);
 
-            //Best vertex relative to polygon B in local space
+            //Best vertex relative to polygon B in object space
             Vectors2D polyANormalVertex = B.orient.transpose().mul(A.orient.mul(A.vertices[i], new Vectors2D()).addi(distanceOfBA));
 
-            //Distance between best vertex and polygon A's plane in local space
-            double d = localPolyANormal.dotProduct(bestVertex.subtract(polyANormalVertex));
+            //Distance between best vertex and polygon A's plane in object space
+            double d = objectPolyANormal.dotProduct(bestVertex.subtract(polyANormalVertex));
 
             //Records penetration and vertex
             if (d > distance) {
@@ -367,6 +431,10 @@ public class Arbiter {
         data.setReferenceFaceIndex(bestIndex);
     }
 
+    /**
+     * Resolves any penetrations that are left overlapping between shapes. This can be cause due to integration errors of the solvers integration method.
+     * Based on linear projection to move the shapes away from each other based on a correction constant and scaled relative to the inverse mass of the objects.
+     */
     public void penetrationResolution() {
         double penetrationTolerance = penetration - Settings.PENETRATION_ALLOWANCE;
 
@@ -376,10 +444,13 @@ public class Arbiter {
 
         double totalMass = A.mass + B.mass;
         double correction = (penetrationTolerance * Settings.PENETRATION_CORRECTION) / totalMass;
-        A.position = A.position.addi(normal.scalar(-A.mass * correction));
-        B.position = B.position.addi(normal.scalar(B.mass * correction));
+        A.position = A.position.addi(contactNormal.scalar(-A.mass * correction));
+        B.position = B.position.addi(contactNormal.scalar(B.mass * correction));
     }
 
+    /**
+     * Solves the current contact manifold and applies impulses based on any contacts found.
+     */
     public void solve() {
         Vectors2D contactA = contacts[0].subtract(A.position);
         Vectors2D contactB = contacts[0].subtract(B.position);
@@ -388,7 +459,7 @@ public class Arbiter {
         Vectors2D relativeVel = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
         //Positive = converging Negative = diverging
-        double contactVel = relativeVel.dotProduct(normal);
+        double contactVel = relativeVel.dotProduct(contactNormal);
 
         //Prevents objects colliding when they are moving away from each other.
         //If not, objects could still be overlapping after a contact has been resolved and cause objects to stick together
@@ -396,21 +467,21 @@ public class Arbiter {
             return;
         }
 
-        double acn = contactA.crossProduct(normal);
-        double bcn = contactB.crossProduct(normal);
+        double acn = contactA.crossProduct(contactNormal);
+        double bcn = contactB.crossProduct(contactNormal);
         double inverseMassSum = A.invMass + B.invMass + (acn * acn) * A.invI + (bcn * bcn) * B.invI;
 
         double j = -(restitution + 1) * contactVel;
         j /= inverseMassSum;
 
-        Vectors2D impulse = normal.scalar(j);
+        Vectors2D impulse = contactNormal.scalar(j);
         B.applyLinearImpulse(impulse, contactB);
         A.applyLinearImpulse(impulse.negativeVec(), contactA);
 
         relativeVel = B.velocity.addi(contactB.crossProduct(B.angularVelocity)).subtract(A.velocity).subtract(contactA.crossProduct(A.angularVelocity));
 
         Vectors2D t = relativeVel.copy();
-        t.add(normal.scalar(-relativeVel.dotProduct(normal))).normalize();
+        t.add(contactNormal.scalar(-relativeVel.dotProduct(contactNormal))).normalize();
 
         double jt = -relativeVel.dotProduct(t);
         jt /= inverseMassSum;
@@ -426,32 +497,66 @@ public class Arbiter {
         A.applyLinearImpulse(tangentImpulse.negativeVec(), contactA);
     }
 
+    /**
+     * Selects one value over another. Intended for polygon collisions to aid in choosing which axis of separation intersects the other in a consistent manner.
+     * Floating point error can occur in the rotation calculations thus this method helps with choosing one axis over another in a consistent manner for stability.
+     *
+     * @param a penetration value a
+     * @param b penetration value b
+     * @return boolean value whether a is to be preferred or not.
+     */
     private static boolean selectionBias(double a, double b) {
         return a >= b * Settings.BIAS_RELATIVE + a * Settings.BIAS_ABSOLUTE;
     }
 }
 
+/**
+ * Class for data related to axis
+ */
 class AxisData {
     private double penetration;
     private int referenceFaceIndex;
 
+    /**
+     * Default constructor
+     */
     AxisData() {
         penetration = -Double.MAX_VALUE;
         referenceFaceIndex = 0;
     }
 
+    /**
+     * Sets penetration value.
+     *
+     * @param value Penetration value of type double.
+     */
     public void setPenetration(double value) {
         penetration = value;
     }
 
+    /**
+     * Sets the reference face index variable to an int value.
+     *
+     * @param value Value to set index variable to.
+     */
     public void setReferenceFaceIndex(int value) {
         referenceFaceIndex = value;
     }
 
+    /**
+     * Gets the penetration value stored.
+     *
+     * @return double penetration value.
+     */
     public double getPenetration() {
         return penetration;
     }
 
+    /**
+     * Gets the referenceFaceIndex value stored.
+     *
+     * @return int referenceFaceIndex value.
+     */
     public int getReferenceFaceIndex() {
         return referenceFaceIndex;
     }

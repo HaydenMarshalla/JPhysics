@@ -10,21 +10,49 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 
+/**
+ * Abstract class presenting a geometric shape.
+ */
 public abstract class Shapes {
     public Body body;
     public Matrix2D orient;
 
+    /**
+     * Default constructor
+     */
     Shapes() {
         orient = new Matrix2D();
         body = null;
     }
 
+    /**
+     * Calculates the mass of a shape.
+     *
+     * @param density The desired density to factor into the calculation.
+     */
     public abstract void calcMass(double density);
 
+    /**
+     * Generates an AABB for the shape.
+     */
     public abstract void createAABB();
 
+    /**
+     * Debug draw method for shape.
+     *
+     * @param g             Graphics2D object to draw to
+     * @param paintSettings Colour settings to draw the objects to screen with
+     * @param camera        Camera class used to convert points from world space to view space
+     */
     public abstract void draw(Graphics2D g, ColourSettings paintSettings, Camera camera);
 
+    /**
+     * Debug draw method for AABB.
+     *
+     * @param g             Graphics2D object to draw to
+     * @param paintSettings Colour settings to draw the objects to screen with
+     * @param camera        Camera class used to convert points from world space to view space
+     */
     public void drawAABB(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         g.setColor(paintSettings.aabb);
         Path2D polyBB = new Path2D.Double();
@@ -40,6 +68,13 @@ public abstract class Shapes {
         g.draw(polyBB);
     }
 
+    /**
+     * Debug draw method for center of mass.
+     *
+     * @param g             Graphics2D object to draw to
+     * @param paintSettings Colour settings to draw the objects to screen with
+     * @param camera        Camera class used to convert points from world space to view space
+     */
     public void drawCOMS(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         g.setColor(paintSettings.centreOfMass);
         Vectors2D centre = body.position;

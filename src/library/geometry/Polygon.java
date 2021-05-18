@@ -9,15 +9,29 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.*;
 
+/**
+ * Class for representing polygon shape.
+ */
 public class Polygon extends Shapes {
     public Vectors2D[] vertices;
     public Vectors2D[] normals;
 
+    /**
+     * Constructor takes a supplied list of vertices and generates a convex hull around them.
+     *
+     * @param vertList Vertices of polygon to create.
+     */
     public Polygon(Vectors2D[] vertList) {
         this.vertices = generateHull(vertList, vertList.length);
         calcNormals();
     }
 
+    /**
+     * Constructor to generate a rectangle.
+     *
+     * @param width  Desired width of rectangle
+     * @param height Desired height of rectangle
+     */
     public Polygon(double width, double height) {
         vertices = new Vectors2D[4];
         vertices[0] = new Vectors2D(-width, -height);
@@ -31,6 +45,12 @@ public class Polygon extends Shapes {
         normals[3] = new Vectors2D(-1.0, 0.0);
     }
 
+    /**
+     * Generate a regular polygon with a specified number of sides and size.
+     *
+     * @param radius    The maximum distance any vertex is away from the center of mass.
+     * @param noOfSides The desired number of face the polygon has.
+     */
     public Polygon(int radius, int noOfSides) {
         vertices = new Vectors2D[noOfSides];
         for (int i = 0; i < noOfSides; i++) {
@@ -42,6 +62,9 @@ public class Polygon extends Shapes {
         calcNormals();
     }
 
+    /**
+     * Generates normals for each face of the polygon. Positive normals of polygon faces face outward.
+     */
     public void calcNormals() {
         normals = new Vectors2D[vertices.length];
         for (int i = 0; i < vertices.length; i++) {
@@ -50,6 +73,11 @@ public class Polygon extends Shapes {
         }
     }
 
+    /**
+     * Implementation of calculating the mass of a polygon.
+     *
+     * @param density The desired density to factor into the calculation.
+     */
     @Override
     public void calcMass(double density) {
         Vectors2D centroidDistVec = new Vectors2D(0.0, 0.0);
@@ -84,6 +112,9 @@ public class Polygon extends Shapes {
         body.invI = (body.I != 0.0) ? 1.0 / body.I : 0.0;
     }
 
+    /**
+     * Generates an AABB encompassing the polygon and binds it to the body.
+     */
     @Override
     public void createAABB() {
         Vectors2D firstPoint = orient.mul(vertices[0], new Vectors2D());
@@ -112,6 +143,13 @@ public class Polygon extends Shapes {
         body.aabb = new AABB(new Vectors2D(minX, minY), new Vectors2D(maxX, maxY));
     }
 
+    /**
+     * Debug draw method for a polygon.
+     *
+     * @param g             Graphics2D object to draw to
+     * @param paintSettings Colour settings to draw the objects to screen with
+     * @param camera        Camera class used to convert points from world space to view space
+     */
     @Override
     public void draw(Graphics2D g, ColourSettings paintSettings, Camera camera) {
         Path2D.Double s = new Path2D.Double();
@@ -139,6 +177,13 @@ public class Polygon extends Shapes {
         g.draw(s);
     }
 
+    /**
+     * Generates a convex hull around the vertices supplied.
+     *
+     * @param vertices List of vertices.
+     * @param n        Number of vertices supplied.
+     * @return Returns a convex hull array.
+     */
     private Vectors2D[] generateHull(Vectors2D[] vertices, int n) {
         ArrayList<Vectors2D> hull = new ArrayList<>();
 
@@ -173,6 +218,14 @@ public class Polygon extends Shapes {
         return hulls;
     }
 
+    /**
+     * Checks which side of a line a point is on.
+     *
+     * @param p1    Vertex of line to evaluate.
+     * @param p2    Vertex of line to evaluate.
+     * @param point Point to check which side it lies on.
+     * @return Int value - positive = right side of line. Negative = left side of line.
+     */
     private int sideOfLine(Vectors2D p1, Vectors2D p2, Vectors2D point) {
         double val = (p2.y - p1.y) * (point.x - p2.x) - (p2.x - p1.x) * (point.y - p2.y);
         if (val > 0)

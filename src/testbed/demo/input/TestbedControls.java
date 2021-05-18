@@ -3,7 +3,7 @@ package testbed.demo.input;
 import library.explosions.ParticleExplosion;
 import library.explosions.ProximityExplosion;
 import library.math.Vectors2D;
-import library.utils.Settings;
+import library.dynamics.Settings;
 import testbed.Camera;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.*;
@@ -110,7 +110,7 @@ public abstract class TestbedControls {
     protected void setProximityEpicentre(MouseEvent e) {
         Vectors2D v = CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY()));
         ProximityExplosion p = (ProximityExplosion) TESTBED.getRayExplosions().get(0);
-        p.changeEpicentre(v);
+        p.setEpicentre(v);
     }
 
     protected void generateParticleExplosion(MouseEvent e) {

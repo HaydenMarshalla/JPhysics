@@ -2,7 +2,7 @@ package testbed.demo.tests;
 
 import library.collision.Arbiter;
 import library.dynamics.Body;
-import library.dynamics.Ray;
+import library.rays.Ray;
 import library.dynamics.World;
 import library.math.Matrix2D;
 import library.math.Vectors2D;

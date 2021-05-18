@@ -1,8 +1,6 @@
 package testbed.demo.input;
 
-import library.math.Vectors2D;
-import library.utils.Settings;
-import testbed.Camera;
+import library.dynamics.Settings;
 import testbed.ColourSettings;
 import testbed.demo.TestBedWindow;
 import testbed.demo.tests.Trebuchet;

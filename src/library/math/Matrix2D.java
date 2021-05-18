@@ -4,13 +4,24 @@ public class Matrix2D {
     public Vectors2D row1 = new Vectors2D();
     public Vectors2D row2 = new Vectors2D();
 
+    /**
+     * Default constructor matrix [(0,0),(0,0)] by default.
+     */
     public Matrix2D() {
     }
 
+    /**
+     * Constructs and sets the matrix up to be a rotation matrix that stores the angle specified in the matrix.
+     * @param radians The desired angle of the rotation matrix
+     */
     public Matrix2D(double radians) {
         this.set(radians);
     }
 
+    /**
+     * Sets the matrix up to be a rotation matrix that stores the angle specified in the matrix.
+     * @param radians The desired angle of the rotation matrix
+     */
     public void set(double radians) {
         double c = StrictMath.cos(radians);
         double s = StrictMath.sin(radians);
@@ -21,6 +32,10 @@ public class Matrix2D {
         row2.y = c;
     }
 
+    /**
+     * Sets current object matrix to be the same as the supplied parameters matrix.
+     * @param m Matrix to set current object to
+     */
     public void set(Matrix2D m) {
         row1.x = m.row1.x;
         row1.y = m.row1.y;

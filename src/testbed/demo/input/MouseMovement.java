@@ -27,9 +27,9 @@ public class MouseMovement extends TestbedControls implements MouseMotionListene
             Vectors2D v = CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY()));
             if (ProximityExplosionTest.active) {
                 ProximityExplosion p = (ProximityExplosion) TESTBED.getRayExplosions().get(0);
-                p.changeEpicentre(v);
+                p.setEpicentre(v);
             } else if (RaycastExplosionTest.active) {
-                RaycastExplosionTest.r.changeEpicentre(v);
+                RaycastExplosionTest.r.setEpicentre(v);
             } else if (LineOfSight.active) {
                 LineOfSight.b.setStartPoint(v);
             } else if (TESTBED.getSlicesSize() == 1 && !SwingUtilities.isRightMouseButton(e) && SliceObjects.active) {
@@ -44,9 +44,9 @@ public class MouseMovement extends TestbedControls implements MouseMotionListene
             Vectors2D v = CAMERA.convertToWorld(new Vectors2D(e.getX(), e.getY()));
             if (ProximityExplosionTest.active) {
                 ProximityExplosion p = (ProximityExplosion) TESTBED.getRayExplosions().get(0);
-                p.changeEpicentre(v);
+                p.setEpicentre(v);
             } else if (RaycastExplosionTest.active) {
-                RaycastExplosionTest.r.changeEpicentre(v);
+                RaycastExplosionTest.r.setEpicentre(v);
             } else if (LineOfSight.active) {
                 LineOfSight.b.setStartPoint(v);
             } else if (TESTBED.getSlicesSize() == 1 && !SwingUtilities.isRightMouseButton(e) && SliceObjects.active) {

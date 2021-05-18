@@ -89,6 +89,9 @@ After this, Keep hitting OK until you're back to the original project code.
 ### Testing
 Now you can go to "src/testbed/junittests/" and run the tests!
 
+## Documentation
+Java documentation on the library can be found in the Javadoc folder or follow the link! [java documentation](Javadoc)
+
 ## Authors
 Hayden Marshall
 

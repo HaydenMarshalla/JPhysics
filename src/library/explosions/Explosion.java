@@ -8,9 +8,37 @@ import testbed.ColourSettings;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * Interface detailing what explosions need to include.
+ */
 public interface Explosion {
+    /**
+     * Applies a blast impulse to the effected bodies.
+     *
+     * @param blastPower The impulse magnitude.
+     */
     void applyBlastImpulse(double blastPower);
-    void draw(Graphics2D gi, ColourSettings paintSettings, Camera camera);
+
+    /**
+     * Debug draw method for explosion and the effected objects.
+     *
+     * @param g             Graphics2D object to draw to
+     * @param paintSettings Colour settings to draw the objects to screen with
+     * @param camera        Camera class used to convert points from world space to view space
+     */
+    void draw(Graphics2D g, ColourSettings paintSettings, Camera camera);
+
+    /**
+     * Updates the arraylist to reevaluate what objects are effected/within the proximity.
+     *
+     * @param bodiesToEvaluate Arraylist of bodies in the world to check.
+     */
     void update(ArrayList<Body> bodiesToEvaluate);
-    void changeEpicentre(Vectors2D v);
+
+    /**
+     * Sets the epicentre to a different coordinate.
+     *
+     * @param v The vector position of the new epicentre.
+     */
+    void setEpicentre(Vectors2D v);
 }
